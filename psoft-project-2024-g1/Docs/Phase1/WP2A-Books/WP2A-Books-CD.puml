@@ -1,0 +1,82 @@
+@startuml
+
+'hide circle
+skinparam classAttributeIconSize 0
+
+class BookController {
+    + registerBook(isbn,  title, genre, description, author(s))
+    + updateBook(title, genre, description, author(s))
+    + getDetails(ISBN)
+    + searchBookByGenre(Genre)
+}
+
+interface BookRepository {
+    + findById(ISBN)
+    + save(book)
+    + searchBookByGenre(Genre)
+}
+
+interface BookService {
+    + register(isbn, title, genre, description, author(s))
+    + findBook(isbn)
+    + update(title, genre, description, author(s))
+}
+
+class BookServiceImpl implements BookService{
+}
+
+class Book <<entity>>{
+}
+
+class Title <<value>>{
+    - Title: string
+}
+
+class Isbn <<value>>{
+    - isbn: string
+}
+
+class Description <<value>>{
+    - Description: string
+    + toString() : String
+}
+
+class Genre <<entity>>{
+   - Genre: genre
+}
+
+interface GenreRepository {
+    + listAll(): list(genre)
+    + listByName(Name): list(genre)
+}
+
+interface GenreService {
+    + register(genre)
+    + findGenre(genre)
+}
+
+interface AuthorsRepository {
+    + getAuthors(): list(authors)
+}
+
+class BookAuthor{
+    - authorNumber :int
+}
+
+Book *-- Isbn
+Book *-- Title
+Book *-right- Description
+Book o-- Genre
+BookAuthor o- Isbn
+
+BookServiceImpl .down.> Book
+
+BookServiceImpl..>GenreRepository
+BookServiceImpl .left.>AuthorsRepository
+GenreServiceImpl ..> Genre
+BookController ..> BookService
+
+BookServiceImpl .right.> BookRepository
+GenreServiceImpl ..> GenreRepository
+GenreServiceImpl .up.|> GenreService
+@enduml

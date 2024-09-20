@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title Ph1-16-ReturnBook-SSD
+
+'autoactivate on
+autonumber
+
+actor Reader
+participant System
+
+note over Reader : Reader is authenticated
+Reader -> System: Requests to see lending
+
+alt date is before limit date
+    System --> Reader: Shows lending
+    Reader -> System: Requests to return book
+    System --> Reader: success
+else date is after limit date
+    System --> Reader: Shows lending and fine
+    hnote across: ???
+end
+@enduml

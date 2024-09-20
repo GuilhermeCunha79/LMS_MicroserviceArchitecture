@@ -1,0 +1,27 @@
+@startuml
+actor Librarian
+
+participant ReaderController
+participant ReaderService
+Database Database
+
+Librarian -> ReaderController : POST /search (SearchRequest)
+activate ReaderController
+
+ReaderController -> ReaderService : searchReaders(request.getPage(), request.getQuery())
+activate ReaderService
+
+ReaderService -> ReaderService : validatePhoneNumber(query.getPhoneNumber())
+
+ReaderService -> Database : create search criteria (phoneNumber)
+activate Database
+Database --> ReaderService : return ReaderDetails
+deactivate Database
+
+ReaderService -> ReaderController : return List<ReaderDetails>
+deactivate ReaderService
+
+ReaderController -> Librarian : return ListResponse<ReaderView>
+deactivate ReaderController
+
+@enduml

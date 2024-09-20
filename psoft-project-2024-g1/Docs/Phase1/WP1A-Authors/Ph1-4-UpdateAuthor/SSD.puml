@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autoactivate on
+autonumber
+
+actor "Librarian" as Librarian
+participant ":System" as System
+
+activate Librarian
+
+Librarian -> System: asks to update an author
+System --> Librarian: requests data (short bio)
+
+Librarian -> System: types requested data
+System --> Librarian: shows all data and requests confirmation
+
+Librarian -> System: confirms the data
+System --> Librarian: informs operation success
+@enduml

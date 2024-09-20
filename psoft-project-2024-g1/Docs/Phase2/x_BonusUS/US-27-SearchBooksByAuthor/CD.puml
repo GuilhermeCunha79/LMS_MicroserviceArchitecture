@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+class BookService {
+    + findByAuthorName(authorName: String): List<Author>
+}
+
+class BookServiceImpl implements BookService {
+        + findByAuthorName(authorName: String): List<Author>
+}
+
+class BookController {
+    - bookService: BookService
+    + findBooks(): List<Book>
+}
+
+class BookView{
+    - title: String
+    - authors: List<String>
+    - genre: String
+    - description: String
+    - isbn: String
+    - _links: Map<String, Object>
+}
+
+
+class BookViewMapper{
+ + toBookView(List<Book> book) : List<BookView>
+}
+
+class Book {
+    - isbn: Isbn
+    - title: Title
+    - genre: Genre
+    - description: Description
+}
+
+
+class Author {
+    - authorNumber: Long;
+    - version: long;
+    - name: Name
+    - bio: Bio
+}
+
+BookController "1" -> "1" BookService
+BookServiceImpl "1" ---> "1" BookRepository
+
+BookController .up.> BookViewMapper
+BookViewMapper .right.> BookView
+
+Author "1..*" o-up- "1" Book
+
+@enduml

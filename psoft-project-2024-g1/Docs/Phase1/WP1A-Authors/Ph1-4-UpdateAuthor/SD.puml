@@ -1,0 +1,52 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autoactivate on
+autonumber
+
+actor "Librarian" as User
+participant ":CreateAuthorView" as System
+participant ":CreateAuthorController" as Ctrl
+participant ":Librarian" as Librarian
+participant "container:AuthorContainer" as Container
+participant "cat:Author" as Author
+
+activate User
+
+User -> System: asks to create a new Author
+System -> Ctrl: createAuthor()
+Ctrl -> Librarian: getAuthorsContainer()
+Librarian --> Ctrl: container
+Ctrl -> Container: create()
+Container --> Author**: create()
+Container --> Ctrl: cat
+Ctrl --> System: ok
+System --> User: requests data (name, short bio)
+
+User -> System: types requested data
+System -> Ctrl: setData(name, short bio)
+Ctrl -> Author: setCode(name)
+Author -->Ctrl: ok
+Ctrl -> Author: setDescription(short bio)
+Author --> Ctrl: ok
+Ctrl -> Container: validate(cat)
+Container -> Author: isValid()
+Author --> Container: ok
+Container -> Container: checkDuplicates(cat)
+Container --> Container : ok
+Container --> Ctrl: ok
+Ctrl --> System: ok
+System --> User: shows all data and requests confirmation
+
+User -> System: confirms the data
+System -> Ctrl: saveCreatedAuthor()
+Ctrl -> Container: save(cat)
+Container -> Container : validate(cat)
+Container --> Container : ok
+Container -> Container: add(cat)
+Container --> Container : ok
+Container --> Ctrl: ok
+Ctrl --> System: ok
+System --> User: informs operation success
+
+@enduml

@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+skinparam classAttributeIconSize 0
+class Authors <<entity>>{
+    - authorsNumber : int
+}
+class Name <<entity>>{
+    - name: string
+    + toString() : String
+}
+
+class AuthorBio <<value>>{
+    - Short Bio: string
+    + toString() : String
+}
+
+class Photo <<Entity>>{
+    - photo: Byte[]
+}
+
+class AuthorsController {
+    +createAuthor(name,short bio,photo): void
+    +UpdateAuthors(name,short bio,photo): data
+    + getDetailsByNumber(AuthorsNumber)
+    + searchAuthorsByName(name)
+}
+
+class AuthorsServiceImpl implements AuthorsService{
+}
+
+interface AuthorsService {
+    + create(name, short bio) : Authors
+    + findByName(AuthorsName)
+    + findById(AuthorsNumber)
+    + update(AuthorsData)
+}
+
+interface AuthorsRepository {
+    +saveCreatedAuthor(): Authors
+    + findByName(AuthorsName)
+    + findById(AuthorsNumber)
+    + searchAuthorsByName(Name)
+
+}
+
+AuthorsServiceImpl ..> Authors
+AuthorsController ..> AuthorsService
+AuthorsServiceImpl .left.> AuthorsRepository
+
+Authors --o Name
+Authors --o Photo
+Authors --o AuthorBio
+@enduml

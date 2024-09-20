@@ -1,0 +1,25 @@
+@startuml
+actor Reader
+
+participant ReaderController
+participant BookService
+Database Database
+
+Reader -> ReaderController : GET /searchBooksByAuthor (authorName)
+activate ReaderController
+
+ReaderController -> BookService : searchBooksByAuthor(authorName)
+activate BookService
+
+BookService -> Database : create search criteria (authorName)
+activate Database
+Database --> BookService : return List<Book>
+deactivate Database
+
+BookService -> ReaderController : return List<Book>
+deactivate BookService
+
+ReaderController -> Reader : return List<BookView>
+deactivate ReaderController
+
+@enduml

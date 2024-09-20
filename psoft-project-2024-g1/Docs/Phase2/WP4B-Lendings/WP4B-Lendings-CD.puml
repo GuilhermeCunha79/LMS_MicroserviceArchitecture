@@ -1,0 +1,185 @@
+@startuml
+
+'hide circle
+skinparam classAttributeIconSize 0
+
+class LendingController {
+    + create(createLendingRequest) : LendingView
+    + findByLendingNumber(readerNumber) : LendingView
+    + setLendingReturned(lendingNumber, setLendingReturnedRequest) : LendingView
+    + getAvgDuration() : LendingsAverageDurationView
+    + getOverdueLendings(page) : List<LendingView>
+}
+
+interface MapperInterface {
+    + mapLendingLink(lending) : Map<String, String>
+    + mapBookLink(book) : Map<String, String>
+    + mapReaderLink(readerDetails) : Map<String, String>
+}
+
+abstract class LendingViewMapper extends MapperInterface{
+    + toLendingView(lending) : LendingView
+    + toLendingView(lendingList) : List<LendingView>
+    + toLendingsAverageDurationView(lendingsAverageDuration) : LendingsAverageDurationView
+}
+
+class LendingView {
+    - lendingNumber : String
+    - bookTitle : String
+    - startDate : LocalDate
+    - limitDate : LocalDate
+    - daysUntilReturn : Integer
+    - daysOverdue : Integer
+    - fineValueInCents : Integer
+}
+
+class LendingLinksView {
+    - self : Map<String, String>
+    - book : Map<String, String>
+    - reader : Map<String, String>
+}
+
+LendingView *-- LendingLinksView
+
+class LendingsAverageDurationView {
+    - lendingsAverageDuration : String
+}
+
+interface LendingService {
+    + create(createLendingRequest) : Lending
+    + findByLendingNumber(lendingNumber) : Optional<Lending>
+    + setReturned(lendingNumber, setLendingReturnedRequest, desiredVersion) : Lending
+    + getAverageDuration() : String
+    + getOverdue(page) : List<Lending>
+}
+
+class LendingServiceImpl implements LendingService{
+}
+
+interface UserService {
+    + getAuthenticatedUser(authentication) : User
+}
+
+interface ReaderService {
+    + findByUsername(username) : Optional<ReaderDetails>
+}
+
+class ConcurrencyService {
+    + getVersionFromIfMatchHeader(ifMatchHeader) : Long
+}
+
+
+interface LendingRepository {
+    + create(createLendingRequest) : Lending
+    + findByLendingNumber(lendingNumber) : Optional<Lending>
+    + listOutstandingByReaderNumber(readerNumber) : List<Lending>
+    + save(lending) : Lending
+    + getCountFromCurrentYear() : int
+    + getAverageDuration() : Double
+    + getOverdue(page) : List<Lending>
+}
+
+
+interface ReaderRepository {
+    + findById(readerNumber)
+}
+
+interface BookRepository {
+    + findById(isbn)
+}
+
+interface FineRepository {
+    + save(fine) : Fine
+}
+
+class Lending <<entity>>{
+    - pk : Long
+    - startDate : Date
+    - limitDate : Date
+    - returnDate : Date
+    - version : long
+    - commentary : String
+    - daysUntilReturn : Integer
+    - daysOverdue : Integer
+    - fineValueInCents : int
+
+    - setReturnedDate() : void
+    - setDaysUntilReturn() : void
+    - setDaysOverdue() : void
+    + getDaysDelayed() : int
+    + getDaysUntilReturn() : Optional<Integer>
+    + getDaysOverdue() : Optional<Integer>
+    + getFineValueInCents() : Optional<Integer>
+    + getLendingNumber() : String
+    + setReturned(desiredVersion, commentary) : void
+    + getReaderDetails() : ReaderDetails
+}
+
+class LendingNumber <<value>> {
+    - registryYear :int
+    - number :int
+    + toString() : String
+}
+
+class Isbn <<value>>{
+    - isbn: string
+}
+
+class ReaderDetails <<entity>>{
+    + getReaderNumber() : String
+}
+
+class ReaderNumber <<value>>{
+    - registryYear :int
+    - number :int
+    + toString() : String
+}
+
+class Fine <<entity>>{
+    - centsValue : int
+    - paid :bool
+    + updateValue(int daysOverdue) : void
+    + getValue() : int
+    + isPaid() : bool
+}
+
+class SetLendingReturnedRequest{
+    - commentary : String
+}
+
+class LendingMapper{
+    + create(lendingDTO) : Lending
+}
+
+
+Lending o- Isbn
+Lending o-left- ReaderNumber
+Lending *-down- LendingNumber
+LendingNumber -right-o Fine
+ReaderDetails *- ReaderNumber
+
+LendingController ..> LendingViewMapper
+LendingController ..> LendingView
+LendingController ..> LendingsAverageDurationView
+LendingController ...> LendingService
+LendingController .up.> UserService
+LendingController .left.> ReaderService
+LendingController .up.> ConcurrencyService
+
+LendingServiceImpl ..> Lending
+LendingServiceImpl ..> FineRepository
+
+ReaderService ..> ReaderDetails
+LendingController .left.> ReaderDetails
+
+LendingServiceImpl .left.> LendingRepository
+LendingServiceImpl ..> ReaderRepository
+LendingServiceImpl .right.> BookRepository
+
+LendingServiceImpl .down.> LendingMapper
+LendingMapper .down.> SetLendingReturnedRequest
+
+LendingViewMapper ..> LendingView
+LendingViewMapper ..> LendingsAverageDurationView
+
+@enduml

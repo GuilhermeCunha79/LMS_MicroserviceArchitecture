@@ -1,0 +1,1570 @@
+{
+	"info": {
+		"_postman_id": "32bf8340-b0a1-48d5-addc-3322dc75523d",
+		"name": "Psoft-G1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34875941"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login as Librarian",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    let token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"librarianToken\", token);    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"maria@gmail.com\",\r\n    \"password\": \"Mariaroberta!123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/public/login",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Manuel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    let token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"readerToken\", token);    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"manuel@gmail.com\",\r\n    \"password\": \"Manuelino123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/public/login",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Pedro",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    let token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"readerToken\", token);    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"pedro@gmail.com\",\r\n    \"password\": \"Pedrodascenas!123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/public/login",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Author",
+			"item": [
+				{
+					"name": "As Reader",
+					"item": [
+						{
+							"name": "FindBooksByAuthorNumber",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors/3/books",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"3",
+										"books"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Author By Id - Author doesnt exist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Not found\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(404);    \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors/30",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"30"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Author By Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let author = postman.getResponseHeader(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtag\", author); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors/3",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Top5Authors",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors/top5",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"top5"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{readerToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "As Librarian",
+					"item": [
+						{
+							"name": "CreateAuthor",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Created\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(201); \r",
+											"\r",
+											"    let author = postman.getResponseHeader(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtag\", author); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Irineu José\",\r\n    \"bio\": \"Bio do ireneu José \"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateAuthor - blank bio",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Bad request\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(400); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Irineu José\",\r\n    \"bio\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Author By Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let author = postman.getResponseHeader(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtag\", author); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors/3",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Author",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let author = postman.getResponseHeader(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtag\", author); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{authorEtag}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"author3\",\r\n    \"bio\":\"bio authorrr v3\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors/3",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"3"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{librarianToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Book",
+			"item": [
+				{
+					"name": "As Reader",
+					"item": [
+						{
+							"name": "GetBookByIsbn",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books/9782722203426",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"9782722203426"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FindBooksByTitle",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books?title=o",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "title",
+											"value": "o"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FindBooksByGenre",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books?genre=infantil",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "genre",
+											"value": "infantil"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{readerToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "As Librarian",
+					"item": [
+						{
+							"name": "GetAverageLendings",
+							"item": [
+								{
+									"name": "GetAverageLendings",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"OK\", function(){\r",
+													"\r",
+													"    pm.response.to.have.status(200); \r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}{{baseUrl}}/genres/avgLendings?period=month&start=2024-05-01&end=2024-05-31",
+											"host": [
+												"{{host}}{{baseUrl}}"
+											],
+											"path": [
+												"genres",
+												"avgLendings"
+											],
+											"query": [
+												{
+													"key": "period",
+													"value": "month"
+												},
+												{
+													"key": "start",
+													"value": "2024-05-01"
+												},
+												{
+													"key": "end",
+													"value": "2024-05-31"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetAverageLendings - invalid dates",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Bad Request\", function(){\r",
+													"\r",
+													"    pm.response.to.have.status(400); \r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}{{baseUrl}}/genres/avgLendings?period=month&start=2024-06-01&end=2024-05-31",
+											"host": [
+												"{{host}}{{baseUrl}}"
+											],
+											"path": [
+												"genres",
+												"avgLendings"
+											],
+											"query": [
+												{
+													"key": "period",
+													"value": "month"
+												},
+												{
+													"key": "start",
+													"value": "2024-06-01"
+												},
+												{
+													"key": "end",
+													"value": "2024-05-31"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetAverageLendings - invalid date format",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Bad Request\", function(){\r",
+													"\r",
+													"    pm.response.to.have.status(400); \r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}{{baseUrl}}/genres/avgLendings?period=day&start=2024-35-01&end=2024-05-31",
+											"host": [
+												"{{host}}{{baseUrl}}"
+											],
+											"path": [
+												"genres",
+												"avgLendings"
+											],
+											"query": [
+												{
+													"key": "period",
+													"value": "day"
+												},
+												{
+													"key": "start",
+													"value": "2024-35-01"
+												},
+												{
+													"key": "end",
+													"value": "2024-05-31"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GetAverageLendings - invalid period Copy",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Bad Request\", function(){\r",
+													"\r",
+													"    pm.response.to.have.status(400); \r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}{{baseUrl}}/genres/avgLendings?period=dia&start=2024-05-01&end=2024-05-31",
+											"host": [
+												"{{host}}{{baseUrl}}"
+											],
+											"path": [
+												"genres",
+												"avgLendings"
+											],
+											"query": [
+												{
+													"key": "period",
+													"value": "dia"
+												},
+												{
+													"key": "start",
+													"value": "2024-05-01"
+												},
+												{
+													"key": "end",
+													"value": "2024-05-31"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "GetTop5ReaderByGenre",
+							"item": [
+								{
+									"name": "getTop5ReaderByGenre",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}{{baseUrl}}/readers/top5ByGenre?genre=Romance&startDate=2024-01-01&endDate=2024-06-01",
+											"host": [
+												"{{host}}{{baseUrl}}"
+											],
+											"path": [
+												"readers",
+												"top5ByGenre"
+											],
+											"query": [
+												{
+													"key": "genre",
+													"value": "Romance"
+												},
+												{
+													"key": "startDate",
+													"value": "2024-01-01"
+												},
+												{
+													"key": "endDate",
+													"value": "2024-06-01"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{librarianToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Reader",
+			"item": [
+				{
+					"name": "As Reader",
+					"item": [
+						{
+							"name": "GetReaderLendingsByIsbn",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/readers/2024/1/lendings?isbn=9782722203402&returned=false",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"readers",
+										"2024",
+										"1",
+										"lendings"
+									],
+									"query": [
+										{
+											"key": "isbn",
+											"value": "9782722203402"
+										},
+										{
+											"key": "returned",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{readerToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "As Librarian",
+					"item": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{librarianToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Lendings",
+			"item": [
+				{
+					"name": "As Reader",
+					"item": [
+						{
+							"name": "SetReturned",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{lendingEtag}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"commentary\": \"Não gostei\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/lendings/2024/14",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"lendings",
+										"2024",
+										"14"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ReaderGetLending",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let lending = postman.getResponseHeader(\"ETag\");\r",
+											"    pm.environment.set(\"lendingEtag\", lending); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/lendings/2024/3",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"lendings",
+										"2024",
+										"3"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{readerToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "As Librarian",
+					"item": [
+						{
+							"name": "Lend Book",
+							"item": [
+								{
+									"name": "LendBook",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Created\", function(){\r",
+													"\r",
+													"    pm.response.to.have.status(201); \r",
+													"\r",
+													"    let lending = postman.getResponseHeader(\"ETag\");\r",
+													"    pm.environment.set(\"lendingEtag\", lending); \r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"isbn\": \"9782722203402\",\r\n    \"readerNumber\": \"2024/1\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{host}}{{baseUrl}}/lendings",
+											"host": [
+												"{{host}}{{baseUrl}}"
+											],
+											"path": [
+												"lendings"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "LendBook - Reader has 3 lendings",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Bad Request\", function(){\r",
+													"\r",
+													"    pm.response.to.have.status(400); \r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"isbn\": \"9782722203402\",\r\n    \"readerNumber\": \"2024/2\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{host}}{{baseUrl}}/lendings",
+											"host": [
+												"{{host}}{{baseUrl}}"
+											],
+											"path": [
+												"lendings"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "LendBook - Reader has overdue lendings",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Bad Request\", function(){\r",
+													"\r",
+													"    pm.response.to.have.status(400); \r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"isbn\": \"9782722203402\",\r\n    \"readerNumber\": \"2024/3\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{host}}{{baseUrl}}/lendings",
+											"host": [
+												"{{host}}{{baseUrl}}"
+											],
+											"path": [
+												"lendings"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "GetAverageDuration",
+							"item": [
+								{
+									"name": "GetAverageDuration",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}{{baseUrl}}/lendings/avgDuration",
+											"host": [
+												"{{host}}{{baseUrl}}"
+											],
+											"path": [
+												"lendings",
+												"avgDuration"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "GetLending - not returned, not over limit",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"    \r",
+											"    let lending = postman.getResponseHeader(\"ETag\");\r",
+											"    pm.environment.set(\"lendingEtag\", lending); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/lendings/2024/6",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"lendings",
+										"2024",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetLending - returned, not over limit",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"    \r",
+											"    let lending = postman.getResponseHeader(\"ETag\");\r",
+											"    pm.environment.set(\"lendingEtag\", lending); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/lendings/2024/1",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"lendings",
+										"2024",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetLending - not returned, overdue",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"    \r",
+											"    let lending = postman.getResponseHeader(\"ETag\");\r",
+											"    pm.environment.set(\"lendingEtag\", lending); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/lendings/2024/8",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"lendings",
+										"2024",
+										"8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetOverdueLendings",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"page\":{\r\n        \"number\":\"1\",\r\n        \"limit\":\"5\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/lendings/overdue",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"lendings",
+										"overdue"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{librarianToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

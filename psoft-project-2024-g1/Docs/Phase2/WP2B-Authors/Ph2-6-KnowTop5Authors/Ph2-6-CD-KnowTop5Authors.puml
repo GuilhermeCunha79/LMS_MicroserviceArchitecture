@@ -1,0 +1,42 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class AuthorController {
+    + getTop5(): ListResponse<AuthorCountView>
+}
+
+class AuthorService {
+    + findTopAuthorByLendings(): List<AuthorCountDTO>
+}
+
+class AuthorServiceImpl implements AuthorService {
+}
+
+interface AuthorRepository {
+    + findTop5(): List<AuthorCountDTO>
+}
+
+class AuthorViewMapper {
+    + toAuthorViewList(authors: List<AuthorCountDTO>): List<AuthorCountView>
+}
+
+class AuthorCountDTO {
+    - authorName: String
+    - lendings: int
+}
+
+class AuthorCountView {
+    - authorName: String
+    - lendings: int
+}
+
+AuthorController -> AuthorService
+AuthorServiceImpl .up.> AuthorService
+AuthorServiceImpl ..> AuthorRepository
+AuthorController ..> AuthorViewMapper
+AuthorRepository ..> AuthorCountDTO
+AuthorViewMapper ..> AuthorCountDTO
+AuthorViewMapper ..> AuthorCountView
+
+@enduml
+

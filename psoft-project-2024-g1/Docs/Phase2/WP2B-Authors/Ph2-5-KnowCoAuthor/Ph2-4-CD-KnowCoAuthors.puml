@@ -1,0 +1,70 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+    class AuthorCoAuthorBooksView {
+        - AuthorView author
+        - List<CoAuthorView> coauthors
+    }
+
+    class CoAuthorView {
+        - String name
+        - Map<String, Object> _links
+        - List<BookShortView> books
+    }
+
+    class AuthorView {
+        - Long authorNumber
+        - String name
+        - String bio
+        - String photo
+        - Map<String, Object> _links
+    }
+
+    class AuthorViewMapper {
+        + AuthorView toAuthorView(Author author)
+        + List<AuthorView> toAuthorView(List<Author> authors)
+        + CoAuthorView toCoAuthorView(Author author, List<Book> books)
+        + List<CoAuthorView> toCoAuthorView(List<Author> authors)
+        + AuthorCoAuthorBooksView toAuthorCoAuthorBooksView(Author author, List<CoAuthorView> coauthors)
+        - String generatePhotoUrl(Author author)
+        - Map<String, Object> mapLinks(Author author)
+    }
+
+
+
+    class BookShortView {
+        - String title
+        - String isbn
+        - List<String> authors
+        - Map<String, Object> _links
+    }
+
+
+    class Author {
+        - Long authorNumber
+        - String name
+        - String bio
+        - String photo
+    }
+
+
+
+    class AuthorService {
+        + Optional<Author> findByAuthorNumber(Long authorNumber)
+        + List<Author> findCoAuthorsByAuthorNumber(Long authorNumber)
+        + List<Book> findBooksByAuthorNumber(Long authorNumber)
+    }
+
+
+AuthorViewMapper ..> Author : use
+AuthorViewMapper ..> Book : use
+AuthorService ..> Author : use
+AuthorService ..> Book : use
+AuthorController ..> AuthorService : use
+AuthorController ..> AuthorViewMapper : use
+AuthorCoAuthorBooksView --> AuthorView
+AuthorCoAuthorBooksView --> CoAuthorView
+CoAuthorView --> BookShortView
+AuthorView --> Author
+BookShortView --> Book
+@enduml

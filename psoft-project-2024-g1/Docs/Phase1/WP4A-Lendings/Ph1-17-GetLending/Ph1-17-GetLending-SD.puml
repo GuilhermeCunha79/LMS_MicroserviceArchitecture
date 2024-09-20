@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title WP#4A.17 Get Lending
+
+actor "User" as User
+participant "System" as System
+participant ":LendingController" as Ctrl
+participant ":LendingService" as LendingService
+participant ":LendingRepository" as LendingRepo
+participant ":BookRepository" as BookRepo
+participant ":ReaderRepository" as ReaderRepo
+
+note over User : User is\nauthenticated
+
+User -> System: request to see the\ndetails of a lending
+
+System -> Ctrl: findByLendingNumber()
+
+note right
+    Check if any
+    user is logged in
+end note
+
+Ctrl -> LendingService: findByLendingNumber(lendingNumber)
+LendingService -> LendingRepo: findByLendingNumber(lendingNumber)
+
+LendingRepo --> LendingService: (lending)
+LendingService --> Ctrl: (lending)
+Ctrl --> System: (lendingView)
+System --> User: details of newly\n registered lending
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title WP#5B.16 Get Lendings Per Month Per Genre Last 12 Months
+
+actor "Librarian" as Librarian
+participant "System" as System
+participant ":GenreController" as Ctrl
+participant ":GenreService" as Service
+participant ":GenreRepository" as GenreRepo
+participant ":GenreViewMapper" as Mapper
+
+note over Librarian : Librarian is\nauthenticated
+
+Librarian -> System: get lendings per\nmonth for the past\nyear, grouped by\nmonth and genre
+System -> Ctrl: getLendingsPerMonthLastYearByGenre()
+Ctrl -> Service: getLendingsPerMonthLastYearByGenre()
+Service -> GenreRepo: getLendingsPerMonthLastYearByGenre()
+note right
+    (Details ommited)
+end note
+GenreRepo --> Service: (genreAverageLendingsDtoList)
+Service --> Ctrl: (genreAverageLendingsDtoList)
+Ctrl -> Mapper: toGenreLendingsCountPerMonthView(genreAverageLendingsDtoList)
+Mapper --> Ctrl: (genreLendingsCountPerMonthViewList)
+Ctrl --> System: (genreLendingsCountPerMonthViewList)
+System --> Librarian: (array of genres\nand their lending\naverages, grouped\nby month and genre)
+
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+actor Cliente
+participant AuthorController
+participant AuthorServiceImpl as AuthorService
+participant AuthorRepository
+participant AuthorViewMapper
+
+Cliente -> AuthorController: GET /top5
+AuthorController -> AuthorService: findTopAuthorByLendings()
+AuthorService -> AuthorRepository: findtop5()
+AuthorRepository -> AuthorService: [List<AuthorCountDTO>]
+AuthorService -> AuthorController: [List<AuthorCountDTO>]
+AuthorController -> AuthorViewMapper: toAuthorViewList([List<AuthorCountDTO>])
+AuthorViewMapper -> AuthorController: [List<AuthorCountView>]
+AuthorController -> Cliente: [ListResponse<AuthorCountView>]
+
+@enduml

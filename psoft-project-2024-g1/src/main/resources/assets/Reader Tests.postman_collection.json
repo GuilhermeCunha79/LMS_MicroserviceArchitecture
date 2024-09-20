@@ -1,0 +1,209 @@
+{
+	"info": {
+		"_postman_id": "a02b7ffc-c970-4018-acb6-6b7a015cfe01",
+		"name": "Reader Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34873035"
+	},
+	"item": [
+		{
+			"name": "Login as Reader",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"manuel@gmail.com\",\n    \"password\": \"Manuelino123!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/public/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"public",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "As librarian get reader data by number",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmlvIiwic3ViIjoiNCxtYXJpYUBnbWFpbC5jb20iLCJleHAiOjE3MTU1ODA2OTUsImlhdCI6MTcxNTU0NDY5NSwicm9sZXMiOiJMSUJSQVJJQU4ifQ.YP5r1bc0MIYXTG78vKyevLRvOCrMOeDTFUaQ2bulqb7w_5JTWtyq_psJ2TuF6QxVlfE8ZdTOuptfwm0qzpSGzKMeOtifbh3Rw5FkGhT3S1OwH82RqjRvGVh0hJapKV98-KHrMr7ayKdcRLuFs23Ri1QQqfxSAat1wNUYvGx1VLppd5P4ljaM5vRImfARXuioYri___fc3P7lmX-OVMS3QF1h1QU2L9r5RAkrNjjAOPazJE2Dfdl-pNVAoFgcW8meA_BkkUW2gszMHpPZ-i6R-uGh7wiewDM1xJWoHQplLTNYAY2kJQXGpZz_NT2WEQrNfuhNzUStNjQmr79K_zT3SdI8q_bWHH_TEflYqvFC6zFdLbbwRIko5VQCGQW8qi2jgGcT_nLjKJh6rZ_YE2bTnPyhSC18CKobV_CoemV1UxHjJPQvw8jCYYkwcSs2ZK9LawyTfn_roMfSb5DTpW0vLtPsvsVz9DJurGf1--6uPaRIpCddXgvG0nk73ae3-w8Jk-IenReu1jQh8UnHDqsoiv6Z3jYx_L1rHJOsnLC4DrZLAVcBmJqzQb8RGLBP_m9mIDadz1pe1IXaA0QTYygwySAxMaiTBBXpwFz6jzfoBOIDrXp17XdvoHpUWBHZ_DQxDLBmrfngi9u5d-c3T3t3RueQoi4_nz-0--9Mo8l0k9c",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/reader/2024/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"reader",
+						"2024",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "As librarian get reader data by name",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmlvIiwic3ViIjoiMSxtYW51ZWxAZ21haWwuY29tIiwiZXhwIjoxNzE1NTc4NjMyLCJpYXQiOjE3MTU1NDI2MzIsInJvbGVzIjoiUkVBREVSIn0.GKpDqKo2ghDcykyOWQ-9aU1QbYa_p1_3qrquwTS-zLsztjB2FkdgREtnBh-4qyBbgkRKTUoR3e6UNU-zIyNXzb8Zud88Ai1g-EvQaPI-l7nb_hmv6sDZB9cXvJP13yJ3PBSZISO20DRYR_8A9nzNET-rY1TIUeUF2AArrgDkjpi018609V8h05-O5ETMrmXG9byMf2JlK62PeYjVbxdRlPQWg2k9SN9GjtYOkxTTw9pTlDbm_3Q2AhmVCYE8X76F78GX69FZUc6ro3Ms2SD1Nz1GNzxiw63R1bpxr_Sucx5lapBSkRFQFL4kBGTJ2xa5nhfLNV6Pohh7Tota_wcz7ynq6o8hYIy9LfzeXwAFfbTlfbkDruBXkZM9j22YigGPj5ay28PNIYeH5o0Nim3alushi1tBkCDPCfGiUf_He_xuHrDO0m9gl2uahAo_dkcnYn5_3wHgq9rgkjsXpDVlOOWr9R-jQaIfM46ZWsL78ip_srpFgLMHTYuc_XJ8Ok_FTXRXQ5ofuiDzanB6wlX0V9hIbA6pc30q5UjhTALUnUWZnB-iEsMAve25MkFZqtiyrBQa4nGXP2c7n37gDPo0mdMtI5PF7ELrmdG4qZG5DhHvdKuF4SfK-Dj9MlyoQzE_2_MK1uCm40iSYtwdVZ6wyMi0WT-IJuIT8Y5HlPGGmGA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/reader?name=Manuel Sarapinto das Coives",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"reader"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Manuel Sarapinto das Coives"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "As Reader, update data",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmlvIiwic3ViIjoiMSxtYW51ZWxAZ21haWwuY29tIiwiZXhwIjoxNzE1NTc4NjMyLCJpYXQiOjE3MTU1NDI2MzIsInJvbGVzIjoiUkVBREVSIn0.GKpDqKo2ghDcykyOWQ-9aU1QbYa_p1_3qrquwTS-zLsztjB2FkdgREtnBh-4qyBbgkRKTUoR3e6UNU-zIyNXzb8Zud88Ai1g-EvQaPI-l7nb_hmv6sDZB9cXvJP13yJ3PBSZISO20DRYR_8A9nzNET-rY1TIUeUF2AArrgDkjpi018609V8h05-O5ETMrmXG9byMf2JlK62PeYjVbxdRlPQWg2k9SN9GjtYOkxTTw9pTlDbm_3Q2AhmVCYE8X76F78GX69FZUc6ro3Ms2SD1Nz1GNzxiw63R1bpxr_Sucx5lapBSkRFQFL4kBGTJ2xa5nhfLNV6Pohh7Tota_wcz7ynq6o8hYIy9LfzeXwAFfbTlfbkDruBXkZM9j22YigGPj5ay28PNIYeH5o0Nim3alushi1tBkCDPCfGiUf_He_xuHrDO0m9gl2uahAo_dkcnYn5_3wHgq9rgkjsXpDVlOOWr9R-jQaIfM46ZWsL78ip_srpFgLMHTYuc_XJ8Ok_FTXRXQ5ofuiDzanB6wlX0V9hIbA6pc30q5UjhTALUnUWZnB-iEsMAve25MkFZqtiyrBQa4nGXP2c7n37gDPo0mdMtI5PF7ELrmdG4qZG5DhHvdKuF4SfK-Dj9MlyoQzE_2_MK1uCm40iSYtwdVZ6wyMi0WT-IJuIT8Y5HlPGGmGA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"phoneNumber\": \"919293949\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/reader",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"reader"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register as anonymous",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"umemail@gmail.com\",\n    \"password\": \"PassBrava!123\",\n    \"fullName\": \"Nome Completo do Joaquim\",\n    \"birthDate\": \"2004/03/17\",\n    \"phoneNumber\": \"919293949\",\n    \"gdpr\": true,\n    \"marketing\": true,\n    \"thirdParty\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/reader",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"reader"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login As Librarian",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"maria@gmail.com\",\n    \"password\": \"Mariaroberta!123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/public/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"public",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

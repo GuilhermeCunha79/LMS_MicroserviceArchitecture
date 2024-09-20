@@ -1,0 +1,64 @@
+@startuml
+
+'hide circle
+skinparam classAttributeIconSize 0
+
+class GenreController {
+    + getLendingsPerMonthLastYearByGenre() : ListResponse<GenreLendingsCountPerMonthView>
+}
+
+interface GenreRepoCustom {
+    + getLendingsPerMonthLastYearByGenre(); : List<GenreLendingsPerMonthDTO>
+}
+
+class GenreRepoCustomImpl implements GenreRepoCustom {
+}
+
+interface GenreRepository {
+    + getLendingsPerMonthLastYearByGenre(); : List<GenreLendingsPerMonthDTO>
+}
+
+
+
+interface GenreService {
+    + getLendingsPerMonthLastYearByGenre(); : List<GenreLendingsPerMonthDTO>
+}
+
+class GenreServiceImpl implements GenreService{
+
+}
+
+class Genre <<entity>>{
+    - pk : long
+    - genre : String
+    + setGenre(String genre) : void
+}
+
+class GenreViewMapper{
+    + toGenreLendingsCountPerMonthView(genreLendingsPerMonthDtos) : List<GenreLendingsCountPerMonthView>
+    + toGenreLendingsCountPerMonthView(genreLendingsPerMonthDto) : GenreLendingsCountPerMonthView
+}
+
+class GenreLendingsCountPerMonthView{
+    - genre: String
+    - avgLendings : String
+}
+
+class GenreLendingsView{
+    - genre - String
+    - value - Number
+}
+
+GenreLendingsCountPerMonthView "1" *-- "*" GenreLendingsView
+
+GenreServiceImpl .right.> Genre
+
+GenreController ..> GenreService
+GenreServiceImpl .down.> GenreRepository
+
+GenreController .up.> GenreViewMapper
+GenreViewMapper .right.> GenreLendingsCountPerMonthView
+
+GenreRepoCustom .up.> GenreRepository
+
+@enduml

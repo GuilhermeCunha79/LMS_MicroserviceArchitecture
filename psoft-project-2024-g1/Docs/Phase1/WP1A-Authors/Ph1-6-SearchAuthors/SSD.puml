@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autoactivate on
+autonumber
+
+actor "LibrarianOrReader" as LibrarianOrReader
+participant ":System" as System
+
+activate LibrarianOrReader
+
+LibrarianOrReader -> System: asks to search author
+System --> LibrarianOrReader: requests data (name)
+
+LibrarianOrReader -> System: types requested data
+System --> LibrarianOrReader: shows all data and requests confirmation
+
+LibrarianOrReader -> System: confirms the data
+System --> LibrarianOrReader: informs operation success
+@enduml

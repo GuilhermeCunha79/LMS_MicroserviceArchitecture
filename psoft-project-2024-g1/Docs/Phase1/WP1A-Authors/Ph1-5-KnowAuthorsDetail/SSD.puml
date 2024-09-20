@@ -1,0 +1,15 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autoactivate on
+autonumber
+
+actor "LibrarianOrReader" as LibrarianOrReader
+participant ":System" as System
+
+activate LibrarianOrReader
+
+LibrarianOrReader -> System: asks to Know Author's Details
+System --> LibrarianOrReader: shows all existing Author's details
+
+@enduml

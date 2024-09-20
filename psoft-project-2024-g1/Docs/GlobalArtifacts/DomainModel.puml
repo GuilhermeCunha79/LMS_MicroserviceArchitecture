@@ -1,0 +1,73 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+class User{
+    - password
+    - username
+    - name
+}
+
+
+class Librarian{
+}
+
+
+class Genre{
+    - genre: string
+}
+
+class Book {
+    - isbn
+    - title
+    - description
+    - photo
+}
+
+class Author {
+    - author number
+    - name
+    - photo
+    - short bio
+   }
+
+class Reader{
+    - readerNumber
+    - email
+    - phoneNumber
+    - birthDate
+    - gdprConsent
+    - marketingConsent
+    - thirdPartySharing
+    - photo
+}
+
+
+
+class Lending {
+    - lendingNumber
+    - startDate
+    - limitDate
+    - returnedDate
+    - fineValuePerDay
+}
+
+class Fine {
+    - value
+}
+
+Librarian "1" - "0..*" Author : registers/updates
+Librarian "1" -- "0..*" Book : registers/updates
+Book "1..*" -up- "1..*"  Author
+Book  "1..*" -- "1"  Genre
+Lending "1" -- "0..1" Fine
+Lending "0..*" -up- "1" Reader
+Lending "0..*" - "1" Book
+Reader "1" -up- "1" User : > is
+Librarian "1" -up- "1" User : > is
+
+
+@enduml
+

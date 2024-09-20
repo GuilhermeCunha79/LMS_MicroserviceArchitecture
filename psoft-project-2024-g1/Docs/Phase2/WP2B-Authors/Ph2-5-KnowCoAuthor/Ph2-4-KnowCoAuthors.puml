@@ -1,0 +1,28 @@
+@startuml
+actor Reader
+participant "Controller" as Controller
+participant "AuthorService" as AuthorService
+participant "AuthorViewMapper" as AuthorViewMapper
+
+Reader -> Controller: GET /{authorNumber}/coauthors
+Controller -> AuthorService: findByAuthorNumber(authorNumber)
+AuthorService --> Controller: Author (ou lança NotFoundException)
+
+alt Author encontrado
+    Controller -> AuthorService: findCoAuthorsByAuthorNumber(authorNumber)
+    AuthorService --> Controller: List<Author>
+
+    loop para cada coautor
+        Controller -> AuthorService: findBooksByAuthorNumber(coAuthor.authorNumber)
+        AuthorService --> Controller: List<Book>
+        Controller -> AuthorViewMapper: toCoAuthorView(coAuthor, books)
+        AuthorViewMapper --> Controller: CoAuthorView
+    end loop
+
+    Controller -> AuthorViewMapper: toAuthorCoAuthorBooksView(author, coAuthorViews)
+    AuthorViewMapper --> Controller: AuthorCoAuthorBooksView
+    Controller --> Reader: AuthorCoAuthorBooksView
+else Autor não encontrado
+    Controller -> Reader: NotFoundException
+end
+@enduml

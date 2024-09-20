@@ -1,0 +1,27 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title GET book details by Isbn as librarian
+
+actor "Librarian" as User
+participant ":Rest" as Rest
+participant "Ctrl:BookController" as Ctrl
+participant "service:BookService" as Service
+participant "repo:BookRepository" as Repo
+
+activate User
+
+User -> Rest: searches books by title
+
+Rest -> Ctrl: getBookByTitle();
+
+Ctrl -> Service: get(book)
+Service -> Repo: get(book)
+Repo --> Service: book or error
+Service --> Ctrl: book or error
+Ctrl --> Rest: book or error
+Rest --> User: get books details or error
+
+@enduml

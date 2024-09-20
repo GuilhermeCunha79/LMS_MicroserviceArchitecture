@@ -1,0 +1,232 @@
+{
+	"info": {
+		"_postman_id": "e9e84866-0156-4de8-bc65-db5fa54566ac",
+		"name": "Book Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35087629"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"maria@gmail.com\",\n    \"password\": \"Mariaroberta!123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/public/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"public",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Book",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"genre\": \"Ação\",\n  \"isbn\": \"9789896615246\",\n  \"description\": \"Bio do livro\",\n  \"title\": \"O homem errado\",\n  \"authors\": [\n    \"Tillie Cole\"\n  ]\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/book",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"book"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Book by ISBN",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/author/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"author",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Books By genre",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/book?genre=Informação",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"book"
+					],
+					"query": [
+						{
+							"key": "genre",
+							"value": "Informação"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Know an books’s detail",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/book/9782722203402",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"book",
+						"9782722203402"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Book",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "If-Match",
+						"value": "0",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"description\": \"TEste de bio mudada para o isbn 9782722203402 \"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/book/9782722203402",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"book",
+						"9782722203402"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmlvIiwic3ViIjoiNCxtYXJpYUBnbWFpbC5jb20iLCJleHAiOjE3MTYzMzg3MTksImlhdCI6MTcxNjMwMjcxOSwicm9sZXMiOiJMSUJSQVJJQU4ifQ.JlqLqiPXz4Tvi7J3ACLG0Dz_q875zCZCuUIz2VWtWgX9Qx_payQKINAeg9Qslwwaz1eVsVgGc9YQ77dy0o4gQpOAErn06BqPO1WOCUFXyO96jn7lnqvdAqPXkm2GrpFxuTGerKFJLymbvvFnyZU3WW75RWfhuiXMSiG0Jc-1UW5pB4iKsTtxL7ByD5AA01p8iVfvwFxWDQUgB_YLy4aWik7YV1rW0EsFZqpvju89JffqP9gLro5o5MAXeAuAvgO49sZrL_N01gDzzMlP46mM-1Hi2T5HyGCAPnnI-007K7-CGLTCDyfqO1xL8Iny7Go5oZSBfuD-5abbITNoBAlayuKtz3sw-MUKzHnkaIuyUAcJC9PGnUtTRzuPXnAEKdu3Iw4z78Opq-IFSgKvmKyjNycWhNutKzDLTirAvNpsopFQMG2UETZojInDqynNYp6buOO_jKOAEycNderMIuBrDdx6FE2GcDFVMc9T6ypYqR1AJL76gMJuTjcRp7J7YSAxAvWxEPLvicetvj9E-vI-OUk139v8b889JbqmRdKrV1PiUulWk5ahlUik4TMNMESoF8GAxKUzlxPb2zJhhZlDEERsZi7-KpALfd6vxDXy-KSSWL4ezv9-vCKnG4NGOo5JyDNk_o7EXVFHDTwrv_3-g9__Q23d8BHtt-MtTqMXMBI",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

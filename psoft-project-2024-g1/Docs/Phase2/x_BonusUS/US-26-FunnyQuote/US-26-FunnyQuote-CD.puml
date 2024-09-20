@@ -1,0 +1,103 @@
+@startuml
+
+'hide circle
+skinparam classAttributeIconSize 0
+
+class ReaderController {
+    + findByReaderNumber(Integer year, Integer seq) : ListResponse<ReaderLendingsPerMonthView>
+}
+
+class ApiNinjasService {
+    - getHistoricalEventsFromYearMonth(int year, int month) : List<HistoricalEventsResponse>
+    + getRandomEventFromYearMonth(int year, int month) : String
+}
+
+class HistoricalEventsResponse {
+    - year : String
+    - month : String
+    - day : String
+    - event : String
+}
+
+interface ReaderRepository {
+    + findByReaderNumber(ReaderNumber): Optional<ReaderDetails>
+}
+
+interface ReaderService {
+    + findByReaderNumber(ReaderNumber): Optional<ReaderDetails>
+}
+
+class ReaderServiceImpl implements ReaderService{
+
+}
+
+class ReaderDetails <<entity>>{
+    - pk : Long
+    - version : Long
+    - gdprConsent - boolean
+    - marketingConsent - boolean
+    - thirdPartySharingConsent - boolean
+    + getBirthDate() : LocalDate
+    + getVersion() : Long
+}
+
+class User <<entity>>{
+    - userName : String
+}
+
+class Reader extends User
+
+class ReaderViewMapper{
+ + toReaderQuoteView(ReaderDetails readerDetails) : ReaderQuoteView
+}
+
+class ReaderView{
+    - readerNumber : String
+    - email : String
+    - fullName : String
+    - birthDate : String
+    - phoneNumber : String
+    - photo : String
+    - gdprConsent : boolean
+    - marketingConsent : boolean
+    - thirdPartySharingConsent : boolean
+    - interestList : List<String>
+}
+
+class ReaderQuoteView extends ReaderView {
+    - quote : String
+    + setQuote(String quote) : void
+}
+
+class BirthDate {
+    - birthDate : LocalDate
+    + getBirthDate()
+}
+
+class ReaderNumber {
+    - readerNumber : String
+    + getReaderNumber() : String
+}
+
+
+ReaderServiceImpl .right.> ReaderDetails
+
+ReaderController ..> ReaderService
+ReaderController .up.> ReaderQuoteView
+ReaderController .up.> ApiNinjasService
+ApiNinjasService ..> HistoricalEventsResponse
+ReaderController .> HistoricalEventsResponse
+
+ReaderServiceImpl .down.> ReaderRepository
+
+ReaderController .up.> ReaderViewMapper
+ReaderViewMapper .right.> ReaderQuoteView
+
+ReaderDetails "1" o-up- "1" Reader
+ReaderDetails "1" *- "1" ReaderNumber
+ReaderDetails "1" *-- "1" BirthDate
+ReaderDetails "1" *-- "1" PhoneNumber
+ReaderDetails "1" *-- "1..*" Genre
+
+
+@enduml

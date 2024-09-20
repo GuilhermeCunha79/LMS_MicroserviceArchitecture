@@ -1,0 +1,182 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+interface ReaderRepository {
+    + remove(Reader): void
+    + update(Reader): Reader
+    + save(Reader): Reader
+    + getAll(): List<Reader>
+    + findByEmail(Email): Reader
+    + findByPhoneNumber(PhoneNumber): Reader
+    + findByReaderNumber(ReaderNumber): Reader
+}
+
+interface ReaderService {
+    + create(reader_data): Reader
+    + remove(Reader): void
+    + update(Reader): Reader
+    + save(Reader): Reader
+    + getAll(): List<Reader>
+    + findByEmail(Email): Reader
+    + findByPhoneNumber(PhoneNumber): Reader
+    + findByReaderNumber(ReaderNumber): Reader
+}
+
+class ReaderServiceImpl implements ReaderService {
+    + create(reader_data): Reader
+    + remove(Reader): void
+    + update(Reader): Reader
+    + save(Reader): Reader
+    + getAll(): List<Reader>
+    + findByEmail(Email): Reader
+    + findByPhoneNumber(PhoneNumber): Reader
+    + findByReaderNumber(ReaderNumber): Reader
+    + isReaderUnique(Reader): bool
+}
+
+class ReaderController {
+}
+
+class ReaderDetails <<entity>>{
+    - pk : Long
+    - version : Long
+    - birthDate: BirthDate
+    - phoneNumber : PhoneNumber
+    - interestList : List<Genre>
+    - photo : Photo
+    - gdprConsent - boolean
+    - marketingConsent - boolean
+    - thirdPartySharingConsent - boolean
+    + getBirthDate() : LocalDate
+    + getVersion() : Long
+}
+
+class User <<entity>>{
+    - userName : String
+}
+
+class Reader extends User
+
+class ReaderViewMapper{
+ + toReaderQuoteView(ReaderDetails readerDetails) : ReaderQuoteView
+ + toReaderView(ReaderDetails readerDetails): ReaderView
+ + toReaderView(List<ReaderDetails> readerDetails): List<ReaderView>
+}
+
+class ReaderView{
+    - readerNumber : String
+    - email : String
+    - fullName : String
+    - birthDate : String
+    - phoneNumber : String
+    - photo : String
+    - gdprConsent : boolean
+    - marketingConsent : boolean
+    - thirdPartySharingConsent : boolean
+    - interestList : List<String>
+}
+
+class Name {
+    - name: string
+    + setName(string): void;
+    + getName(): string;
+}
+
+class ReaderNumber {
+    - registryYear: int
+    - number: int
+    + toString(): string;
+}
+
+class PhoneNumber {
+    - countryCode: string
+    - number: string
+    + getCountryCode(): string
+    + setCountryCode(string): void
+    + getNumber(): string
+    + setNumber(string): void
+}
+
+class BirthDate {
+    - year: int
+    - month: int
+    - day: int
+    + setDate(year, month, day): void
+    + getAge(): int
+    + getDate(): int[3]
+}
+
+
+interface UserRepository {
+    + remove(User): void
+    + update(User): User
+    + save(User): User
+    + getAll(): List<User>
+    + findByUsername(string): User
+}
+
+interface UserService {
+    + remove(User): void
+    + update(User): User
+    + save(User): User
+    + getAll(): List<User>
+    + findByUsername(string): User
+}
+
+class UserServiceImpl implements UserService {
+    + remove(User): void
+    + update(User): User
+    + save(User): User
+    + getAll(): List<User>
+    + findByUsername(string): User
+}
+
+class Photo {
+    - id: Long
+    - photoFile: String
+
+}
+
+interface BookRepository {
+    + findByGenre(genre): List<Book>
+}
+
+interface BookService {
+    + findByGenre(genre): List<Book>
+    + getBooksSuggestionsForReader(readerNumber): List<Book>
+}
+
+class BookServiceImpl implements BookService {
+    + findByGenre(genre): List<Book>
+    + getBooksSuggestionsForReader(readerNumber): List<Book>
+}
+
+class BookController {
+    + getBookSuggestions(): ListResponse<>
+}
+
+BookController "1" -> "1" BookService
+BookServiceImpl "1" ---> "1" BookRepository
+BookServiceImpl "1" ---> "1" ReaderRepository
+
+UserServiceImpl "1" ---> "1" UserRepository
+
+ReaderMapper "1" ---> "1" ReaderController
+
+ReaderController .up.> ReaderViewMapper
+ReaderViewMapper .right.> ReaderView
+
+ReaderController "1" ---> "1" ReaderService
+ReaderController "1" ---> "1" UserService
+ReaderDetails "1" o-up- "1" Reader
+ReaderDetails "1" *- "1" ReaderNumber
+ReaderDetails "1" *-- "1" BirthDate
+ReaderDetails "1" *-- "1" PhoneNumber
+ReaderDetails "1" *-- "1..*" Genre
+ReaderDetails "1" o-- "1" Photo
+ReaderServiceImpl "1" --> "0..*" Reader
+ReaderServiceImpl "1" --> "1" ReaderRepository
+User "1" --> "1" Name
+
+
+@enduml

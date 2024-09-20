@@ -1,0 +1,49 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class AuthorsController {
+    + create(CreateAuthorRequest resource): ResponseEntity<AuthorView>
+    - saveCreatedAuthor(): void
+}
+
+class AuthorsService {
+    + create(name: String, bio: String, photo?: Byte[]): Authors
+}
+
+class AuthorsServiceImpl implements AuthorsService {
+}
+
+interface AuthorsRepository {
+    + create(name: String, bio: String, photo?: Byte[]): Authors
+}
+
+class Authors {
+    - authorsNumber: int
+    - name: Name
+    - authorBio: AuthorBio
+    - photo: Photo
+}
+
+class Name {
+    - name: String
+    + toString(): String
+}
+
+class AuthorBio {
+    - shortBio: String
+    + toString(): String
+}
+
+class Photo {
+    - photo: Byte[]
+}
+
+AuthorsController -> AuthorsService
+AuthorsServiceImpl .up.> AuthorsService
+AuthorsServiceImpl ..> AuthorsRepository
+AuthorsRepository ..> Authors
+Authors --o Name
+Authors --o AuthorBio
+Authors --o Photo
+
+@enduml

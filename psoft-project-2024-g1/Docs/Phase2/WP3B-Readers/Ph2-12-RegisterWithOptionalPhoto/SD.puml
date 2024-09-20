@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title Register a new reader as anonymous
+
+actor "Anonymous" as Anonymous
+participant ":System" as System
+participant "Ctrl:ReaderController" as Ctrl
+participant "storageService:FileStorageService" as FileStorageService
+participant "service:ReaderService" as Service
+participant "repo:ReaderRepository" as Repo
+participant "userRepo:UserRepository" as UserRepository
+participant "readerDetails:ReaderDetails" as Reader
+
+activate Anonymous
+
+Anonymous -> System: requests reader registration based on given data
+
+System -> Ctrl: createReader();
+Ctrl -> FileStorageService: getRequestFile(file)
+FileStorageService --> Ctrl: fileName
+Ctrl -> Service: create(readerData)
+Service -> UserRepository: User(userData)
+Service -> Repo: ReaderDetails(readerData)
+Service --> Ctrl: Reader or exception
+
+alt If exception is returned
+    Ctrl -> System: Reader is duplicate
+    System -> Anonymous: Reader is duplicate
+end
+
+Ctrl --> System: reader
+System --> Anonymous: registered reader
+
+@enduml

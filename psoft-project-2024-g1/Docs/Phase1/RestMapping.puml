@@ -1,0 +1,79 @@
+@startuml
+
+hide circle
+skinparam classAttributeIconSize 0
+
+title PSOFT-G1 Rest Mapping
+
+class "/api" as Resource <<interface>>{
+    GET
+    PUT
+    PATCH
+    POST
+    DELETE
+}
+
+class "/readers" extends Resource{
+'    GET : get all entities
+    POST : create an entity in the collection (A11)
+}
+
+class "?name={name}" as SearchReader extends "/readers"{
+    GET : get filtered\n entities (A14)
+}
+
+class "/{year}/{seq}" as ReaderID extends "/readers"{
+    GET : get specific reader (A13)
+    PATCH : update specific\n\t reader details (A12)
+}
+
+class "/lendings" as ReaderLendings extends ReaderID{
+}
+
+class "?isbn={isbn}" extends ReaderLendings{
+    GET : lendings of a reader,\n searched by ISBN (A16)
+}
+
+class "/authors" extends Resource{
+'    GET : get all entities
+    POST : create an entity in the collection (A3)
+}
+
+class "/{id}" as AuthorID extends "/authors"{
+    GET : get specific author (A5)
+    PATCH : update specific\n author details (A4)
+}
+
+/'
+class "/books" as AuthorBooks extends AuthorID{
+    GET : get books by author (B4)
+}
+'/
+
+class "?name={name}" as SearchAuthor extends "/authors"{
+    GET : get filtered\n entities (A6)
+}
+
+class "/books" extends Resource{
+}
+
+class "/{isbn}" extends "/books"{
+    GET : get specific book (A9)
+    PUT : create specific book (A7)
+    PATCH : update specific\n book details (A8)
+}
+
+class "?genre={genre}" extends "/books"{
+    GET : get filtered\n entities (A6)
+}
+
+class "/lendings" extends Resource{
+    POST : create an entity in the collection (A15)
+}
+
+class "/{year}/{seq}" as LendingID extends "/lendings"{
+    GET : get specific lending (A17)
+    PATCH : update lending\n (return book) (A16)
+}
+
+@enduml

@@ -1,0 +1,70 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+skinparam classAttributeIconSize 0
+class Authors <<entity>>{
+    - authorsNumber : int
+}
+class Name <<entity>>{
+    - name: string
+    + toString() : String
+}
+
+class AuthorBio <<value>>{
+    - Short Bio: string
+    + toString() : String
+}
+
+class Photo {
+    - id: Long
+    - photo: byte[]
+}
+
+class AuthorsController {
+        + create(CreateAuthorRequest resource): ResponseEntity<AuthorView>
+        + partialUpdate(Long authorNumber, WebRequest request, UpdateAuthorRequest resource): ResponseEntity<AuthorView>
+        + findByAuthorNumber(Long authorNumber): ResponseEntity<AuthorView>
+        + findByName(String name): ListResponse<AuthorView>
+        + getBooksByAuthorNumber(Long authorNumber): ListResponse<BookView>
+        + getTop5(): ListResponse<AuthorView>
+        + getSpecificAuthorPhoto(authorNumber)
+        + getAuthorWithCoAuthors (authorNumber)
+        +ResponseEntity<Void> deleteBookPhoto(Long authorNumber)
+}
+
+class AuthorsServiceImpl implements AuthorsService{
+}
+
+interface AuthorsService {
+    +Iterable<Author> findAll();
+    +Optional<Author> findByAuthorNumber(Long authorNumber);
+    +List<Author> findByName(String name);
+    +Author create(CreateAuthorRequest resource);
+    +Author partialUpdate(Long authorNumber, UpdateAuthorRequest resource, long desiredVersion);
+    +List<Author> findTopAuthorByLendings();
+    +List<Book> findBooksByAuthorNumber(Long authorNumber);
+    +List<Author> findCoAuthorsByAuthorNumber(Long authorNumber);
+
+}
+
+interface AuthorsRepository {
+    + findByAuthorNumber(Long authorNumber)
+    + List<Author> searchByNameNameStartsWith(String name);
+    + searchByNameName (String name)
+    + save(Author author)
+    + findAll()
+    + findTopAuthorByLendings (Pageable pageableRules)
+    + delete(Author author);
+    + List<Author> findCoAuthorsByAuthorNumber(Long authorNumber);
+
+
+}
+
+AuthorsServiceImpl ..> Authors
+AuthorsController ..> AuthorsService
+AuthorsServiceImpl .left.> AuthorsRepository
+
+Authors --o Name
+Authors --o Photo
+Authors --o AuthorBio
+@enduml

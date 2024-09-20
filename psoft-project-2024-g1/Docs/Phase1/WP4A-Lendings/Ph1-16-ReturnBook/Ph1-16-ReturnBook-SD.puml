@@ -1,0 +1,39 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title WP#4A.16 Return Book
+
+actor "Reader" as Reader
+participant "System" as System
+participant ":LendingController" as Ctrl
+participant ":LendingService" as LendingService
+participant ":LendingRepository" as LendingRepo
+participant ":BookRepository" as BookRepo
+participant ":ReaderRepository" as ReaderRepo
+
+note over Reader : Reader is\nauthenticated
+
+Reader -> System: request to return\n a book
+
+System -> Ctrl: setLendingReturned(SetLendingReturnedDto)
+
+note right
+    Check if any
+    user is logged in
+end note
+
+Ctrl -> LendingService: findByLendingNumber(lendingNumber)
+LendingService -> LendingRepo: findByLendingNumber(lendingNumber)
+
+LendingRepo --> LendingService: (lending)
+LendingService --> Ctrl: (lending)
+
+note left
+    Get reader details
+    from Authentication object
+end note
+Ctrl -> LendingService: setReturned(lendingNumber, resource, version)
+
+@enduml

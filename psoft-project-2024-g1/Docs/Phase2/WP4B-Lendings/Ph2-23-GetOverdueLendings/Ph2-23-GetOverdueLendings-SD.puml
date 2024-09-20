@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title WP#4B.23 Get Overdue Lendings
+
+actor "Librarian" as Librarian
+participant "System" as System
+participant ":LendingController" as Ctrl
+participant ":LendingService" as Service
+participant ":LendingRepository" as LendingRepo
+participant ":LendingViewMapper" as Mapper
+
+
+note over Librarian : Librarian is\nauthenticated
+
+Librarian -> System: get overdue lendings
+
+System -> Ctrl: getOverdueLendings(page)
+Ctrl -> Service: getOverdue(page)
+Service -> LendingRepo: getOverdue(page)
+note right
+    (Details ommited)
+end note
+LendingRepo --> Service: (overdueLendings)
+Service --> Ctrl: (overdueLendings)
+Ctrl -> Mapper: toLendingView(overdueLendings)
+Mapper --> Ctrl: (overdueLendingsView)
+Ctrl --> System: (overdueLendingsView)
+System --> Librarian: (array of overdue lendings)
+
+
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title Register a new book as librarian
+
+actor "Anonymous" as Anonymous
+participant ":System" as System
+participant "Ctrl:BookController" as Ctrl
+participant "service:BookService" as Service
+participant "repo:BookRepository" as Repo
+participant "book:Book" as Book
+
+activate Anonymous
+
+Anonymous -> System: requests book registration based on given data
+
+System -> Ctrl: registerBook(RegisterBookRequest);
+
+Ctrl -> Service: create(title, isbn, ...)
+Service -> Book: Book(title, isbn, ...)
+Service --> Ctrl: Book or exception
+
+alt If exception is returned
+    Ctrl -> System: Book is duplicate
+end
+
+Ctrl -> Service: save(book)
+Service -> Repo: save(book)
+Repo --> Service: Book or exception
+Service --> Ctrl: Book or exception
+
+Ctrl --> System: book
+System --> Anonymous: registered reader
+
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title US 26 Funny Quote
+
+actor "Librarian/Reader" as user
+participant "System" as System
+participant ":ReaderController" as Ctrl
+participant ":ReaderService" as Service
+participant ":ReaderRepository" as ReaderRepo
+participant ":ReaderViewMapper" as Mapper
+participant ":ApiNinjasService" as ApiService
+
+user -> System : asks to view \na reader
+System -> Ctrl : findByReaderNumber(year,seq)
+Ctrl -> Service : findByReaderNumber(readerNumber)
+Service -> ReaderRepo : findByReaderNumber(readerNumber)
+ReaderRepo --> Service : (readerDetails)
+Service --> Ctrl : (readerDetails)
+
+Ctrl -> Mapper : toReaderQuoteView(readerDetails)
+create "view:ReaderQuoteView" as View
+Mapper -> View
+Mapper --> Ctrl : (readerQuoteView)
+deactivate View
+
+Ctrl -> ApiService : getRandomEventFromYearMonth(birthYear, birhMonth)
+ApiService -> ApiService : getHistoricalEventsFromYearMonth(year, month)
+ApiService --> ApiService : (historicalEventsResponse)
+ApiService --> Ctrl : (historicalEvent)
+
+Ctrl -> View: setQuote(historicalEvent)
+deactivate View
+
+Ctrl --> System : (readerQuoteView)
+System --> user : shows reader's details\nincluding an event from\nhis/hers birth month
+@enduml

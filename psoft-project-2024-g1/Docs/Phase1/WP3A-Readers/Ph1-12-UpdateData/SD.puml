@@ -1,0 +1,27 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title Update data as reader
+
+actor "Reader" as Reader
+participant ":System" as System
+participant "Ctrl:ReaderController" as Ctrl
+participant "service:ReaderService" as Service
+participant "repo:ReaderRepository" as Repo
+participant "reader:Reader" as ReaderObj
+
+activate Reader
+
+Reader -> System: requests to update data
+
+System -> Ctrl: update(UpdateReaderRequest);
+Ctrl -> Service: update(UpdateReaderRequest)
+Service -> ReaderObj: applyPatch(version, UpdateReaderRequest)
+Service -> Repo: save(readerObj)
+Repo --> Service: success or error
+Service --> Ctrl: success or error
+Ctrl --> System: success or error
+System --> Reader: success or exception
+@enduml

@@ -1,0 +1,163 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+interface ReaderRepository {
+    + remove(Reader): void
+    + update(Reader): Reader
+    + save(Reader): Reader
+    + getAll(): List<Reader>
+    + findByEmail(Email): Reader
+    + findByPhoneNumber(PhoneNumber): Reader
+    + findByReaderNumber(ReaderNumber): Reader
+}
+
+/'class ReaderFactory {
+    + create: Reader
+}'/
+
+interface ReaderService {
+    + create(reader_data): Reader
+    + remove(Reader): void
+    + update(Reader): Reader
+    + save(Reader): Reader
+    + getAll(): List<Reader>
+    + findByEmail(Email): Reader
+    + findByPhoneNumber(PhoneNumber): Reader
+    + findByReaderNumber(ReaderNumber): Reader
+}
+
+class ReaderServiceImpl implements ReaderService {
+    + create(reader_data): Reader
+    + remove(Reader): void
+    + update(Reader): Reader
+    + save(Reader): Reader
+    + getAll(): List<Reader>
+    + findByEmail(Email): Reader
+    + findByPhoneNumber(PhoneNumber): Reader
+    + findByReaderNumber(ReaderNumber): Reader
+    + isReaderUnique(Reader): bool
+}
+
+class ReaderController {
+}
+
+class Reader {
+    - gdprConsent: bool
+    - marketingConsent: bool
+    - thirdPartySharingConsent: bool
+    - booksOutstanding: int
+    + setThirdPartySharingConsent(bool): void
+    + setMarketingConsent(bool): void
+    + getThirdPartySharingConsent(): bool
+    + getMarketingConsent(): bool
+    + getOutstandingBooks(): int
+    /'Min: 0 | Max: 3'/
+    + setOutstandingBooks(int): void
+}
+
+class Name {
+    - name: string
+    + setName(string): void;
+    + getName(): string;
+}
+
+class ReaderNumber {
+    - registryYear: int
+    - number: int
+    + toString(): string;
+}
+
+class Email {
+    - email: string
+    + setEmail(string): void
+    + getEmail(): string
+}
+
+class PhoneNumber {
+    - countryCode: string
+    - number: string
+    + getCountryCode(): string
+    + setCountryCode(string): void
+    + getNumber(): string
+    + setNumber(string): void
+}
+
+class BirthDate {
+    - year: int
+    - month: int
+    - day: int
+    + setDate(year, month, day): void
+    + getAge(): int
+    + getDate(): int[3]
+}
+
+class User {
+    - username: string
+    - setUsername(): string
+    + getUsername(): string
+    - password: string
+    - setPassword(string): void
+    + getPassword(void): string
+}
+
+interface UserRepository {
+    + remove(User): void
+    + update(User): User
+    + save(User): User
+    + getAll(): List<User>
+    + findByUsername(string): User
+}
+
+interface UserService {
+    + remove(User): void
+    + update(User): User
+    + save(User): User
+    + getAll(): List<User>
+    + findByUsername(string): User
+}
+
+class UserServiceImpl implements UserService {
+    + remove(User): void
+    + update(User): User
+    + save(User): User
+    + getAll(): List<User>
+    + findByUsername(string): User
+}
+
+class ReaderMapper {
+    + toDTO(Reader): ReaderDTO
+    + toObject(ReaderDTO): Reader
+}
+
+class ReaderDTO {}
+
+class UserDTO {}
+
+class UserMapper {
+    + toDTO(User): UserDTO
+    + toObject(UserDTO): User
+}
+
+UserServiceImpl "1" ---> "1" UserRepository
+ReaderDTO "1" ---> "1" ReaderMapper
+
+ReaderMapper "1" ---> "1" ReaderController
+
+UserDTO "1" ---> "1" UserMapper
+UserMapper "1" ---> "1" ReaderController
+
+ReaderController "1" ---> "1" ReaderService
+ReaderController "1" ---> "1" UserService
+Reader "1" o-down- "1" User
+Reader "1" o- "1" Name
+Reader "1" o-down- "1" ReaderNumber
+User "1" o-up- "1" Email
+Reader "1" o-down- "1" PhoneNumber
+Reader "1" o-down- "1" BirthDate
+'ReaderFactory "1" -> "1" ReaderRepository
+'ReaderService "1" -up-> "1" ReaderFactory
+ReaderServiceImpl "1" --> "0..*" Reader
+ReaderServiceImpl "1" --> "1" ReaderRepository
+
+
+@enduml

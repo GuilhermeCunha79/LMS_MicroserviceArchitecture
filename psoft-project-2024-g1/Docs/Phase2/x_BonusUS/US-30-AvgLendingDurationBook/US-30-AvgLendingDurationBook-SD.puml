@@ -1,0 +1,40 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title WP#4B.15 Get Average Book Duration
+
+actor "Librarian" as Librarian
+participant "System" as System
+participant ":BookController" as Ctrl
+participant ":BookService" as BookService
+participant ":BookRepository" as BookRepo
+participant ":LendingService" as LendingService
+participant ":LendingRepository" as LendingRepo
+participant ":BookViewMapper" as Mapper
+
+
+note over Librarian : Librarian is\nauthenticated
+
+Librarian -> System: get average lendings\nduration for a book
+
+System -> Ctrl: getAvgLendingDurationByIsbn(Isbn);
+
+Ctrl -> BookService: findByIsbn(Isbn)
+BookService -> BookRepo: findByIsbn(Isbn)
+
+BookRepo --> BookService: (book)
+BookService --> Ctrl: (book)
+
+Ctrl -> LendingService: getAvgLendingDurationByIsbn(Isbn)
+LendingService -> LendingRepo: getAvgLendingDurationByIsbn(Isbn)
+
+LendingRepo --> LendingService: (averageDurationValue)
+LendingService --> Ctrl: (averageDurationFormatted)
+Ctrl -> Mapper: toBookAverageDurationView(book, (averageDurationFormatted))
+Mapper --> Ctrl: (view)
+Ctrl --> System: (view)
+System --> Librarian: (book details and its\nassociated average\nlending duration)
+
+@enduml

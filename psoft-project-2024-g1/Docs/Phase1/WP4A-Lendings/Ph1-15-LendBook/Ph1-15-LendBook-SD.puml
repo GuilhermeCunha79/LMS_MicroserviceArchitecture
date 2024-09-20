@@ -1,0 +1,42 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title WP#4A.15 Lend Book
+
+actor "Librarian" as Librarian
+participant "System" as System
+participant ":LendingController" as Ctrl
+participant ":LendingService" as LendingService
+participant ":LendingRepository" as LendingRepo
+participant ":BookRepository" as BookRepo
+participant ":ReaderRepository" as ReaderRepo
+
+note over Librarian : Librarian is\nauthenticated
+
+Librarian -> System: request to register\n a new lending
+
+System -> Ctrl: create(createLendingRequest);
+
+Ctrl -> LendingService: create(createLendingRequest)
+LendingService -> LendingRepo: listOutstandingByReaderNumber(readerNumber)
+note right
+    Check for any outstanding lendings,
+    or if under the allowed number.
+end note
+LendingRepo --> LendingService
+LendingService -> BookRepo: findByIsbn(isbn)
+BookRepo --> LendingService: (book)
+LendingService -> ReaderRepo:findByReaderNumber
+ReaderRepo --> LendingService: (reader)
+create Lending as "lending:Lending"
+LendingService -> Lending
+Lending --> LendingService: (lending)
+LendingService -> LendingRepo: save (lending)
+LendingRepo --> LendingService: (lending)
+LendingService --> Ctrl: (lending)
+Ctrl --> System: (lendingView)
+System --> Librarian: details of newly\n registered lending
+
+@enduml

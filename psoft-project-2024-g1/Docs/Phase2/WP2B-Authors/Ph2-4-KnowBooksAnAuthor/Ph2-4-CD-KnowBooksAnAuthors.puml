@@ -1,0 +1,58 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Controller {
+    + getBooksByAuthorNumber(authorNumber: Long): ListResponse<BookView>
+}
+
+interface AuthorService {
+    + findByAuthorNumber(authorNumber: Long): Author
+    + findBooksByAuthorNumber(authorNumber: Long): List<Book>
+}
+
+interface AuthorRepository {
+    + findByAuthorNumber(authorNumber: Long): Author
+}
+
+interface BookRepository {
+    + findBooksByAuthorNumber(authorNumber: Long): List<Book>
+}
+
+class BookViewMapper {
+    + toBookView(books: List<Book>): List<BookView>
+}
+
+class ListResponse<T> {
+    + ListResponse(items: List<T>)
+}
+
+class Author {
+    - authorNumber: Long
+    - name: String
+    - bio: AuthorBio
+    - photo: Photo
+}
+
+class Book {
+    - bookId: Long
+    - title: String
+    - author: Author
+}
+
+class BookView {
+    - bookId: Long
+    - title: String
+    - authorName: String
+}
+
+Controller -> AuthorService
+AuthorService ..> AuthorRepository
+AuthorService ..> BookRepository
+Controller ..> BookViewMapper
+Controller ..> ListResponse
+BookViewMapper ..> Book
+BookViewMapper ..> BookView
+ListResponse ..> BookView
+
+@enduml
+

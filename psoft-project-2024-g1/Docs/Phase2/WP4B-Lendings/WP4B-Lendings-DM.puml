@@ -1,0 +1,52 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+package Lending as PLending <<Frame>> {
+    class Lending {
+        - startDate
+        - limitDate
+        - returnDate
+    }
+    class LendingNumber {
+    }
+}
+
+class User {
+    - username
+    - password
+    - name
+}
+
+class Librarian
+
+package Book as PBook <<Frame>> {
+    class Book
+    class ISBN {
+    - isbn: string
+    }
+    class Genre
+
+}
+
+package Reader as PReader <<Frame>> {
+    class Reader{
+        - birthDate
+        - gdprConsent
+    }
+    class ReaderNumber
+}
+
+Lending "1" - "1" ISBN : uses
+ReaderNumber "1" -up- "1" Lending : uses
+Book "1" -up- "1" ISBN : identifies
+Reader "1" -up- "1" ReaderNumber : identifies
+Librarian "1" -down- "*" Lending : registers
+Librarian "1" -right- "1" User : is
+Lending -left- LendingNumber : identifies
+Book "*"- "1" Genre : has
+Reader "1" -up- "1" User : > is
+
+@enduml

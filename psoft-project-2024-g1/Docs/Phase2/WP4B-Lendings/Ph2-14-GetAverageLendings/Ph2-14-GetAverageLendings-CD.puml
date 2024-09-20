@@ -1,0 +1,65 @@
+@startuml
+
+'hide circle
+skinparam classAttributeIconSize 0
+
+class GenreController {
+    + getAverageLendings(SearchRequest<GetAverageLendingsQuery> query) : ListResponse<GenreAvgLendingsView>
+}
+
+interface GenreService {
+    + getAverageLendings(GetAverageLendingsQuery query, Page page) : List<GenreAverageLendingsDTO>
+}
+
+class GenreServiceImpl implements GenreService{
+    + getAverageLendings(GetAverageLendingsQuery query, Page page) : List<GenreAverageLendingsDTO>
+}
+
+interface GenreRepository {
+    + getAverageLendings(LocalDate month, Page page) : List<GenreAverageLendingsDTO>
+}
+
+interface GenreRepoCustom {
+    + getAverageLendings(LocalDate month, Page page) : List<GenreAverageLendingsDTO>
+}
+
+class GenreRepoCustomImpl implements GenreRepoCustom {
+    + getAverageLendings(LocalDate month, Page page) : List<GenreAverageLendingsDTO>
+}
+
+class Genre <<entity>>{
+    - pk : long
+    - genre : String
+    + setGenre(String genre) : void
+}
+
+class GenreViewMapper{
+    + toGenreAvgLendingsView(List<GenreAverageLendingsDTO> dtos) : List<GenreAvgLendingsView>
+    + toGenreAvgLendingsView(GenreAverageLendingsDTO dto) : GenreAvgLendingsView
+}
+
+class GenreAvgLendingsView{
+    - genre: String
+    - averageLendings : String
+}
+
+class GenreAverageLendingsDTO{
+    - genre: String
+    - averageLendings : String
+    + GenreAverageLendingsDTO(Genre genre, Double averageLendings)
+}
+
+GenreServiceImpl .right.> Genre
+
+GenreController ..> GenreService
+GenreServiceImpl .down.> GenreRepository
+
+GenreController .up.> GenreViewMapper
+GenreViewMapper .right.> GenreAvgLendingsView
+
+GenreRepoCustom .up.> GenreRepository
+
+GenreRepoCustomImpl .right.> GenreAverageLendingsDTO
+
+
+@enduml

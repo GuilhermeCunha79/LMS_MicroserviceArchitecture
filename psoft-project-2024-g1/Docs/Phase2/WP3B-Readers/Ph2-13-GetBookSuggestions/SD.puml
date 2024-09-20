@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title Get Book Suggestions
+
+actor "Reader" as Reader
+participant ":System" as System
+participant "Ctrl:BookController" as Ctrl
+participant "service:BookService" as BookService
+participant "repo:BookRepository" as BookRepository
+participant "readerService:ReaderService" as ReaderService
+participant "readerRepository:ReaderRepository" as ReaderRepository
+participant "readerDetails:ReaderDetails" as ReaderDetails
+
+activate Reader
+
+Reader -> System: requests book suggestions
+
+System -> Ctrl: getBookSuggestions(UpdateReaderRequest);
+Ctrl -> ReaderService: findByUsername(loggedUserUsername)
+ReaderService -> ReaderRepository: findByUsername(loggedUserUsername)
+ReaderRepository --> ReaderService: readerDetails
+ReaderService --> Ctrl: readerDetails
+Ctrl -> BookService: getBookSuggestions(readerNumber)
+BookService -> ReaderService: findByReaderNumber
+ReaderService -> ReaderRepository: findByReaderNumber(readerNumber)
+ReaderRepository --> ReaderService: readerDetails
+ReaderService --> BookService: readerDetails
+BookService -> BookRepository: for readerDetails.getInterestList() - interestGenre loop: findByGenre(interestGenre)
+BookRepository --> BookService: bookList (merged with all genres searches)
+BookService --> Ctrl: bookList
+Ctrl --> System: bookList
+System --> Reader: bookList
+@enduml

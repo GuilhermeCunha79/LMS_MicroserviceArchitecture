@@ -1,0 +1,27 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title Register a new reader as anonymous
+
+actor "Librarian" as Librarian
+participant ":System" as System
+participant "Ctrl:ReaderController" as Ctrl
+participant "Service:ReaderService" as ReaderService
+participant "Repository:ReaderRepository" as ReaderRepository
+
+activate Librarian
+
+Librarian -> System: requests top5 readers
+
+System -> Ctrl: getTop(RegisterReaderRequest);
+
+Ctrl -> ReaderService: findTopReaders(5)
+ReaderService -> ReaderRepository: findTopReaders()
+ReaderRepository --> ReaderService: Top5 List
+ReaderService --> Ctrl: Top5 List
+Ctrl --> System: Top5 List
+System --> Librarian: Top5 List
+
+@enduml

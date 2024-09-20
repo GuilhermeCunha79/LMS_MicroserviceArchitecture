@@ -1,0 +1,28 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title Want to know an author’s detail  by author number as Librarian or Reader
+
+actor "Librarian or Reader" as User
+participant "Ctrl:AuthorsController" as Ctrl
+participant "service:AuthorsService" as Service
+participant "repo:AuthorsRepository" as Repo
+activate User
+
+User -> Ctrl: Request author details
+activate Ctrl
+Ctrl -> Service: findByAuthorNumber(authorNumber)
+activate Service
+Service -> Repo: findByAuthorNumber(authorNumber)
+activate Repo
+
+Repo --> Service: authorDetails
+deactivate Repo
+Service --> Ctrl: authorDetails
+deactivate Service
+Ctrl --> User: authorDetails
+deactivate Ctrl
+
+@enduml

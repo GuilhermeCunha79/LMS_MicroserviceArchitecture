@@ -1,0 +1,62 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+interface ReaderRepository {
+    + findByPhoneNumber(phoneNumber: String): List<ReaderDetails>
+}
+
+class ReaderService {
+    + findByPhoneNumber(phoneNumber: String): List<ReaderDetails>
+}
+
+class ReaderServiceImpl implements ReaderService {
+    - readerRepository: ReaderRepository
+        + findByPhoneNumber(phoneNumber: String): List<ReaderDetails>
+}
+
+class ReaderController {
+    - readerService: ReaderService
+    + searchReaders(): List<ReaderDetails>
+}
+
+class ReaderView{
+    - readerNumber : String
+    - email : String
+    - fullName : String
+    - birthDate : String
+    - phoneNumber : String
+    - photo : String
+    - gdprConsent : boolean
+    - marketingConsent : boolean
+    - thirdPartySharingConsent : boolean
+    - interestList : List<String>
+}
+
+class ReaderDetails <<entity>>{
+    - pk : Long
+    - version : Long
+    - birthDate: BirthDate
+    - phoneNumber : PhoneNumber
+    - interestList : List<Genre>
+    - photo : Photo
+    - gdprConsent - boolean
+    - marketingConsent - boolean
+    - thirdPartySharingConsent - boolean
+    + getBirthDate() : LocalDate
+    + getVersion() : Long
+}
+
+class ReaderViewMapper{
+ + toReaderView(ReaderDetails readerDetails) : ReaderView
+}
+
+ReaderController "1" -> "1" ReaderService
+ReaderServiceImpl "1" ---> "1" ReaderRepository
+
+ReaderController .up.> ReaderViewMapper
+ReaderViewMapper .right.> ReaderView
+
+ReaderDetails "1" o-up- "1" Reader
+ReaderServiceImpl "1" --> "0..*" Reader
+
+@enduml

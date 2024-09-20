@@ -1,0 +1,30 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title GET book details by Isbn as librarian
+
+actor "Librarian" as User
+participant ":Rest" as Rest
+participant "Ctrl:GenreController" as Ctrl
+participant "service:GenreService" as Service
+participant "repo:GenreRepository" as Repo
+participant ":GenreViewMapper" as Mapper
+
+activate User
+
+User -> Rest: requests the top 5 genres by books
+
+Rest -> Ctrl: Top5();
+
+Ctrl -> Mapper: findTop5Genre()
+Mapper -> Service: findTop5Genre()
+Service -> Repo: findTop5Genre()
+Repo --> Service: list<GenreDTO>
+Service --> Mapper: list<GenreDTO>
+Mapper --> Ctrl: ListResponse<>
+Ctrl --> Rest: ListResponse<>
+Rest --> User: ListResponse<>
+
+@enduml

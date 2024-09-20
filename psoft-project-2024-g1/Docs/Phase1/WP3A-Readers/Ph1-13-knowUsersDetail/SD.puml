@@ -1,0 +1,21 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autoactivate on
+autonumber
+
+title As Librarian I want to know a user’s detail given its reader number
+
+actor "Librarian" as User
+participant "Ctrl:ReaderController" as Ctrl
+participant "service:ReaderService" as Service
+participant "repo:ReaderRepository" as Repo
+activate User
+
+User -> Ctrl: Request user details
+Ctrl -> Service: findByReaderNumber(ReaderNumber)
+Service -> Repo: findByReaderNumber(ReaderNumber)
+Repo -> Service: Reader or 404
+Service -> Ctrl: Reader or 404
+Ctrl -> User: Reader or 404
+
+@enduml
