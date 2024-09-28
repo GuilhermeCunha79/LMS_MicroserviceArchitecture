@@ -1,0 +1,23 @@
+@startuml
+
+actor Librarian
+participant "AuthorsController" as Controller
+participant "AuthorsService" as Service
+participant "AuthorsRepository" as Repository
+
+Librarian -> Controller: As Librarian, I want to create an author
+activate Controller
+Controller -> Service: create an author
+activate Service
+Service -> Repository: create
+activate Repository
+Repository --> Service: Authors
+deactivate Repository
+Service --> Controller: Authors
+deactivate Service
+Controller -> Controller: save created author
+activate Controller
+Controller --> Librarian: Result
+deactivate Controller
+
+@enduml
