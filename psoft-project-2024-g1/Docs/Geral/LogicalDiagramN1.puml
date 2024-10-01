@@ -1,0 +1,13 @@
+@startuml
+component View
+
+component Management {
+}
+
+component "H2 Database" {
+}
+
+Database --> "H2 Database"
+View --> Management
+Management --> Database
+@enduml
