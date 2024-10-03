@@ -1,0 +1,15 @@
+@startuml
+
+package "Client Machine" {
+  [Browser]
+}
+
+package "Application Server" {
+  artifact "psoft-g1.jar" as app
+  artifact "H2 Database" as h2db
+}
+
+Browser --> app: HTTP Requests
+app --> h2db: JDBC Connection
+
+@enduml

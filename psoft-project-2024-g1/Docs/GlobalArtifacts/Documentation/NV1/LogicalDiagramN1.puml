@@ -1,13 +1,12 @@
 @startuml
-component View
 
-component Management {
+package View {
 }
 
-component "H2 Database" {
+package psoftg1 {
+
 }
 
-Database --> "H2 Database"
-View --> Management
-Management --> Database
+View --> psoftg1 : HTTP Requests
+
 @enduml
