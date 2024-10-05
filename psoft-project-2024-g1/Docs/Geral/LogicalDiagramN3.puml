@@ -1,0 +1,53 @@
+@startuml
+
+package View {
+  [Browser]
+}
+
+package psoftg1 {
+
+  package "API" {
+    [RestController]
+  }
+
+  package "Service Layer" {
+    [Business Logic]
+    [IAM Service]
+    [ID Generation Service]
+    [Recommendation Service]
+  }
+
+  package "Repository Layer" {
+    [Repository]
+  }
+
+  package "Database" {
+    [MySQL Database]
+    [SQL Server Database]
+    [MongoDB Database]
+    [Redis Database]
+  }
+
+  package "IAM Providers" {
+    [Google IAM]
+    [Facebook IAM]
+    [Azure IAM]
+  }
+
+  [RestController] --> [Business Logic] : Calls
+  [Business Logic] --> [Repository] : Data Access
+  [Business Logic] --> [IAM Service] : Authentication
+  [Business Logic] --> [ID Generation Service] : Generate IDs
+  [Business Logic] --> [Recommendation Service] : Recommend Lendings
+  [Repository] --> [MySQL Database] : Queries
+  [Repository] --> [SQL Server Database] : Queries
+  [Repository] --> [MongoDB Database] : Queries
+  [Repository] --> [Redis Database] : Queries
+  [IAM Service] --> [Google IAM] : Auth
+  [IAM Service] --> [Facebook IAM] : Auth
+  [IAM Service] --> [Azure IAM] : Auth
+}
+
+[Browser] --> [RestController] : HTTP Requests
+
+@enduml
