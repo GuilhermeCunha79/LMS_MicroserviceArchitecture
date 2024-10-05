@@ -1,31 +1,17 @@
 @startuml
+
 package View {
   [Browser]
 }
 
 package psoftg1 {
-
-  package "API" {
-    [RestController]
-  }
-
-  package "Service Layer" {
-    [Business Logic]
-  }
-
-  package "Repository Layer" {
-    [Repository]
-  }
-
-  package "Database" {
-    [H2 Database]
-  }
-
-  [RestController] --> [Business Logic] : Calls
-  [Business Logic] --> [Repository] : Data Access
-  [Repository] --> [H2 Database] : Queries
-
+  [API]
+  [Service Layer]
+  [Data Management]
 }
 
-[Browser] --> [RestController] : HTTP Requests
+View --> [API] : HTTP Requests
+[API] --> [Service Layer] : Process Requests
+[Service Layer] --> [Data Management] : Access Data
+
 @enduml
