@@ -17,6 +17,8 @@ package psoftg1 {
     [Recommendation Service]
   }
 
+  package "Data Management" {
+
   package "Repository Layer" {
     [Repository]
   }
@@ -32,6 +34,8 @@ package psoftg1 {
     [Google IAM]
     [Facebook IAM]
     [Azure IAM]
+  }
+
   }
 
   [RestController] --> [Business Logic] : Calls
