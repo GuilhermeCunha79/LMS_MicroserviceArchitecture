@@ -1,0 +1,21 @@
+Problem: Persisting data in different data models (e.g. relational, document) and SGBD (e.g.MySQL, SQL Server, MongoDB, Redis)
+
+Summary of solutions:
+    Adopt the following tatics:
+        - Reduce coupling namely:
+            - Use intermediary;
+            - Abstract common services
+            - Defer binding
+
+Solution:
+    - Use intermediary
+    - Use abstract common services because:
+    - Defer binding because: addresses configuration
+
+Motivation:
+    - Adopt the same codebase for different clients that have constraints in the data model and DBMS.
+
+Pending issues:
+    - How difficult and long will be the refactoring of current solution to adopt other persistence data models and DBMS?
+    - What are the parts of the system that requires modification?
+    - What data models and DBMS should be supported? (According to the Product Owner, non-relational (document) and relational should be supported. Such as: H2, Oracle, MS SQL, Mongo DB)
