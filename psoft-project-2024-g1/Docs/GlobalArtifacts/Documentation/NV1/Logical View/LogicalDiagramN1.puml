@@ -4,9 +4,11 @@ package View {
 }
 
 package psoftg1 {
+}
 
+package Database {
 }
 
 View --> psoftg1 : HTTP Requests
-
+psoftg1 --> Database : Store Data
 @enduml

@@ -23,20 +23,20 @@ package psoftg1 {
     [Repository]
   }
 
-  package "Database" {
-    [MySQL Database]
-    [SQL Server Database]
-    [MongoDB Database]
-    [Redis Database]
-  }
-
   package "IAM Providers" {
     [Google IAM]
     [Facebook IAM]
     [Azure IAM]
   }
-
   }
+  }
+   package "Database" {
+      [MySQL Database]
+      [SQL Server Database]
+      [MongoDB Database]
+      [Redis Database]
+   }
+
 
   [RestController] --> [Business Logic] : Calls
   [Business Logic] --> [Repository] : Data Access

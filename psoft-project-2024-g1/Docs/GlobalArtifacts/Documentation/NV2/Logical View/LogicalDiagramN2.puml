@@ -10,8 +10,16 @@ package psoftg1 {
   [Data Management]
 }
 
+package Database {
+    [MySQL Database]
+    [SQL Server Database]
+    [MongoDB Database]
+    [Redis Database]
+}
+
 View --> [API] : HTTP Requests
 [API] --> [Service Layer] : Process Requests
 [Service Layer] --> [Data Management] : Access Data
+[Data Management] --> Database : Store Data
 
 @enduml
