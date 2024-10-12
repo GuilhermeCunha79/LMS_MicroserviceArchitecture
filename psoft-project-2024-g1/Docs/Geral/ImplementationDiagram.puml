@@ -6,16 +6,19 @@ package "Client Machine" {
 
 package "Application Server" {
   artifact "psoft-g1.jar" as app
-  artifact "MySQL Database" as mysql
-  artifact "Sql Server Database" as sqlserver
-  artifact "MongoDB Database" as mongodb
-  artifact "Redis Database" as redis
 }
 
 package "IAM Providers" {
   [Google IAM]
   [Facebook IAM]
   [Azure IAM]
+}
+
+package "Database" {
+  artifact "MySQL Database" as mysql
+  artifact "Sql Server Database" as sqlserver
+  artifact "MongoDB Database" as mongodb
+  artifact "Redis Database" as redis
 }
 
 Browser --> app: HTTP Requests
