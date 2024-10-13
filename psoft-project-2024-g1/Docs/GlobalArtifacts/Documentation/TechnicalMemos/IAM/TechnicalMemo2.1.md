@@ -1,4 +1,4 @@
-# Technical Memo 1.2
+# Technical Memo 2.1
 
 ## Problem:
 **Adopting different IAM (Identity and Access Management) providers** (e.g. Google, Facebook, Azure).

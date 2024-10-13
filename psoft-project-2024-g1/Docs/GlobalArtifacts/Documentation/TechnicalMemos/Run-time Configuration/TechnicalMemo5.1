@@ -1,0 +1,17 @@
+Problem: How can we ensure that different alternatives, such as the selection of IAM Providers and different data models,
+ the generation of IDs in various formats, and the recommendation of loans based on different criteria, are dynamically
+ applied at runtime
+
+Summary of solutions:
+Adopt the following tactics:
+- **Reduce coupling** namely:
+    - Defer binding to address configuration.
+
+Factors:
+-High coupling because there are only one possible way to store/manage data.
+-Responsability separation
+-Logic encapsulation because the logic is hidden
+
+Motivation:
+-Allow flexible configurations without the need to modify the source code.
+-Clients have different/flexible data models that are not compatible with the existing.
