@@ -36,10 +36,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import pt.psoft.g1.psoftg1.usermanagement.api.UserView;
 import pt.psoft.g1.psoftg1.usermanagement.api.UserViewMapper;
@@ -109,4 +106,10 @@ public class AuthApi {
 		return userViewMapper.toUserView(user);
 	}
 
+	@GetMapping("/loginSuccess")
+	public ResponseEntity<UserView> loginSuccess(Authentication authentication) {
+		// Aqui você pode acessar o usuário autenticado e retornar suas informações.
+		final User user = (User) authentication.getPrincipal();
+		return ResponseEntity.ok(userViewMapper.toUserView(user));
+	}
 }
