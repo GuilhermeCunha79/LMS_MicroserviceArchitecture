@@ -1,0 +1,10 @@
+@startuml
+
+package View {
+}
+
+package psoftg1 {
+}
+
+View --> psoftg1 : HTTP Requests
+@enduml

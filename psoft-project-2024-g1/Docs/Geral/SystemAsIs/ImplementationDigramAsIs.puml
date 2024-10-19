@@ -1,0 +1,13 @@
+@startuml
+
+package "Client Machine" {
+  [Browser]
+}
+
+package "Application Server" {
+  artifact "psoft-g1.jar" as app
+}
+
+Browser --> app: HTTP Requests
+
+@enduml

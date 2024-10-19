@@ -1,0 +1,17 @@
+@startuml
+
+package View {
+  [Browser]
+}
+
+package psoftg1 {
+  [API]
+  [Service Layer]
+  [Data Management]
+}
+
+View --> [API] : HTTP Requests
+[API] --> [Service Layer] : Process Requests
+[Service Layer] --> [Data Management] : Access Data
+
+@enduml
