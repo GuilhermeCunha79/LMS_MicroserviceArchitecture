@@ -14,3 +14,4 @@
 | **LMS**        | LMS is an acronym for ‘Library Management System’. Global system.                                                                               |
 | **Reader**     | Can request books for lending, and _should_ return them. Is a registered user of the library.                                                   |
 
+
