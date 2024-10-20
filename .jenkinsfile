@@ -1,0 +1,10 @@
+#!/usr/bin/env groovy
+pipeline{
+    stages{
+        stage('Checkout') {
+            steps {
+                git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git', branch: 'main'
+            }
+        }
+    }
+}
