@@ -12,7 +12,7 @@ pipeline{
                 script{
                     if(isUnix()){
                         sh 'rm -rf target/'
-                    } else if(isWindows(){
+                    } else if(isWindows()){
                         bat 'rd /s /q target'
                     }
                 }
@@ -23,7 +23,7 @@ pipeline{
                 script{
                     if(isUnix()){
                         sh 'mvn:test'
-                    } else if(isWindows(){
+                    } else if(isWindows()){
                         bat 'mvn test'
                     }
                 }
@@ -34,7 +34,7 @@ pipeline{
                 script{
                     if(isUnix()){
                         sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-                    } else if(isWindows(){
+                    } else if(isWindows()){
                         bat 'mvn org.pitest:pitest-maven:mutationCoverage'
                     }
                 }
@@ -45,7 +45,7 @@ pipeline{
                 script{
                     if(isUnix()){
                         sh 'npm run integration-test'
-                    } else if(isWindows(){
+                    } else if(isWindows()){
                         bat 'npm run integration-test'
                     }
                 }
@@ -56,7 +56,7 @@ pipeline{
                 script{
                     if(isUnix()){
                         sh 'npm install'
-                    } else if(isWindows(){
+                    } else if(isWindows()){
                         bat 'npm install'
                     }
                 }
