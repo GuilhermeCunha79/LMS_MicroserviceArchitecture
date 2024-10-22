@@ -22,7 +22,7 @@ pipeline{
             steps{
                 script{
                     if(isUnix()){
-                        sh 'mvn:test'
+                        sh 'mvn test'
                     } else if(isWindows()){
                         bat 'mvn test'
                     }
