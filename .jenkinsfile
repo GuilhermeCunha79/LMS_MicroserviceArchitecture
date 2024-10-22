@@ -44,9 +44,9 @@ pipeline{
             steps{
                 script{
                     if(isUnix()){
-                        sh 'npm run integration-test'
+                        sh 'mvn verify -DskipTests'
                     } else if(isWindows()){
-                        bat 'npm run integration-test'
+                        bat 'mvn verify -DskipTests'
                     }
                 }
             }
