@@ -7,5 +7,64 @@ pipeline{
                 git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git', credentialsId: 'jenkins_1201506', branch: 'main'
             }
         }
+        stage('Clean'){
+            steps{
+                script{
+                    if(isUnix()){
+                        sh 'rm -rf target/'
+                    } else if(isWindows(){
+                        bat 'rd /s /q target'
+                    }
+                }
+            }
+        }
+        stage('Unit Testing'){
+            steps{
+                script{
+                    if(isUnix()){
+                        sh 'mvn:test'
+                    } else if(isWindows(){
+                        bat 'mvn test'
+                    }
+                }
+            }
+        }
+        stage('Mutation Testing'){
+            steps{
+                script{
+                    if(isUnix()){
+                        sh 'mvn org.pitest:pitest-maven:mutationCoverage'
+                    } else if(isWindows(){
+                        bat 'mvn org.pitest:pitest-maven:mutationCoverage'
+                    }
+                }
+            }
+        }
+        stage('Integration Testing'){
+            steps{
+                script{
+                    if(isUnix()){
+                        sh 'npm run integration-test'
+                    } else if(isWindows(){
+                        bat 'npm run integration-test'
+                    }
+                }
+            }
+        }
+        stage('Install'){
+            steps{
+                script{
+                    if(isUnix()){
+                        sh 'npm install'
+                    } else if(isWindows(){
+                        bat 'npm install'
+                    }
+                }
+            }
+        }
+        stage('Deploy'){
+        }
+        stage('Smoke Testing'){
+        }
     }
 }
