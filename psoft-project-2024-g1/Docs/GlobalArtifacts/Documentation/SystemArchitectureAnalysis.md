@@ -1,6 +1,11 @@
 # Library Management System Architecture Analysis Document
 
+## Introduction
+
 The purpose of this document is to provide a detailed architecture design of the new Library Management System by focusing on three key quality attributes: extensibility, configurability, and modifiability. These attributes were chosen based on their importance in the design and refactoring of the application.
+ - **Extensibility:** The system should easily accommodate new features and modules with minimal disruption to existing components.
+ - **Configurability:** The design allow administrators to adjust system parameters and behaviours without requiring changes to the source code.
+ - **Modifiability:** The system should be easily modified to accommodate new requirements or changes in existing features.
 
 ## Requirements
 
