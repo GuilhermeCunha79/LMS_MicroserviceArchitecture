@@ -62,9 +62,9 @@ pipeline{
                 }
             }
         }
-        stage('Deploy'){
+ /*       stage('Deploy'){
         }
         stage('Smoke Testing'){
-        }
+        }*/
     }
 }
