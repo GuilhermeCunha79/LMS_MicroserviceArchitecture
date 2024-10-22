@@ -125,6 +125,37 @@
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M9</version>
+				<configuration>
+					<includes>
+						<include>**/*Test.java</include> <!-- Padrão para testes unitários -->
+					</includes>
+				</configuration>
+			</plugin>
+
+			<!-- Plugin Failsafe para testes de integração -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M9</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<includes>
+						<include>**/*IT.java</include> <!-- Padrão para testes de integração -->
+					</includes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<release>17</release>
@@ -148,6 +179,35 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.15.0</version>
+				<executions>
+					<execution>
+						<id>mutation-testing</id>
+						<goals>
+							<goal>mutationCoverage</goal>
+						</goals>
+						<configuration>
+							<!-- Definir se deseja incluir/excluir pacotes -->
+							<targetClasses>
+								<param>**/*</param> <!-- Definir os pacotes a serem testados -->
+							</targetClasses>
+							<targetTests>
+								<param>**/*Test</param> <!-- Definir os testes a serem usados no mutation testing -->
+							</targetTests>
+							<mutationThreshold>80</mutationThreshold> <!-- Percentagem mínima de mutações necessárias -->
+							<threads>4</threads> <!-- Número de threads para paralelizar os testes -->
+							<outputFormats>
+								<param>XML</param>
+								<param>HTML</param>
+							</outputFormats>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
