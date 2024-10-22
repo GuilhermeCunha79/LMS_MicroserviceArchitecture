@@ -1,6 +1,10 @@
 #!/usr/bin/env groovy
 pipeline{
     agent any
+    environment {
+         MVN_HOME = '/usr/share/maven'
+         MVN_CMD = "${MVN_HOME}/bin/mvn"
+    }
     stages{
         stage('Checkout') {
             steps {
