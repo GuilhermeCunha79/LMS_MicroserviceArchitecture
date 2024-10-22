@@ -11,6 +11,12 @@ pipeline{
                 git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git', credentialsId: 'jenkins_1201506', branch: 'main'
             }
         }
+                stage('List Files') {
+                    steps {
+                        sh 'ls -la' // Para verificar se o pom.xml está presente
+                    }
+                }
+
         stage('Clean'){
             steps{
                 script{
