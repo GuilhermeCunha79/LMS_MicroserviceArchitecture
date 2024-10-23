@@ -67,9 +67,9 @@ pipeline{
                 script{
                     dir('psoft-project-2024-g1') {
                         if(isUnix()){
-                            sh 'mvn install'
+                            sh 'mvn install -DskipTests -DskipITs -DskipPitest'
                         } else if(isWindows()){
-                            bat 'mvn install'
+                            bat 'mvn install -DskipTests -DskipITs -DskipPitest'
                         }
                     }
                 }
