@@ -67,9 +67,9 @@ pipeline{
                 script{
                     dir('psoft-project-2024-g1') {
                         if(isUnix()){
-                            sh 'npm install'
+                            sh 'mvn install'
                         } else if(isWindows()){
-                            bat 'npm install'
+                            bat 'mvn install'
                         }
                     }
                 }
