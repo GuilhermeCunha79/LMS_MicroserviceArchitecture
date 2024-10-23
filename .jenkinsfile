@@ -11,11 +11,6 @@ pipeline{
                 git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git', credentialsId: 'jenkins_1201506', branch: 'main'
             }
         }
-                stage('List Files') {
-                    steps {
-                        sh 'ls -la' // Para verificar se o pom.xml está presente
-                    }
-                }
 
         stage('Clean'){
             steps{
@@ -31,10 +26,12 @@ pipeline{
         stage('Unit Testing'){
             steps{
                 script{
-                    if(isUnix()){
-                        sh 'mvn test'
-                    } else if(isWindows()){
-                        bat 'mvn test'
+                    dir('psoft-project-2024-g1') {
+                        if(isUnix()){
+                            sh 'mvn test'
+                        } else if(isWindows()){
+                            bat 'mvn test'
+                        }
                     }
                 }
             }
@@ -42,10 +39,12 @@ pipeline{
         stage('Mutation Testing'){
             steps{
                 script{
-                    if(isUnix()){
-                        sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-                    } else if(isWindows()){
-                        bat 'mvn org.pitest:pitest-maven:mutationCoverage'
+                    dir('psoft-project-2024-g1') {
+                        if(isUnix()){
+                            sh 'mvn org.pitest:pitest-maven:mutationCoverage'
+                        } else if(isWindows()){
+                            bat 'mvn org.pitest:pitest-maven:mutationCoverage'
+                        }
                     }
                 }
             }
@@ -53,10 +52,12 @@ pipeline{
         stage('Integration Testing'){
             steps{
                 script{
-                    if(isUnix()){
-                        sh 'mvn verify -DskipTests'
-                    } else if(isWindows()){
-                        bat 'mvn verify -DskipTests'
+                    dir('psoft-project-2024-g1') {
+                        if(isUnix()){
+                            sh 'mvn verify -DskipTests'
+                        } else if(isWindows()){
+                            bat 'mvn verify -DskipTests'
+                        }
                     }
                 }
             }
@@ -64,10 +65,12 @@ pipeline{
         stage('Install'){
             steps{
                 script{
-                    if(isUnix()){
-                        sh 'npm install'
-                    } else if(isWindows()){
-                        bat 'npm install'
+                    dir('psoft-project-2024-g1') {
+                        if(isUnix()){
+                            sh 'npm install'
+                        } else if(isWindows()){
+                            bat 'npm install'
+                        }
                     }
                 }
             }
