@@ -26,7 +26,7 @@ pipeline{
         stage('Build') {
             steps {
                 script {
-                    dir(${POM_LOC}) {
+                    dir(POM_LOC) {
                         if (isUnix()) {
                             sh 'mvn clean package -DskipTests'
                         } else if (isWindows()) {
@@ -40,7 +40,7 @@ pipeline{
         stage('Unit Testing'){
             steps{
                 script{
-                    dir(${POM_LOC}) {
+                    dir(POM_LOC) {
                         if(isUnix()){
                             sh 'mvn test'
                         } else if(isWindows()){
@@ -53,7 +53,7 @@ pipeline{
         stage('Mutation Testing'){
             steps{
                 script{
-                    dir(${POM_LOC}) {
+                    dir(POM_LOC) {
                         if(isUnix()){
                             sh 'mvn org.pitest:pitest-maven:mutationCoverage'
                         } else if(isWindows()){
@@ -66,7 +66,7 @@ pipeline{
         stage('Integration Testing'){
             steps{
                 script{
-                    dir(${POM_LOC}) {
+                    dir(POM_LOC) {
                         if(isUnix()){
                             sh 'mvn verify -DskipTests'
                         } else if(isWindows()){
@@ -79,7 +79,7 @@ pipeline{
         stage('Install'){
             steps{
                 script{
-                    dir(${POM_LOC}) {
+                    dir(POM_LOC) {
                         if(isUnix()){
                             sh 'mvn install -DskipTests -DskipITs -DskipPitest'
                         } else if(isWindows()){
