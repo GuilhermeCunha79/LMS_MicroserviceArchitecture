@@ -2,8 +2,7 @@
 pipeline{
     agent any
     environment {
-         MVN_HOME = '/usr/share/maven'
-         MVN_CMD = "${MVN_HOME}/bin/mvn"
+         POM_LOC = "psoft-project-2024-g1"
     }
     stages{
         stage('Checkout') {
@@ -23,10 +22,25 @@ pipeline{
                 }
             }
         }
+
+        stage('Build') {
+            steps {
+                script {
+                    dir(${POM_LOC}) {
+                        if (isUnix()) {
+                            sh 'mvn clean package -DskipTests'
+                        } else if (isWindows()) {
+                            bat 'mvn clean package -DskipTests'
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Unit Testing'){
             steps{
                 script{
-                    dir('psoft-project-2024-g1') {
+                    dir(${POM_LOC}) {
                         if(isUnix()){
                             sh 'mvn test'
                         } else if(isWindows()){
@@ -39,7 +53,7 @@ pipeline{
         stage('Mutation Testing'){
             steps{
                 script{
-                    dir('psoft-project-2024-g1') {
+                    dir(${POM_LOC}) {
                         if(isUnix()){
                             sh 'mvn org.pitest:pitest-maven:mutationCoverage'
                         } else if(isWindows()){
@@ -52,7 +66,7 @@ pipeline{
         stage('Integration Testing'){
             steps{
                 script{
-                    dir('psoft-project-2024-g1') {
+                    dir(${POM_LOC}) {
                         if(isUnix()){
                             sh 'mvn verify -DskipTests'
                         } else if(isWindows()){
@@ -65,7 +79,7 @@ pipeline{
         stage('Install'){
             steps{
                 script{
-                    dir('psoft-project-2024-g1') {
+                    dir(${POM_LOC}) {
                         if(isUnix()){
                             sh 'mvn install -DskipTests -DskipITs -DskipPitest'
                         } else if(isWindows()){
