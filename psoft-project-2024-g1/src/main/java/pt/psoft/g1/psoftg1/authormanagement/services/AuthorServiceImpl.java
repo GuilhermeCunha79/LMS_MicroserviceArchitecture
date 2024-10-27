@@ -1,12 +1,10 @@
 package pt.psoft.g1.psoftg1.authormanagement.services;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
@@ -21,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
@@ -37,7 +34,7 @@ public class AuthorServiceImpl implements AuthorService {
         this.bookRepository = bookRepository;
         this.mapper = mapper;
         this.photoRepository = photoRepository;
-        this.authorRepository = (AuthorRepository) context.getBean(repositoryType);
+        this.authorRepository = context.getBean(repositoryType, AuthorRepository.class);
     }
 
     @Override

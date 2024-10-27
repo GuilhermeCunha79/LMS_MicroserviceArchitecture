@@ -9,7 +9,6 @@ import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface AuthorRepository {
 
     Optional<Author> findByAuthorNumber(Long authorNumber);

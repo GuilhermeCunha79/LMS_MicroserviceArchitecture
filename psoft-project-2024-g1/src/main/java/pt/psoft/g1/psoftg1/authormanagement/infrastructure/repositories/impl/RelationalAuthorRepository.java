@@ -2,11 +2,14 @@ package pt.psoft.g1.psoftg1.authormanagement.infrastructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
@@ -15,8 +18,10 @@ import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import java.util.List;
 import java.util.Optional;
 
-@Qualifier("mongoo")
+@Component("jpa")
+
 public class RelationalAuthorRepository implements AuthorRepository {
+
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -64,17 +69,20 @@ public class RelationalAuthorRepository implements AuthorRepository {
 
     @Override
     public List<Author> searchByNameNameStartsWith(String name) {
-
-        return null;
+        return entityManager.createQuery("SELECT a FROM Author a WHERE a.name.name LIKE :name", Author.class)
+                .setParameter("name", name + "%")
+                .getResultList();
     }
 
     @Override
     public List<Author> searchByNameName(String name) {
-        // Implementar a lógica
-        return null;
+        return entityManager.createQuery("SELECT a FROM Author a WHERE a.name.name = :name", Author.class)
+                .setParameter("name", name)
+                .getResultList();
     }
 
     @Override
+    @Transactional
     public Author save(Author author) {
         entityManager.persist(author);
         return author;

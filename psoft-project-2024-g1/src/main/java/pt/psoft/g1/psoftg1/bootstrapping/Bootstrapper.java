@@ -49,14 +49,15 @@ public class Bootstrapper implements CommandLineRunner {
     private final ForbiddenNameService forbiddenNameService;
 
     @Override
-    @Transactional
     public void run(final String... args) {
-        createAuthors();
-        createGenres();
-        createBooks();
-        loadForbiddenNames();
-        createLendings();
-        createPhotos();
+        if (!authorRepository.findAll().iterator().hasNext()) { // Verifica se não há dados
+            createAuthors();
+            createGenres();
+            createBooks();
+            loadForbiddenNames();
+            createLendings();
+            createPhotos();
+        }
     }
 
     private void createAuthors() {

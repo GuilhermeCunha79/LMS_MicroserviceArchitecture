@@ -1,6 +1,8 @@
 package pt.psoft.g1.psoftg1.authormanagement.infrastructure.repositories.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +12,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
@@ -19,11 +22,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository("mongoo")
-@Qualifier("mongoo")
+@Primary
 public class NoSQLAuthorRepository implements AuthorRepository {
 
     private final MongoTemplate mongoTemplate;
 
+    @Autowired
     public NoSQLAuthorRepository(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
@@ -49,6 +53,11 @@ public class NoSQLAuthorRepository implements AuthorRepository {
 
     @Override
     public Author save(Author author) {
+        try {
+            mongoTemplate.save(author);
+        } catch (Exception e) {
+            e.printStackTrace(); // ou use um logger
+        }
         return mongoTemplate.save(author);
     }
 

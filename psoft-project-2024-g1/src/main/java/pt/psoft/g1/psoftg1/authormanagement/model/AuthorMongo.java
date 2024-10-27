@@ -1,22 +1,24 @@
 package pt.psoft.g1.psoftg1.authormanagement.model;
 
-import jakarta.persistence.*;
-import lombok.Getter;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Version;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Name;
 
-import java.util.List;
-
-@Entity
-public class Author extends EntityWithPhoto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "AUTHOR_NUMBER")
-    @Getter
+@EqualsAndHashCode(callSuper = true)
+@Document(collection = "author")
+@Data
+@NoArgsConstructor
+public class AuthorMongo extends EntityWithPhoto {
+    @Field(value = "AUTHOR_NUMBER")
     private Long authorNumber;
 
     @Version
@@ -44,14 +46,10 @@ public class Author extends EntityWithPhoto {
         return 1L;
     }
 
-    public Author(String name, String bio, String photoURI) {
+    public AuthorMongo(String name, String bio, String photoURI) {
         setName(name);
         setBio(bio);
         setPhotoInternal(photoURI);
-    }
-
-    protected Author() {
-        // got ORM only
     }
 
 
@@ -81,4 +79,3 @@ public class Author extends EntityWithPhoto {
         return this.bio.toString();
     }
 }
-
