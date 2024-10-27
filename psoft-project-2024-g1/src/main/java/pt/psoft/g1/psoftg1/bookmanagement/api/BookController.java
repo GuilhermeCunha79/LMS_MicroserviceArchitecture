@@ -142,6 +142,7 @@ public class BookController {
                                                final WebRequest request,
                                                @Valid final UpdateBookRequest resource) {
 
+        // Verifica se o cabeçalho If-Match está presente
         final String ifMatchValue = request.getHeader(ConcurrencyService.IF_MATCH);
         if (ifMatchValue == null || ifMatchValue.isEmpty() || ifMatchValue.equals("null")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -149,9 +150,9 @@ public class BookController {
         }
 
         MultipartFile file = resource.getPhoto();
-
         String fileName = fileStorageService.getRequestPhoto(file);
 
+        // Se um arquivo de foto for enviado, atualiza o URI
         if (fileName != null) {
             resource.setPhotoURI(fileName);
         }
@@ -159,10 +160,20 @@ public class BookController {
         Book book;
         resource.setIsbn(isbn);
         try {
+            // Tenta atualizar o livro
             book = bookService.update(resource, String.valueOf(concurrencyService.getVersionFromIfMatchHeader(ifMatchValue)));
-        }catch (Exception e){
-            throw new ConflictException("Could not update book: "+ e.getMessage());
+
+            // Verifica se o livro retornado é nulo
+            if (book == null) {
+                throw new NotFoundException("Cannot update a book that does not exist");
+            }
+        } catch (NotFoundException e) {
+            throw e; // Repassa a exceção se já for uma NotFoundException
+        } catch (Exception e) {
+            throw new ConflictException("Could not update book: " + e.getMessage());
         }
+
+        // Retorna a resposta com o livro atualizado
         return ResponseEntity.ok()
                 .eTag(Long.toString(book.getVersion()))
                 .body(bookViewMapper.toBookView(book));
