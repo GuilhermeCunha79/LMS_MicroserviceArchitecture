@@ -1,8 +1,12 @@
 package pt.psoft.g1.psoftg1.authormanagement.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
@@ -19,10 +23,22 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
+
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
     private final AuthorMapper mapper;
     private final PhotoRepository photoRepository;
+
+
+    @Autowired
+    public AuthorServiceImpl(
+            @Value("${universal.repository.type}") String repositoryType,
+            ApplicationContext context, BookRepository bookRepository, AuthorMapper mapper, PhotoRepository photoRepository) {
+        this.bookRepository = bookRepository;
+        this.mapper = mapper;
+        this.photoRepository = photoRepository;
+        this.authorRepository = (AuthorRepository) context.getBean(repositoryType);
+    }
 
     @Override
     public Iterable<Author> findAll() {
@@ -65,7 +81,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Author partialUpdate(final Long authorNumber, final UpdateAuthorRequest request, final long desiredVersion) {
-        // first let's check if the object exists so we don't create a new object with
+        // first let's check if the object exists, so we don't create a new object with
         // save
         final var author = findByAuthorNumber(authorNumber)
                 .orElseThrow(() -> new NotFoundException("Cannot update an object that does not yet exist"));
