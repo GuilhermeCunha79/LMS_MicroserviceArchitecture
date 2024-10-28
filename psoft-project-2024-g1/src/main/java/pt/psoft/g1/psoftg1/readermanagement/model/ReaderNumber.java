@@ -20,6 +20,14 @@ public class ReaderNumber implements Serializable {
         this.readerNumber = LocalDate.now().getYear() + "/" + number;
     }
 
+    public ReaderNumber(String number) {
+        this.readerNumber = number;
+    }
+
+    private void setReaderNumber(String number) {
+        this.readerNumber = LocalDate.now().getYear() + "/" + number;
+    }
+
     protected ReaderNumber() {}
 
     public String toString() {

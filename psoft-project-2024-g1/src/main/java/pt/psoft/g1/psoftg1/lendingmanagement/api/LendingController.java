@@ -174,6 +174,14 @@ public class LendingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ListResponse<>(lendingDTOList));
     }
 
+    @PostMapping("/recommendationByReaderAge")
+    public ResponseEntity<ListResponse<LendingView>> lendingRecommendationByReaderAge(@RequestBody final CreateLendingRequest resource) {
+        final var readerList = lendingService.generateLendingRecommendations(resource);
+        List<LendingView> lendingDTOList = StreamSupport.stream(readerList.spliterator(), false)
+                .collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ListResponse<>(lendingDTOList));
+    }
+
 
 /*    @Operation(summary = "Get list monthly average lendings per reader")
     @GetMapping(value = "/averageMonthlyPerReader")

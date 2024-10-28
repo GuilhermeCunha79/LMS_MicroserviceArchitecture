@@ -16,6 +16,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.services.CreateLendingRequest;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingDTO;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingMapperImpl;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 
 import java.util.ArrayList;
@@ -32,12 +33,12 @@ public class LendingRecommendation1Impl implements LendingRecommendation {
     private int fineValuePerDayInCents;
     @Value("${lendingDurationInDays}")
     private int lendingDurationInDays;
-    @Value("${x}")
+    @Value("${universal.lendingRecommendation.x}")
     private int x;
-    @Value("${y}")
+    @Value("${universal.lendingRecommendation.y}")
     private int y;
 
-    private LendingViewMapper lendingViewMapper;
+    private final LendingViewMapper lendingViewMapper;
 
     public LendingRecommendation1Impl(BookRepository bookRepository, ReaderRepository readerRepository, LendingRepository lendingRepository, LendingViewMapper lendingViewMapper) {
         this.bookRepository = bookRepository;

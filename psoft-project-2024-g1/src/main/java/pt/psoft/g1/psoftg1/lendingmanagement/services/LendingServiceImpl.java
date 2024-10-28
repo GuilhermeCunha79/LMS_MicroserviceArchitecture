@@ -16,6 +16,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingFactory;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.recommendation.LendingRecommendation;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 

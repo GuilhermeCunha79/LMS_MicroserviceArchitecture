@@ -25,6 +25,7 @@ public class ReaderDetails extends EntityWithPhoto {
     @OneToOne
     private Reader reader;
 
+
     private ReaderNumber readerNumber;
 
     @Embedded
