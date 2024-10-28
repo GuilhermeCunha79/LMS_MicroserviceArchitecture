@@ -18,8 +18,7 @@ import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import java.util.List;
 import java.util.Optional;
 
-@Component("jpa")
-
+@Component("authorJpa")
 public class RelationalAuthorRepository implements AuthorRepository {
 
 

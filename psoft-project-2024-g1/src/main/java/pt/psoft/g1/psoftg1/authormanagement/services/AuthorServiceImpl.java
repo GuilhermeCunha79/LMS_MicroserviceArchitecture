@@ -29,7 +29,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Autowired
     public AuthorServiceImpl(
-            @Value("${universal.repository.type}") String repositoryType,
+            @Value("${author.repository.type}") String repositoryType,
             ApplicationContext context, BookRepository bookRepository, AuthorMapper mapper, PhotoRepository photoRepository) {
         this.bookRepository = bookRepository;
         this.mapper = mapper;

@@ -21,7 +21,7 @@ import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository("mongoo")
+@Component("authorMongo")
 @Primary
 public class NoSQLAuthorRepository implements AuthorRepository {
 
