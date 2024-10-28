@@ -52,7 +52,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/readers")
-class ReaderController {
+public class ReaderController {
     private final ReaderService readerService;
     private final UserService userService;
     private final ReaderViewMapper readerViewMapper;
