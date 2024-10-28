@@ -63,6 +63,7 @@ public class LendingController {
                 .body(lendingViewMapper.toLendingView(lending));
     }
 
+
     @Operation(summary = "Gets a specific Lending")
     @GetMapping(value = "/{year}/{seq}")
     public ResponseEntity<LendingView> findByLendingNumber(
