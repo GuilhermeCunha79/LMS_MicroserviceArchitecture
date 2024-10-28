@@ -1,6 +1,8 @@
 package pt.psoft.g1.psoftg1.bookmanagement.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +29,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
-@PropertySource({"classpath:config/library.properties"})
 public class BookServiceImpl implements BookService {
 
 	private final BookRepository bookRepository;
@@ -39,6 +39,16 @@ public class BookServiceImpl implements BookService {
 
 	@Value("${suggestionsLimitPerGenre}")
 	private long suggestionsLimitPerGenre;
+
+	@Autowired
+	public BookServiceImpl(@Value("${book.repository.type}") String repositoryTypeBook, ApplicationContext context, @Value("${author.repository.type}") String repositoryTypeAuthor,GenreRepository genreRepository,
+						   PhotoRepository photoRepository, ReaderRepository readerRepository){
+		this.bookRepository = context.getBean(repositoryTypeBook, BookRepository.class);
+		this.genreRepository = genreRepository;
+		this.authorRepository = context.getBean(repositoryTypeAuthor, AuthorRepository.class);
+		this.photoRepository = photoRepository;
+		this.readerRepository = readerRepository;
+	}
 
 	@Override
 	public Book create(CreateBookRequest request, String isbn) {

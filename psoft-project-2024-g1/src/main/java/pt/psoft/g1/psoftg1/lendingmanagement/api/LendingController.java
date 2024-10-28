@@ -16,10 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
-import pt.psoft.g1.psoftg1.lendingmanagement.services.CreateLendingRequest;
-import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
-import pt.psoft.g1.psoftg1.lendingmanagement.services.SearchLendingQuery;
-import pt.psoft.g1.psoftg1.lendingmanagement.services.SetLendingReturnedRequest;
+import pt.psoft.g1.psoftg1.lendingmanagement.services.*;
 import pt.psoft.g1.psoftg1.readermanagement.api.ReaderLendingsAvgPerMonthView;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
@@ -33,6 +30,8 @@ import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Tag(name = "Lendings", description = "Endpoints for managing Lendings")
 @RestController
@@ -45,6 +44,8 @@ public class LendingController {
     private final ConcurrencyService concurrencyService;
 
     private final LendingViewMapper lendingViewMapper;
+
+
 
     @Operation(summary = "Creates a new Lending")
     @PostMapping
@@ -62,6 +63,8 @@ public class LendingController {
                 .eTag(Long.toString(lending.getVersion()))
                 .body(lendingViewMapper.toLendingView(lending));
     }
+
+
 
     @Operation(summary = "Gets a specific Lending")
     @GetMapping(value = "/{year}/{seq}")
@@ -160,6 +163,17 @@ public class LendingController {
         final var readerList = lendingService.searchLendings(request.getPage(), request.getQuery());
         return new ListResponse<>(lendingViewMapper.toLendingView(readerList));
     }
+
+
+
+    @PostMapping("/recommendation")
+    public ResponseEntity<ListResponse<LendingView>> lendingRecommendation(@RequestBody final CreateLendingRequest resource) {
+        final var readerList = lendingService.generateLendingRecommendations(resource);
+        List<LendingView> lendingDTOList = StreamSupport.stream(readerList.spliterator(), false)
+                .collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ListResponse<>(lendingDTOList));
+    }
+
 
 /*    @Operation(summary = "Get list monthly average lendings per reader")
     @GetMapping(value = "/averageMonthlyPerReader")
