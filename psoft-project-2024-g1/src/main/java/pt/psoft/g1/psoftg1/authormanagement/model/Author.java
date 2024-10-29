@@ -37,7 +37,7 @@ public class Author extends EntityWithPhoto {
     }
 
     public Long getVersion() {
-        return version;
+        return Long.parseLong(String.valueOf(0)); // Converte long para Long
     }
 
     public Long getId() {
@@ -80,5 +80,6 @@ public class Author extends EntityWithPhoto {
     public String getBio() {
         return this.bio.toString();
     }
+
 }
 
