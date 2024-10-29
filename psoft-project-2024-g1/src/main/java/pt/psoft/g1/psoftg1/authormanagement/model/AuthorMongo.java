@@ -1,19 +1,19 @@
 package pt.psoft.g1.psoftg1.authormanagement.model;
 
 import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
-import org.bson.types.ObjectId;
+import lombok.Setter;
 import org.hibernate.StaleObjectStateException;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pt.psoft.g1.psoftg1.authormanagement.model.Bio;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
@@ -24,24 +24,27 @@ import pt.psoft.g1.psoftg1.shared.model.Name;
 @NoArgsConstructor
 public class AuthorMongo extends EntityWithPhoto {
 
-    @Field("AUTHOR_NUMBER")
+    @Id
+    @Field(targetType = FieldType.INT64, name = "authorNumber")
+    @Setter
+    @Getter
     private Long authorNumber;
 
     @Version
-    private Long version;
+    public Long version;
 
-    @Embedded
-    private Name name;
+    @Field(name = "name")
+    public String name;
 
-    @Embedded
-    private Bio bio;
+    @Field(name = "bio")
+    public String bio;
 
     public void setName(String name) {
-        this.name = new Name(name);
+        this.name = name;
     }
 
     public void setBio(String bio) {
-        this.bio = new Bio(bio);
+        this.bio = bio;
     }
 
     public AuthorMongo(String name, String bio, String photoURI) {

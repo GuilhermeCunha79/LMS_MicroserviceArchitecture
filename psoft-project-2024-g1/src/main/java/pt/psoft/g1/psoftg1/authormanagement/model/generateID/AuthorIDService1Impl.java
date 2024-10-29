@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import java.security.SecureRandom;
 
 @Component("AuthorIDService1")
-@Primary
 public class AuthorIDService1Impl implements AuthorIDService {
 
     private static final SecureRandom secureRandom = new SecureRandom();

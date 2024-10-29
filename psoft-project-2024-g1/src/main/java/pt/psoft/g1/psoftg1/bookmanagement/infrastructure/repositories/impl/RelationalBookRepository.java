@@ -5,10 +5,13 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
@@ -26,7 +29,7 @@ import java.util.Optional;
 public class RelationalBookRepository implements BookRepository {
 
     @Autowired
-    private EntityManager entityManager; // Para executar consultas nativas
+    private EntityManager entityManager;
 
     public RelationalBookRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -35,7 +38,7 @@ public class RelationalBookRepository implements BookRepository {
     @Override
     @Query("SELECT b FROM Book b WHERE b.isbn.isbn = :isbn")
     public Optional<Book> findByIsbn(@Param("isbn") String isbn) {
-        // Implementação padrão do método, você pode utilizar uma consulta JPA
+
         return entityManager.createQuery("SELECT b FROM Book b WHERE b.isbn.isbn = :isbn", Book.class)
                 .setParameter("isbn", isbn)
                 .getResultList()
@@ -44,15 +47,23 @@ public class RelationalBookRepository implements BookRepository {
     }
 
     @Override
-    @Query("SELECT new pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO(b, COUNT(l)) " +
-            "FROM Book b JOIN Lending l ON l.book = b " +
-            "WHERE l.startDate > :oneYearAgo " +
-            "GROUP BY b ORDER BY COUNT(l) DESC")
-    public Page<BookCountDTO> findTop5BooksLent(@Param("oneYearAgo") LocalDate oneYearAgo, Pageable pageable) {
-        // Implementação padrão do método, que utiliza JPA
-        // Lógica para paginar resultados
-        return null; // Substituir pela implementação correta
+    public Page<BookCountDTO> findTop5BooksLent(LocalDate oneYearAgo, Pageable pageable) {
+        String jpql = "SELECT new pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO(b, COUNT(l)) " +
+                "FROM Book b JOIN Lending l ON l.book = b " +
+                "WHERE l.startDate > :oneYearAgo " +
+                "GROUP BY b ORDER BY COUNT(l) DESC";
+
+        TypedQuery<BookCountDTO> query = entityManager.createQuery(jpql, BookCountDTO.class)
+                .setParameter("oneYearAgo", oneYearAgo);
+
+        int totalRows = query.getResultList().size(); // Obter total de linhas
+        List<BookCountDTO> results = query.setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+
+        return new PageImpl<>(results, pageable, totalRows);
     }
+
 
     @Override
     @Query("SELECT b FROM Book b WHERE b.genre.genre LIKE %:genre%")
@@ -63,6 +74,7 @@ public class RelationalBookRepository implements BookRepository {
     }
 
     @Override
+    @Transactional
     public Book save(Book book) {
         entityManager.persist(book);
         return book;
@@ -125,7 +137,7 @@ public class RelationalBookRepository implements BookRepository {
             WHERE a.NAME LIKE %:authorName%
             """, nativeQuery = true)
     public List<Book> findByAuthorName(@Param("authorName") String authorName) {
-        // O parâmetro authorName é passado corretamente pela anotação @Query.
+
         return entityManager.createNativeQuery("""
                         SELECT b.* 
                         FROM Book b 

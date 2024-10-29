@@ -78,13 +78,6 @@
 			<artifactId>spring-boot-starter-oauth2-client</artifactId>
 		</dependency>
 
-		<!-- Lombok to automate setter/getter generation -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
-
 		<!-- OpenAPI & Swagger UI-->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -130,8 +123,13 @@
             <artifactId>spring-data-mongodb</artifactId>
             <version>4.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.32</version>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
 	<build>
 		<plugins>

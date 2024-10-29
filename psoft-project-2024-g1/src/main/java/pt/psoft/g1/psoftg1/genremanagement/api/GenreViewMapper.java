@@ -2,8 +2,11 @@ package pt.psoft.g1.psoftg1.genremanagement.api;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.model.BookMongo;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDTO;
+import pt.psoft.g1.psoftg1.genremanagement.model.GenreMongo;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDTO;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsPerMonthDTO;
 import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
@@ -17,6 +20,10 @@ public abstract class GenreViewMapper extends MapperInterface{
     public abstract GenreView toGenreView(Genre genre);
 
     public abstract GenreView mapStringToGenreView(String genre);
+
+    public abstract Genre toGenre(GenreMongo genreMongo);
+
+    public abstract GenreMongo toGenreMongo(Genre genre);
 
     @Mapping(target = "genreView", source = "genre")
     public abstract GenreBookCountView toGenreBookCountView(GenreBookCountDTO genreBookCountView);
