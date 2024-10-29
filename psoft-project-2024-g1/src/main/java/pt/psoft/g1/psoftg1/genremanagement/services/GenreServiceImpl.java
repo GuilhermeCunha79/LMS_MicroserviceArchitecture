@@ -1,6 +1,9 @@
 package pt.psoft.g1.psoftg1.genremanagement.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,11 @@ public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
 
+    @Autowired
+    public GenreServiceImpl(@Value("${genre.repository.type}") String repositoryType, ApplicationContext context) {
+        this.genreRepository = context.getBean(repositoryType, GenreRepository.class);
+    }
+
 
     public Optional<Genre> findByString(String name) {
         return genreRepository.findByString(name);
@@ -32,8 +40,8 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public List<GenreBookCountDTO> findTopGenreByBooks(){
-        Pageable pageableRules = PageRequest.of(0,5);
+    public List<GenreBookCountDTO> findTopGenreByBooks() {
+        Pageable pageableRules = PageRequest.of(0, 5);
         return this.genreRepository.findTop5GenreByBookCount(pageableRules).getContent();
     }
 
@@ -48,7 +56,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public List<GenreLendingsDTO> getAverageLendings(GetAverageLendingsQuery query, Page page){
+    public List<GenreLendingsDTO> getAverageLendings(GetAverageLendingsQuery query, Page page) {
         if (page == null)
             page = new Page(1, 10);
 
@@ -58,7 +66,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public List<GenreLendingsPerMonthDTO> getLendingsAverageDurationPerMonth(String start, String end){
+    public List<GenreLendingsPerMonthDTO> getLendingsAverageDurationPerMonth(String start, String end) {
         LocalDate startDate;
         LocalDate endDate;
 
@@ -69,7 +77,7 @@ public class GenreServiceImpl implements GenreService {
             throw new IllegalArgumentException("Expected format is YYYY-MM-DD");
         }
 
-        if(startDate.isAfter(endDate))
+        if (startDate.isAfter(endDate))
             throw new IllegalArgumentException("Start date cannot be after end date");
 
         final var list = genreRepository.getLendingsAverageDurationPerMonth(startDate, endDate);

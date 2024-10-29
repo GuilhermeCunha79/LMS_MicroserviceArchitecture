@@ -1,6 +1,9 @@
 package pt.psoft.g1.psoftg1.readermanagement.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.data.domain.Pageable;
 
 @Service
@@ -32,6 +36,21 @@ public class ReaderServiceImpl implements ReaderService {
     private final ForbiddenNameRepository forbiddenNameRepository;
     private final PhotoRepository photoRepository;
 
+    @Autowired
+    public ReaderServiceImpl(@Value("${genre.repository.type}") String genreRepositoryType,
+                             @Value("${reader.repository.type}") String readerRepositoryType,
+                             ApplicationContext context,
+                             @Value("${user.repository.type}") String userRepositoryType, ReaderMapper readerMapper,
+                             ForbiddenNameRepository forbiddenNameRepository,
+                             PhotoRepository photoRepository) {
+        this.readerRepo = context.getBean(readerRepositoryType, ReaderRepository.class);
+        this.userRepo = context.getBean(userRepositoryType, UserRepository.class);
+        this.readerMapper = readerMapper;
+
+        this.genreRepo = context.getBean(genreRepositoryType, GenreRepository.class);
+        this.forbiddenNameRepository = forbiddenNameRepository;
+        this.photoRepository = photoRepository;
+    }
 
     @Override
     public ReaderDetails create(CreateReaderRequest request, String photoURI) {
@@ -40,8 +59,8 @@ public class ReaderServiceImpl implements ReaderService {
         }
 
         Iterable<String> words = List.of(request.getFullName().split("\\s+"));
-        for (String word : words){
-            if(!forbiddenNameRepository.findByForbiddenNameIsContained(word).isEmpty()) {
+        for (String word : words) {
+            if (!forbiddenNameRepository.findByForbiddenNameIsContained(word).isEmpty()) {
                 throw new IllegalArgumentException("Name contains a forbidden word");
             }
         }
@@ -65,36 +84,36 @@ public class ReaderServiceImpl implements ReaderService {
          * */
 
         MultipartFile photo = request.getPhoto();
-        if(photo == null && photoURI != null || photo != null && photoURI == null) {
+        if (photo == null && photoURI != null || photo != null && photoURI == null) {
             request.setPhoto(null);
         }
 
         int count = readerRepo.getCountFromCurrentYear();
         Reader reader = readerMapper.createReader(request);
-        ReaderDetails rd = readerMapper.createReaderDetails(count+1, reader, request, photoURI, interestList);
+        ReaderDetails rd = readerMapper.createReaderDetails(count + 1, reader, request, photoURI, interestList);
 
         userRepo.save(reader);
         return readerRepo.save(rd);
     }
 
     @Override
-    public List<ReaderBookCountDTO> findTopByGenre(String genre, LocalDate startDate, LocalDate endDate){
-        if(startDate.isAfter(endDate)){
+    public List<ReaderBookCountDTO> findTopByGenre(String genre, LocalDate startDate, LocalDate endDate) {
+        if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Start date cannot be after end date");
         }
-        Pageable pageableRules = PageRequest.of(0,5);
+        Pageable pageableRules = PageRequest.of(0, 5);
         return this.readerRepo.findTopByGenre(pageableRules, genre, startDate, endDate).getContent();
     }
 
     @Override
-    public ReaderDetails update(final Long id, final UpdateReaderRequest request, final long desiredVersion, String photoURI){
+    public ReaderDetails update(final Long id, final UpdateReaderRequest request, final long desiredVersion, String photoURI) {
         final ReaderDetails readerDetails = readerRepo.findByUserId(id)
                 .orElseThrow(() -> new NotFoundException("Cannot find reader"));
 
         List<String> stringInterestList = request.getInterestList();
         List<Genre> interestList = this.getGenreListFromStringList(stringInterestList);
 
-         /*
+        /*
          * Since photos can be null (no photo uploaded) that means the URI can be null as well.
          * To avoid the client sending false data, photoURI has to be set to any value / null
          * according to the MultipartFile photo object
@@ -107,7 +126,7 @@ public class ReaderServiceImpl implements ReaderService {
          * */
 
         MultipartFile photo = request.getPhoto();
-        if(photo == null && photoURI != null || photo != null && photoURI == null) {
+        if (photo == null && photoURI != null || photo != null && photoURI == null) {
             request.setPhoto(null);
         }
 
@@ -141,28 +160,28 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public List<ReaderDetails> findTopReaders(int minTop) {
-        if(minTop < 1) {
+        if (minTop < 1) {
             throw new IllegalArgumentException("Minimum top reader must be greater than 0");
         }
 
-        Pageable pageableRules = PageRequest.of(0,minTop);
+        Pageable pageableRules = PageRequest.of(0, minTop);
         Page<ReaderDetails> page = readerRepo.findTopReaders(pageableRules);
         return page.getContent();
     }
 
     private List<Genre> getGenreListFromStringList(List<String> interestList) {
-        if(interestList == null) {
+        if (interestList == null) {
             return null;
         }
 
-        if(interestList.isEmpty()) {
+        if (interestList.isEmpty()) {
             return new ArrayList<>();
         }
 
         List<Genre> genreList = new ArrayList<>();
-        for(String interest : interestList) {
+        for (String interest : interestList) {
             Optional<Genre> optGenre = genreRepo.findByString(interest);
-            if(optGenre.isEmpty()) {
+            if (optGenre.isEmpty()) {
                 throw new NotFoundException("Could not find genre with name " + interest);
             }
 
@@ -190,11 +209,11 @@ public class ReaderServiceImpl implements ReaderService {
             page = new pt.psoft.g1.psoftg1.shared.services.Page(1, 10);
 
         if (query == null)
-            query = new SearchReadersQuery("", "","");
+            query = new SearchReadersQuery("", "", "");
 
         final var list = readerRepo.searchReaderDetails(page, query);
 
-        if(list.isEmpty())
+        if (list.isEmpty())
             throw new NotFoundException("No results match the search query");
 
         return list;

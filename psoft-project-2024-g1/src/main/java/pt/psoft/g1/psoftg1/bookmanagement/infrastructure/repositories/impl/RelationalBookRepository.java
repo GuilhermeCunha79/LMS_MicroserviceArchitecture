@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.bookmanagement.infrastructure.repositories.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,7 +28,7 @@ import java.util.Optional;
 public class RelationalBookRepository implements BookRepository {
 
     @Autowired
-    private EntityManager entityManager; // Para executar consultas nativas
+    private EntityManager entityManager;
 
     public RelationalBookRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -36,38 +37,12 @@ public class RelationalBookRepository implements BookRepository {
     @Override
     @Query("SELECT b FROM Book b WHERE b.isbn.isbn = :isbn")
     public Optional<Book> findByIsbn(@Param("isbn") String isbn) {
+
         return entityManager.createQuery("SELECT b FROM Book b WHERE b.isbn.isbn = :isbn", Book.class)
                 .setParameter("isbn", isbn)
                 .getResultList()
                 .stream()
                 .findFirst();
-    }
-
-    public Page<BookCountDTO> findTop5BooksLent(LocalDate oneYearAgo, Pageable pageable) {
-        String queryStr = "SELECT new pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO(b, COUNT(l)) " +
-                "FROM Book b JOIN Lending l ON l.book = b " +
-                "WHERE l.startDate > :oneYearAgo " +
-                "GROUP BY b ORDER BY COUNT(l) DESC";
-
-        TypedQuery<BookCountDTO> query = entityManager.createQuery(queryStr, BookCountDTO.class);
-        query.setParameter("oneYearAgo", oneYearAgo);
-
-        int totalRows = query.getResultList().size();
-        query.setFirstResult((int) pageable.getOffset());
-        query.setMaxResults(pageable.getPageSize());
-
-        List<BookCountDTO> results = query.getResultList();
-
-        return new PageImpl<>(results, pageable, totalRows);
-    }
-
-    @Override
-    @Query("SELECT b FROM Book b WHERE b.genre.genre LIKE %:genre%")
-    public List<Book> findByGenre(@Param("genre") String genre) {
-        return entityManager.createQuery("SELECT b FROM Book b WHERE b.genre.genre LIKE %:genre%", Book.class)
-                .setParameter("genre", genre)
-                .getResultList();
-
     }
 
     @Override
@@ -78,7 +53,6 @@ public class RelationalBookRepository implements BookRepository {
                 .setMaxResults(x)
                 .getResultList();
     }
-
     @Override
     public List<Book> findTopXBooksFromMostLentGenreByReader(String readerNumber, @Param("x") int x) {
         return entityManager.createNativeQuery(
@@ -106,6 +80,34 @@ public class RelationalBookRepository implements BookRepository {
     }
 
     @Override
+    public Page<BookCountDTO> findTop5BooksLent(LocalDate oneYearAgo, Pageable pageable) {
+        String jpql = "SELECT new pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO(b, COUNT(l)) " +
+                "FROM Book b JOIN Lending l ON l.book = b " +
+                "WHERE l.startDate > :oneYearAgo " +
+                "GROUP BY b ORDER BY COUNT(l) DESC";
+
+        TypedQuery<BookCountDTO> query = entityManager.createQuery(jpql, BookCountDTO.class)
+                .setParameter("oneYearAgo", oneYearAgo);
+
+        int totalRows = query.getResultList().size(); // Obter total de linhas
+        List<BookCountDTO> results = query.setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+
+        return new PageImpl<>(results, pageable, totalRows);
+    }
+
+
+    @Override
+    @Query("SELECT b FROM Book b WHERE b.genre.genre LIKE %:genre%")
+    public List<Book> findByGenre(@Param("genre") String genre) {
+        return entityManager.createQuery("SELECT b FROM Book b WHERE b.genre.genre LIKE %:genre%", Book.class)
+                .setParameter("genre", genre)
+                .getResultList();
+    }
+
+    @Override
+    @Transactional
     public Book save(Book book) {
         entityManager.persist(book);
         return book;
@@ -168,6 +170,7 @@ public class RelationalBookRepository implements BookRepository {
             WHERE a.NAME LIKE %:authorName%
             """, nativeQuery = true)
     public List<Book> findByAuthorName(@Param("authorName") String authorName) {
+        // O parâmetro authorName é passado corretamente pela anotação @Query.
         return entityManager.createNativeQuery("""
                         SELECT b.* 
                         FROM Book b 

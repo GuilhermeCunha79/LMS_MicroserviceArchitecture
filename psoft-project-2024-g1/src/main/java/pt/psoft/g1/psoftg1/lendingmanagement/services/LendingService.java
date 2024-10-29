@@ -28,5 +28,4 @@ public interface LendingService {
     Double getAvgLendingDurationByIsbn(String isbn);
     List<Lending> searchLendings(Page page, SearchLendingQuery request);
     Iterable<LendingView> generateLendingRecommendations(final CreateLendingRequest resource);
-
 }

@@ -16,7 +16,6 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingFactory;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.recommendation.LendingRecommendation;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
-import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
@@ -29,13 +28,13 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @PropertySource({"classpath:config/library.properties"})
-public class LendingServiceImpl implements LendingService{
+public class LendingServiceImpl implements LendingService {
     private final LendingRepository lendingRepository;
     private final FineRepository fineRepository;
     private final BookRepository bookRepository;
     private final ReaderRepository readerRepository;
-    private final LendingFactory lendingFactory;
     private final LendingRecommendation lendingRecommendation;
+    private final LendingFactory lendingFactory;
 
     @Value("${lendingDurationInDays}")
     private int lendingDurationInDays;
@@ -43,18 +42,18 @@ public class LendingServiceImpl implements LendingService{
     private int fineValuePerDayInCents;
 
     @Autowired
-    public LendingServiceImpl(@Value("${universal.lendingRecommendation.algorithm}") String beanContext, ApplicationContext applicationContext, LendingRepository lendingRepository, FineRepository fineRepository, BookRepository bookRepository, ReaderRepository readerRepository, LendingFactory lendingFactory, LendingRecommendation lendingRecommendation) {
-        this.lendingRepository = lendingRepository;
-        this.fineRepository = fineRepository;
-        this.bookRepository = bookRepository;
-        this.readerRepository = readerRepository;
+    public LendingServiceImpl(@Value("${reader.repository.type}") String readerRepositoryType,
+                              @Value("${book.repository.type}") String bookRepositoryType,
+                              ApplicationContext context,
+                              @Value("${lending.repository.type}") String lendingRepositoryType,
+                              FineRepository fineRepository, ReaderRepository readerRepository,
+                              LendingFactory lendingFactory, @Value("${universal.lendingRecommendation.algorithm}") String beanContext) {
+        this.readerRepository = context.getBean(readerRepositoryType, ReaderRepository.class);
         this.lendingFactory = lendingFactory;
-        this.lendingRecommendation = applicationContext.getBean(beanContext, LendingRecommendation.class);
-    }
-
-    @Override
-    public Iterable<LendingView> generateLendingRecommendations(final CreateLendingRequest resource) {
-        return lendingRecommendation.bookRecommendation(resource);
+        this.lendingRepository = context.getBean(lendingRepositoryType, LendingRepository.class);
+        this.fineRepository = fineRepository;
+        this.bookRepository = context.getBean(bookRepositoryType, BookRepository.class);
+        this.lendingRecommendation = context.getBean(beanContext, LendingRecommendation.class);
     }
 
     @Override
@@ -76,6 +75,11 @@ public class LendingServiceImpl implements LendingService{
             }
         }
         return lendings;
+    }
+
+    @Override
+    public Iterable<LendingView> generateLendingRecommendations(final CreateLendingRequest resource) {
+        return lendingRecommendation.bookRecommendation(resource);
     }
 
     @Override

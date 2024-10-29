@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.model.recommendation;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
@@ -40,11 +41,14 @@ public class LendingRecommendation2Impl implements LendingRecommendation {
 
     private final LendingViewMapper lendingViewMapper;
 
-    public LendingRecommendation2Impl(BookRepository bookRepository, LendingRepository lendingRepository, ReaderRepository readerRepository,
+    public LendingRecommendation2Impl(@Value("${reader.repository.type}") String readerRepositoryType,
+                                      @Value("${book.repository.type}") String bookRepositoryType,
+                                      ApplicationContext context,
+                                      @Value("${lending.repository.type}") String lendingRepositoryType,
                                       LendingViewMapper lendingViewMapper) {
-        this.bookRepository = bookRepository;
-        this.lendingRepository = lendingRepository;
-        this.readerRepository = readerRepository;
+        this.bookRepository = context.getBean(bookRepositoryType, BookRepository.class);
+        this.readerRepository = context.getBean(readerRepositoryType, ReaderRepository.class);
+        this.lendingRepository = context.getBean(lendingRepositoryType, LendingRepository.class);
         this.lendingViewMapper = lendingViewMapper;
     }
 

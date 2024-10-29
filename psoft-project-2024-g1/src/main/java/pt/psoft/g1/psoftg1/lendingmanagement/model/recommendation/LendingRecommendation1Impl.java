@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.model.recommendation;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
@@ -40,20 +41,17 @@ public class LendingRecommendation1Impl implements LendingRecommendation {
 
     private final LendingViewMapper lendingViewMapper;
 
-    public LendingRecommendation1Impl(BookRepository bookRepository, ReaderRepository readerRepository, LendingRepository lendingRepository, LendingViewMapper lendingViewMapper) {
-        this.bookRepository = bookRepository;
-        this.readerRepository = readerRepository;
-        this.lendingRepository=lendingRepository;
-        this.lendingViewMapper=lendingViewMapper;
+    public LendingRecommendation1Impl(@Value("${reader.repository.type}") String readerRepositoryType,
+                                      @Value("${book.repository.type}") String bookRepositoryType,
+                                      ApplicationContext context,
+                                      @Value("${lending.repository.type}") String lendingRepositoryType,
+                                      LendingViewMapper lendingViewMapper) {
+        this.bookRepository = context.getBean(bookRepositoryType, BookRepository.class);
+        this.readerRepository = context.getBean(readerRepositoryType, ReaderRepository.class);
+        this.lendingRepository = context.getBean(lendingRepositoryType, LendingRepository.class);
+        this.lendingViewMapper = lendingViewMapper;
     }
 
-    /* CORRECT
-        public LendingRecommendation1Impl(@Value("${universal.repository.type}") String repositoryType,
-                                      ApplicationContext context, BookRepository bookRepository, GenreRepository genreRepository) {
-       // this.bookRepository = context.getBean(repositoryType, BookRepository.class);
-       // this.genreRepository = context.getBean(repositoryType, GenreRepository.class);
-    }
-     */
 
     @Override
     public Iterable<LendingView> bookRecommendation(final CreateLendingRequest resource) {
@@ -68,7 +66,7 @@ public class LendingRecommendation1Impl implements LendingRecommendation {
             Lending newLending = LendingFactory.create(
                     book,
                     r,
-                    lendingRepository.getCountFromCurrentYear()+1,
+                    lendingRepository.getCountFromCurrentYear() + 1,
                     lendingDurationInDays,
                     fineValuePerDayInCents
             );

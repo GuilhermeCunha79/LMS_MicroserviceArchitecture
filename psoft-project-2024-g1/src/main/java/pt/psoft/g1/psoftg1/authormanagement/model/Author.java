@@ -2,6 +2,7 @@ package pt.psoft.g1.psoftg1.authormanagement.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
@@ -14,8 +15,9 @@ import java.util.List;
 @Entity
 public class Author extends EntityWithPhoto {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    //@GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "AUTHOR_NUMBER")
+    @Setter
     @Getter
     private Long authorNumber;
 
@@ -37,7 +39,7 @@ public class Author extends EntityWithPhoto {
     }
 
     public Long getVersion() {
-        return version;
+        return Long.parseLong(String.valueOf(0)); // Converte long para Long
     }
 
     public Long getId() {
@@ -80,5 +82,6 @@ public class Author extends EntityWithPhoto {
     public String getBio() {
         return this.bio.toString();
     }
+
 }
 
