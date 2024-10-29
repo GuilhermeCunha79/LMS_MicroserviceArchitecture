@@ -1,7 +1,9 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
@@ -33,6 +35,19 @@ public class LendingServiceImpl implements LendingService{
     private int lendingDurationInDays;
     @Value("${fineValuePerDayInCents}")
     private int fineValuePerDayInCents;
+
+    @Autowired
+    public LendingServiceImpl(@Value("${reader.repository.type}") String readerRepositoryType,
+                              @Value("${book.repository.type}") String bookRepositoryType,
+                              ApplicationContext context,
+                              @Value("${lending.repository.type}") String lendingRepositoryType, FineRepository fineRepository, ReaderRepository readerRepository){
+        this.readerRepository = readerRepository;
+
+        this.lendingRepository = context.getBean(lendingRepositoryType,LendingRepository.class);
+        this.fineRepository = fineRepository;
+        this.bookRepository = context.getBean(bookRepositoryType,BookRepository.class);
+
+    }
 
     @Override
     public Optional<Lending> findByLendingNumber(String lendingNumber){

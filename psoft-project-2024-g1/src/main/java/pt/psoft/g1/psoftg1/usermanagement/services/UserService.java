@@ -21,6 +21,9 @@
 package pt.psoft.g1.psoftg1.usermanagement.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,6 +59,16 @@ public class UserService implements UserDetailsService {
 	private final ForbiddenNameRepository forbiddenNameRepository;
 
 	private final PasswordEncoder passwordEncoder;
+
+	@Autowired
+	public UserService(@Value("${user.repository.type}") String userRepositoryType, ApplicationContext context,
+					   EditUserMapper userEditMapper, ForbiddenNameRepository forbiddenNameRepository, PasswordEncoder passwordEncoder){
+		this.userEditMapper = userEditMapper;
+		this.forbiddenNameRepository = forbiddenNameRepository;
+		this.passwordEncoder = passwordEncoder;
+		this.userRepo=context.getBean(userRepositoryType, UserRepository.class);
+
+	}
 
 	public List<User> findByName(String name){
 		return this.userRepo.findByNameName(name);

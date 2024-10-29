@@ -43,13 +43,15 @@ public class BookServiceImpl implements BookService {
     @Autowired
     public BookServiceImpl(@Value("${author.repository.type}") String authorRepositoryType,
                            @Value("${book.repository.type}") String bookRepositoryType,
-                           ApplicationContext context, GenreRepository genreRepository, PhotoRepository photoRepository,
-                           ReaderRepository readerRepository) {
+                           @Value("${genre.repository.type}") String genreRepositoryType,
+                           @Value("${reader.repository.type}") String readerRepositoryType,
+                           ApplicationContext context, PhotoRepository photoRepository
+                           ) {
         this.bookRepository = context.getBean(bookRepositoryType, BookRepository.class);
-        this.genreRepository = genreRepository;
+        this.genreRepository = context.getBean(genreRepositoryType, GenreRepository.class);
         this.authorRepository = context.getBean(authorRepositoryType, AuthorRepository.class);
         this.photoRepository = photoRepository;
-        this.readerRepository = readerRepository;
+        this.readerRepository = context.getBean(readerRepositoryType, ReaderRepository.class);
     }
 
     @Override

@@ -49,13 +49,17 @@ public class Bootstrapper implements CommandLineRunner {
     private final ForbiddenNameService forbiddenNameService;
 
     @Autowired
-    public Bootstrapper(@Value("${author.repository.type}") String authorRepositoryType, @Value("${book.repository.type}") String bookRepositoryType, @Value("${genre.repository.type}") String genreRepositoryType,
-                        ApplicationContext context, LendingRepository lendingRepository, ReaderRepository readerRepository, PhotoRepository photoRepository, ForbiddenNameService forbiddenNameService) {
+    public Bootstrapper(@Value("${author.repository.type}") String authorRepositoryType,
+                        @Value("${book.repository.type}") String bookRepositoryType,
+                        @Value("${genre.repository.type}") String genreRepositoryType,
+                        ApplicationContext context,
+                        @Value("${lending.repository.type}") String lendingRepositoryType,
+                        @Value("${reader.repository.type}") String readerRepositoryType, PhotoRepository photoRepository, ForbiddenNameService forbiddenNameService) {
         this.genreRepository = context.getBean(genreRepositoryType, GenreRepository.class);
         this.bookRepository = context.getBean(bookRepositoryType, BookRepository.class);
         this.authorRepository = context.getBean(authorRepositoryType, AuthorRepository.class);
-        this.lendingRepository = lendingRepository;
-        this.readerRepository = readerRepository;
+        this.lendingRepository = context.getBean(lendingRepositoryType, LendingRepository.class);
+        this.readerRepository = context.getBean(readerRepositoryType, ReaderRepository.class);
         this.photoRepository = photoRepository;
         this.forbiddenNameService = forbiddenNameService;
     }

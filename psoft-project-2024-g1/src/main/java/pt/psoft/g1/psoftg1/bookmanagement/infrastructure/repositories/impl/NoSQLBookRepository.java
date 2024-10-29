@@ -13,9 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
-import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.model.BookMongo;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookMapper;
@@ -26,7 +24,6 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component("bookMongo")
 @Primary
@@ -43,7 +40,7 @@ public class NoSQLBookRepository implements BookRepository {
     @Override
     public Optional<Book> findByIsbn(String isbn) {
         Query query = new Query(Criteria.where("isbn").is(isbn));
-        Book book = bookMapper.toBook(mongoTemplate.findOne(query, BookMongo.class));
+        Book book = mongoTemplate.findOne(query, Book.class);
         return Optional.ofNullable(book);
     }
 
@@ -63,22 +60,20 @@ public class NoSQLBookRepository implements BookRepository {
     @Override
     public List<Book> findByGenre(String genre) {
         Query query = new Query(Criteria.where("genre.genre").regex(genre, "i"));
-        List<BookMongo> bookList = mongoTemplate.find(query, BookMongo.class);
-        return bookList.stream()
-                .map(bookMapper::toBook)
-                .collect(Collectors.toList());
+        List<Book> bookList = mongoTemplate.find(query, Book.class);
+        return bookList;
 
     }
 
     @Override
     public Book save(Book book) {
-        mongoTemplate.save(bookMapper.toBookMongo(book));
+        mongoTemplate.save(book);
         return book;
     }
 
     @Override
     public void delete(Book book) {
-        mongoTemplate.remove(bookMapper.toBookMongo(book));
+        mongoTemplate.remove(book);
     }
 
     @Override
@@ -92,38 +87,30 @@ public class NoSQLBookRepository implements BookRepository {
                 Aggregation.limit(x)
         );
 
-        AggregationResults<BookMongo> results = mongoTemplate.aggregate(aggregation, Genre.class, BookMongo.class);
+        AggregationResults<Book> results = mongoTemplate.aggregate(aggregation, Genre.class, Book.class);
 
-        return results.getMappedResults().stream()
-                .map(bookMapper::toBook)
-                .collect(Collectors.toList());
+        return results.getMappedResults();
     }
 
     @Override
     public List<Book> findByTitle(String title) {
         Query query = new Query(Criteria.where("title.title").regex(title, "i"));
-        List<BookMongo> bookList = mongoTemplate.find(query, BookMongo.class);
-        return bookList.stream()
-                .map(bookMapper::toBook)
-                .collect(Collectors.toList());
+        List<Book> bookList = mongoTemplate.find(query, Book.class);
+        return bookList;
     }
 
     @Override
     public List<Book> findByAuthorName(String authorName) {
         Query query = new Query(Criteria.where("authors.name").regex(authorName, "i"));
-        List<BookMongo> bookList = mongoTemplate.find(query, BookMongo.class);
-        return bookList.stream()
-                .map(bookMapper::toBook)
-                .collect(Collectors.toList());
+        List<Book> bookList = mongoTemplate.find(query, Book.class);
+        return bookList;
     }
 
     @Override
     public List<Book> findBooksByAuthorNumber(Long authorNumber) {
         Query query = new Query(Criteria.where("authors.authorNumber").is(authorNumber));
-        List<BookMongo> bookList = mongoTemplate.find(query, BookMongo.class);
-        return bookList.stream()
-                .map(bookMapper::toBook)
-                .collect(Collectors.toList());
+        List<Book> bookList = mongoTemplate.find(query, Book.class);
+        return bookList;
     }
 
     @Override
@@ -143,10 +130,8 @@ public class NoSQLBookRepository implements BookRepository {
         mongoQuery.with(Sort.by(Sort.Order.asc("title")));
         mongoQuery.skip((page.getNumber() - 1) * page.getLimit()).limit(page.getLimit());
 
-        List<BookMongo> bookList = mongoTemplate.find(mongoQuery, BookMongo.class);
+        List<Book> bookList = mongoTemplate.find(mongoQuery, Book.class);
 
-        return bookList.stream()
-                .map(bookMapper::toBook)
-                .collect(Collectors.toList());
+        return bookList;
     }
 }

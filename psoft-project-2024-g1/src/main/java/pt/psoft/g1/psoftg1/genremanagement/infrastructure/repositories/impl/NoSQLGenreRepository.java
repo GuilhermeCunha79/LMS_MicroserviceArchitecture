@@ -46,7 +46,7 @@ public class NoSQLGenreRepository implements GenreRepository {
 
     @Override
     public Genre save(Genre genre) {
-        mongoTemplate.save(genreMapper.toGenreMongo(genre));
+        mongoTemplate.save(genre);
         return genre;
     }
 
