@@ -10,6 +10,7 @@ import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
+import pt.psoft.g1.psoftg1.shared.model.Generator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.Objects;
 public class Book extends EntityWithPhoto {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    long pk;
+    Long pk;
 
     @Version
     @Getter
@@ -63,6 +64,7 @@ public class Book extends EntityWithPhoto {
     public String getDescription(){ return this.description.toString(); }
 
     public Book(String isbn, String title, String description, Genre genre, List<Author> authors, String photoURI) {
+        this.pk= Generator.generateLongID();
         setTitle(title);
         setIsbn(isbn);
         if(description != null)

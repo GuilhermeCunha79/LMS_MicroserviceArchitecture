@@ -46,12 +46,12 @@ public class LendingServiceImpl implements LendingService {
                               @Value("${book.repository.type}") String bookRepositoryType,
                               ApplicationContext context,
                               @Value("${lending.repository.type}") String lendingRepositoryType,
-                              FineRepository fineRepository, ReaderRepository readerRepository,
+                              @Value("${fine.repository.type}") String fineRepositoryType,
                               LendingFactory lendingFactory, @Value("${universal.lendingRecommendation.algorithm}") String beanContext) {
         this.readerRepository = context.getBean(readerRepositoryType, ReaderRepository.class);
         this.lendingFactory = lendingFactory;
         this.lendingRepository = context.getBean(lendingRepositoryType, LendingRepository.class);
-        this.fineRepository = fineRepository;
+        this.fineRepository = context.getBean(fineRepositoryType, FineRepository.class);
         this.bookRepository = context.getBean(bookRepositoryType, BookRepository.class);
         this.lendingRecommendation = context.getBean(beanContext, LendingRecommendation.class);
     }

@@ -5,8 +5,10 @@ import static java.lang.String.format;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -67,6 +69,11 @@ public class SecurityConfig {
 
     @Value("${springdoc.swagger-ui.path}")
     private String swaggerPath;
+
+    @Autowired
+    public SecurityConfig(@Value("${user.repository.type}") String userRepository, ApplicationContext context){
+        this.userRepo = context.getBean(userRepository, UserRepository.class);
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(final UserDetailsService userDetailsService,

@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 public class Author extends EntityWithPhoto {
     @Id
-    //@GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "AUTHOR_NUMBER")
     @Setter
     @Getter

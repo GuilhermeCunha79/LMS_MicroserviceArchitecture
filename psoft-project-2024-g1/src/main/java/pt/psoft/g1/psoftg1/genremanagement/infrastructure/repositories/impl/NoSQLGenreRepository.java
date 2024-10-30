@@ -46,7 +46,7 @@ public class NoSQLGenreRepository implements GenreRepository {
 
     @Override
     public Genre save(Genre genre) {
-        mongoTemplate.save(genre);
+        mongoTemplate.save(genreMapper.toGenreMongo(genre));
         return genre;
     }
 
@@ -70,7 +70,6 @@ public class NoSQLGenreRepository implements GenreRepository {
         Query query = new Query(Criteria.where("genre").is(genreName));
         List<Genre> list = mongoTemplate.find(query, Genre.class);
 
-        // Verifica se a lista possui algum elemento antes de tentar acessá-lo
         return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
 

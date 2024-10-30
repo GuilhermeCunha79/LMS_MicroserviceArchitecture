@@ -32,6 +32,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -47,6 +48,7 @@ import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
  */
 @Component("userJpa")
 @CacheConfig(cacheNames = "users")
+@Primary
 public class RelationalUserRepository implements UserRepository {
 
     private final EntityManager entityManager;

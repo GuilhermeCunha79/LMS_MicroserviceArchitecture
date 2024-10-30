@@ -28,7 +28,7 @@ import java.util.List;
 public class LendingRecommendation1Impl implements LendingRecommendation {
 
     private final BookRepository bookRepository;
-    private LendingRepository lendingRepository;
+    private final LendingRepository lendingRepository;
     private final ReaderRepository readerRepository;
     @Value("${fineValuePerDayInCents}")
     private int fineValuePerDayInCents;

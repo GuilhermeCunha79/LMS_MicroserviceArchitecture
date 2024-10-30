@@ -14,7 +14,6 @@ import pt.psoft.g1.psoftg1.shared.model.Generator;
 
 @Document(collection = "genre")
 @Data
-@NoArgsConstructor
 public class GenreMongo {
 
     @Id
