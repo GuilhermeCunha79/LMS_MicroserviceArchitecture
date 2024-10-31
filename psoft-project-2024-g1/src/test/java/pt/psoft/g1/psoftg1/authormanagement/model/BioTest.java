@@ -1,11 +1,18 @@
 package pt.psoft.g1.psoftg1.authormanagement.model;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BioTest {
+    private Bio bio;
+
+    @BeforeEach
+    public void setUp() {
+        bio = new Bio();
+    }
+
 
     @Test
     void ensureBioMustNotBeNull() {
@@ -40,6 +47,15 @@ public class BioTest {
                 "Vestibulum quis mi at lorem laoreet bibendum eu porta magna. Etiam vitae metus a sapien sagittis dapibus et et ex. Vivamus sed vestibulum nibh. Etiam euismod odio massa, ac feugiat urna congue ac. Phasellus leo quam, lacinia at elementum vitae, viverra quis ligula. Quisque ultricies tellus nunc, id ultrices risus accumsan in. Vestibulum orci magna, mollis et vehicula non, bibendum et magna. Pellentesque ut nibh quis risus dignissim lacinia sed non elit. Morbi eleifend ipsum posuere velit sollicitudin, quis auctor urna ullamcorper. Praesent pellentesque non lacus eu scelerisque. Praesent quis eros sed orci tincidunt maximus. Quisque imperdiet interdum massa a luctus. Phasellus eget nisi leo.\n" +
                 "\n" +
                 "Nunc porta nisi eu dui maximus hendrerit eu quis est. Cras molestie lacus placerat, maximus libero hendrerit, eleifend nisi. Suspendisse potenti. Praesent nec mi ut turpis pharetra pharetra. Phasellus pharetra. "));
+    }
+
+    @Test
+    public void testSetBio__DoesNotThrowException() {
+        String longBio = "A".repeat(4096);
+        assertDoesNotThrow(() -> {
+            bio.setBio(longBio);
+        });
+        assertEquals(longBio, bio.getBio());
     }
 
     @Test

@@ -20,6 +20,7 @@
  */
 package pt.psoft.g1.psoftg1.auth.api;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
@@ -37,6 +38,7 @@ import lombok.NoArgsConstructor;
 public class AuthRequest {
 	@NotNull
 	@Email
+	@Nullable
 	private String username;
 
 	@NotNull

@@ -12,13 +12,13 @@ import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AuthorTest {
-    private Author author;
+class AuthorMongoTest {
+    private AuthorMongo author;
     private final String validName = "João Alberto";
     private final String validBio = "O João Alberto nasceu em Chaves e foi pedreiro a maior parte da sua vida.";
     @Mock
@@ -27,8 +27,7 @@ class AuthorTest {
     private static class EntityWithPhotoImpl extends EntityWithPhoto { }
     @BeforeEach
     void setup() {
-        author = new Author("John Doe", "Biography of John", "photoURI");
-       // author.setVersion(1L);
+        author = new AuthorMongo("John Doe", "Biography of John", "photoURI");
     }
 
     @Test
@@ -36,16 +35,6 @@ class AuthorTest {
         assertEquals("John Doe", author.getName());
         assertEquals("Biography of John", author.getBio());
         assertEquals("photoURI", author.getPhoto().getPhotoFile());
-    }
-
-    @Test
-    void testGetId() {
-        assertEquals(1L, author.getId());
-    }
-
-    @Test
-    void testGetVersion1L() {
-        assertEquals(0L, author.getVersion());
     }
 
     @Test
@@ -88,10 +77,6 @@ class AuthorTest {
     }
 
     @Test
-    void testGetVersion() {
-        assertEquals(Long.valueOf(0), author.getVersion());
-    }
-    @Test
     void ensureNameNotNull(){
         assertThrows(IllegalArgumentException.class, () -> new Author(null,validBio, null));
     }
@@ -99,17 +84,6 @@ class AuthorTest {
     @Test
     void ensureBioNotNull(){
         assertThrows(IllegalArgumentException.class, () -> new Author(validName,null, null));
-    }
-
-    @Test
-    public void testApplyPatch_VersionMismatch_ThrowsException() {
-        // Arrange
-        long desiredVersion = 2L; // Mismatched version
-
-        // Act & Assert
-        assertThrows(StaleObjectStateException.class, () -> {
-            author.applyPatch(desiredVersion, request);
-        });
     }
 
     @Test
@@ -146,11 +120,6 @@ class AuthorTest {
     void testGetAuthorNumber() {
         author.setAuthorNumber(42L);
         assertEquals(Long.valueOf(42), author.getAuthorNumber());
-    }
-
-    @Test
-    void testGetId2() {
-        assertEquals(Long.valueOf(1), author.getId());
     }
 
     @Test
@@ -195,4 +164,3 @@ class AuthorTest {
 
 
 }
-

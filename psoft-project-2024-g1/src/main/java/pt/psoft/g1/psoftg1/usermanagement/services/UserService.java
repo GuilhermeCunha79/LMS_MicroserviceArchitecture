@@ -55,17 +55,17 @@ public class UserService implements UserDetailsService {
 
 	private final UserRepository userRepo;
 	private final EditUserMapper userEditMapper;
-
 	private final ForbiddenNameRepository forbiddenNameRepository;
-
 	private final PasswordEncoder passwordEncoder;
+	private final UserIAM userIam;
 
 	@Autowired
 	public UserService(@Value("${user.repository.type}") String userRepositoryType, ApplicationContext context,
-					   EditUserMapper userEditMapper, ForbiddenNameRepository forbiddenNameRepository, PasswordEncoder passwordEncoder){
+					   EditUserMapper userEditMapper, ForbiddenNameRepository forbiddenNameRepository, PasswordEncoder passwordEncoder, @Value("${user.iam.type}") String userIamType){
 		this.userEditMapper = userEditMapper;
 		this.forbiddenNameRepository = forbiddenNameRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.userIam = context.getBean(userIamType, UserIAM.class);;
 		this.userRepo=context.getBean(userRepositoryType, UserRepository.class);
 
 	}
@@ -74,6 +74,10 @@ public class UserService implements UserDetailsService {
 		return this.userRepo.findByNameName(name);
 	}
 	public List<User> findByNameLike(String name) { return this.userRepo.findByNameNameContains(name); }
+
+	public User loginIam(String iam){
+		return userIam.authentication(iam).get();
+	}
 
 	@Transactional
 	public User create(final CreateUserRequest request) {
@@ -109,6 +113,8 @@ public class UserService implements UserDetailsService {
 
 		return userRepo.save(user);
 	}
+
+
 
 	@Transactional
 	public User update(final Long id, final EditUserRequest request) {

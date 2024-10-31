@@ -5,6 +5,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
 import lombok.Setter;
 import pt.psoft.g1.psoftg1.shared.model.StringUtilsCustom;
 
@@ -14,6 +15,7 @@ public class Bio {
     @Column(nullable = false, length = 4096)
     @NotNull
     @Size(min = 1, max = 4096)
+    @Getter
     private String bio;
 
     public Bio(String bio) {

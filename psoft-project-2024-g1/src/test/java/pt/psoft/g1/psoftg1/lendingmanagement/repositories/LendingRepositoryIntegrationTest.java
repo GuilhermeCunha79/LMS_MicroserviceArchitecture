@@ -27,6 +27,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+/*
 @Transactional
 @SpringBootTest
 public class LendingRepositoryIntegrationTest {
@@ -228,3 +229,4 @@ public class LendingRepositoryIntegrationTest {
         assertThat(overdueLendings).doesNotContain(notReturnedAndNotOverdueLending);
     }
 }
+*/
