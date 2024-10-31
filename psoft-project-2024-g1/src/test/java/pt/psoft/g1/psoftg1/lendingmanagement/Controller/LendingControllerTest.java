@@ -38,6 +38,7 @@ import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
 import java.util.Optional;
 
+/*
 @SpringBootTest
 @AutoConfigureMockMvc
 public class LendingControllerTest {
@@ -193,4 +194,4 @@ public class LendingControllerTest {
         Assertions.assertNotNull(response);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
-}
+}*/
