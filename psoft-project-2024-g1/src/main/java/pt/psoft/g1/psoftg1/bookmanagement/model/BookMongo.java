@@ -5,6 +5,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import lombok.Getter;
@@ -29,7 +30,7 @@ import java.util.Objects;
 
 @Document(collection = "book")
 @Data
-public class BookMongo extends EntityWithPhoto {
+public class  BookMongo extends EntityWithPhoto {
 
     @Id
     @Field(targetType = FieldType.INT64, name = "pk")
@@ -43,6 +44,7 @@ public class BookMongo extends EntityWithPhoto {
     private String isbn;
 
     @Field(name = "title")
+    @NotNull
     private String title;
 
     @Field(name = "description")

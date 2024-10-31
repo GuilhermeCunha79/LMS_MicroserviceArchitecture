@@ -24,7 +24,7 @@ public class ReaderNumber implements Serializable {
         this.readerNumber = number;
     }
 
-    private void setReaderNumber(String number) {
+    void setReaderNumber(String number) {
         this.readerNumber = LocalDate.now().getYear() + "/" + number;
     }
 

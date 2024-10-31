@@ -82,7 +82,6 @@ public class UserMongo implements UserDetails {
         // for ORM only
     }
 
-    @PersistenceConstructor
     public UserMongo(final String username, final String password) {
         this.id = Generator.generateLongID(); // Se você usar String, pode usar UUID.randomUUID().toString()
         this.username = username;

@@ -52,6 +52,7 @@ public class ReaderDetails extends EntityWithPhoto {
 
     @Version
     @Getter
+    @Setter
     private Long version;
 
     @Getter

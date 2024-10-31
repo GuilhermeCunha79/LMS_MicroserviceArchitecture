@@ -96,6 +96,10 @@ public class LendingMongo {
         this.returnedDate = LocalDate.now();
     }
 
+    public String getTitle(){
+        return this.book.getTitle().toString();
+    }
+
     public void setCommentary(final String commentary) {
         if (commentary != null)
             this.commentary = commentary;
