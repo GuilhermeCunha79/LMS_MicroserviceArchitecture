@@ -172,13 +172,13 @@ Git is a distributed version-control system for tracking changes in source code 
 | QA-8        | High                       | High                         |
 | QA-9        | High                       | High                         |
 
-| Category                        | Details                                                                                                                                                              |
-|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Design Purpose                  | A greenfield system from a mature domain is to be developed and it is necessary to produce a sufficiently detailed design to support the construction of the system. |
-| Primary functional requirements | UC1, UC2, UC3, UC5, UC6, UC7, UC9, UC10, UC11, UC13, UC14, UC15,                                                                                                     |
-| Quality Attribute scenarios     | QA-1, QA-2, QA-3, QA-4, QA-7, QA-9                                                                                                                                   |
-| Constraints                     | All of the constraints previously presented are included as drivers                                                                                                  |
-| Architectural concerns          | All of the architectural concerns previously presented are included as drivers                                                                                       |
+| Category                        | Details                                                                                                                                                   |
+|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Design Purpose                  | A system from a mature domain is to be developed and it is necessary to produce a sufficiently detailed design to support the construction of the system. |
+| Primary functional requirements | UC1, UC2, UC3, UC5, UC6, UC7, UC9, UC10, UC11, UC13, UC14, UC15,                                                                                          |
+| Quality Attribute scenarios     | QA-1, QA-2, QA-3, QA-4, QA-7, QA-9                                                                                                                        |
+| Constraints                     | All of the constraints previously presented are included as drivers                                                                                       |
+| Architectural concerns          | All of the architectural concerns previously presented are included as drivers                                                                            |
 
 ### Step 2 Establish Iteration Goal by selecting drivers
 
@@ -234,7 +234,7 @@ The design concepts proposed are the following:
 |-----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Rich Internet Application (RIA)   | This reference architecture supports developing a rich user interface that runs within a web browser, providing a highly interactive experience. It also allows for easy upgrades and supports complex front-end functionalities.       |
 
-![ServiceApplicationArchitecture.png](ADD/Iteration1/diagrams/ServiceApplicationArchiteture.png)
+![ServiceApplicationArchitecture.png](Imagens/ServiceApplicationArchiteture.png)
 
 
 
@@ -249,10 +249,10 @@ The design concepts proposed are the following:
 
 #### Other Concepts
 
-| Design Decisions and Location | Rationale                                                                                                                                                                                                                         |
-|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Java Spring Framework for Backend Development | Spring Boot and Spring Data are selected for backend development. Spring Boot´s dependency injection supports Onion architecture, enabling modular and maintainable service layers. Spring Data provides flexible integration with relational and non-relational databases. |
-| JWT with Spring Security for Authentication and Authorization | Spring Security with JWT provides secure and scalable authentication. This approach ensures robust security for API endpoints across services, aligning with non-functional requirements. |
+| Design Decisions and Location                                 | Rationale                                                                                                                                                                                                                                                                   |
+|---------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Java Spring Framework for Backend Development                 | Spring Boot and Spring Data are selected for backend development. Spring Boot´s dependency injection supports Onion architecture, enabling modular and maintainable service layers. Spring Data provides flexible integration with relational and non-relational databases. |
+| JWT with Spring Security for Authentication and Authorization | Spring Security with JWT provides secure and scalable authentication. This approach ensures robust security for API endpoints across services, aligning with non-functional requirements.                                                                                   |
 
 ### Step 5 Instantiate architectural elements, allocate responsibilities, and define interfaces
 
@@ -297,5 +297,124 @@ The architect must analyze the current design and review the iteration goal and 
 |               | CON-1               |                      | The system will be developed in Java, using the Spring Boot framework                                                                                                                   |
 |               | CON-2               |                      | The system will support relational databases, specifically H2, Oracle, and MS SQL Server, as well as document database MongoDB                                                          |
 | CRN-4         |                     |                      | No relevant decisions were made                                                                                                                                                         |
-|               | CRN-6               |                      | Technologies that have been considered up to this point takee into account the knowledge of the developers                                                                              |
+|               | CRN-6               |                      | Technologies that have been considered up to this point take into account the knowledge of the developers                                                                               |
+
+# Iteration 2
+
+### Step 2  Establish iteration goal by selecting drivers
+
+In this step the team will address the general architectural concern of identifying structures to support primary functionality.
+
+In this second iteration, the following system´s primary use cases were considered:
+
+* UC1
+* UC2
+* UC3
+* UC5
+* UC6
+* UC7
+* UC9
+* UC10
+* UC11
+* UC13
+* UC14
+* UC15
+
+### Step 3 Choose elements of the system to refine
+
+In this iteration the elements to be refined are the modules located in the different layers defined by the reference architecture from the previous iteration. In general, the support of functionality in this system requires the collaboration of components associated with modules that are located in the different layers.
+
+### Step 4 Choose one or more design concepts that satisfy the selected drivers
+
+Given the iteration goal selected drivers in Step 2, it is necessary to define which design concepts will be taken in account to realize the elements to refine selected in Step 3. The design concepts proposed are the following:
+
+| Design Decisions and Location                                    | Rationale                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Create a Domain Model for the application                        | Before starting a functional decomposition, it is necessary to create an initial domain model for the system, identifying the major entities in the domainn, along with their relationships. A domain model must eventually be created, or it will emerge in a suboptimal fashion, leadingto an hoc architecture that is hard to understandand maintain                                                                                                                         |
+| Identity Domain Objects that map to functional requirements      | Each distinct functional element of the application needs to be encapsulated in a self-contained building block -a domain object. One possivel alternative is to not considered domain objectsand instead directly decompose layers into modules, but this increases the risk of not considering a requirement                                                                                                                                                                  |
+| Decompose Domain Objects into general and specialized Components | Domain objects represent complete sets of functionalities, Objects into general but this functionality is supported by ffiner-grained elements and specialized located within the layers. The "components" in this pattern Components are what we have referred to as modules. Specialization of modules is associated with the layers where they are located (e.g. UI modules). There are no good alternatives to decomposing the layers into modules to support functionality |
+| Use Spring Framework                                             | Spring is a widely used framework to support enterprise application development                                                                                                                                                                                                                                                                                                                                                                                                 |
+| Use Postman                                                      | Since there is no requirement for a frontend, Postman will be used to communicate with the prototype API                                                                                                                                                                                                                                                                                                                                                                        |
+
+### Step 5 Instantiate architectural elements, allocate responsibilities, and define interfaces
+
+| Design Decisions and Location                                                                                | Rationale                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+|--------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Create the domain model                                                                                      | The domain model will be created to identify the major entities in the domain, along with their relationships. This will help to understand the domain and support the functional decomposition of the system.                                                                                                                                                                                                                              |
+| Elaborate use cases by actors                                                                                | To establish actors and their responsibilities it is necessary to map the use cases being addressed by their actors                                                                                                                                                                                                                                                                                                                         |
+| Map the system use cases to domain objects                                                                   | An initial identification of domain objects can be made by analyzing the system´s use cases                                                                                                                                                                                                                                                                                                                                                 |
+| Decompose the domain objects across the layers to identify layer-specific modules with an explicit interface | This technique ensures that modules that support all the functionalities are identified. The architect will perform this task just for the primary use cases. This allows another team member to identify the rest of the modules, thereby allocating work among team members. Having established the set of modules, the architect realizes the need to test these modules. To test these modules JUnit will be used to perform unit tests |
+| Connect components associated with modules using Spring                                                      | This framework uses an inversion of control approach that allows different aspects to be supported and the modules to be unit tested. To test the modules, JUnit will be used to perform unit tests                                                                                                                                                                                                                                         |
+| Map domain model using DDD                                                                                   | This help understanding how DDD should be applied in LMS                                                                                                                                                                                                                                                                                                                                                                                    |
+| Elaborate LMS REST API                                                                                       | To explicit the specifications of the produced functionalities so consumers can understand how requests and responses are performed and structured                                                                                                                                                                                                                                                                                          |
+| Explicit sequence of REST API functionalities in LMS component                                               | To understand the flux of each module interaction each time a functionality is requested                                                                                                                                                                                                                                                                                                                                                    |
+
+### Step 6 Sketch views and record design decisions
+
+**Domain Model**
+
+**Class Diagram**
+
+**DDD**
+
+**Component Diagram**
+
+**Sequence Diagram**
+
+![VP-N3-CreateReader](Imagens/VP-N3-CreateReader.svg)
+
+![VP-N3-UpdatePersonal Data](Imagens/VP-N3-UpdatePersonalData.svg)
+
+**Use Case Diagram**
+
+**Responsibility Table for Defined Elements**
+
+| Element        | Responsibility                                                          |
+|----------------|-------------------------------------------------------------------------|
+| Repository     | To provide a CRUD interface for the domain objects                      |
+| RepositoryImpl | Represents the implementation of a Repository                           |
+| Model          | Produces an interface that explicits model objects functionalities      |
+| View           | Produces an interface that explicits view objects functionalities       |
+| Controller     | Produces an interface that explicits controller objects functionalities |
+| DomainEntities | Contains the entities from the domain model ( server side )             |
+
+### Step 7 Perform analysis of current design and review iteration goal and achievements of design purpose
+
+LMS was designed architecturally in a fine-grain view, which allowed the team to understand how each component units were being integrated.
+A domain model was created to identify the major entities in the domain, along with their relationships. This helped to understand the domain and support the functional decomposition of the system.
+A class diagram for the models that represent this business concepts was created, allowing the representation of the domain model in a more detailed way.
+The DDD was applied to the domain model, allowing the team to understand how the domain model should be structured.
+
+The following table represents design decisions made during the iteration:
+
+| Not Addressed | Partially Addressed | Completely Addressed                                                  | Design Decisions made during the Iteration                                                                                                                                                         |
+|---------------|---------------------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|               |                     | UC1, UC2, UC3, UC5, UC6, UC7, UC9, UC10, UC11, UC12, UC13, UC14 ,UC15 | Modules across the layers                                                                                                                                                                          |
+|               |                     | QA-1                                                                  | Domain model was created to identify the major entities in the domain, along with their relationships. This helped to understand the domain and support the functional decomposition of the system |
+|               |                     | QA-2                                                                  | No important decisions was made. Spring Security with JWT was chosen to ensure secure authentication and authorization                                                                             |
+|               |                     | QA-3                                                                  | Modules across the layers support thee using of HTTP                                                                                                                                               |
+|               | QA-4                |                                                                       | No important decisions were made                                                                                                                                                                   |
+| QA-7          |                     |                                                                       | No important decisions were made                                                                                                                                                                   |
+|               | QA-9                |                                                                       | No important decisions were made                                                                                                                                                                   |
+|               | CON-2               |                                                                       | No important decisions were made                                                                                                                                                                   |
+| CRN-4         |                     |                                                                       | No relevant decisions were made                                                                                                                                                                    |
+|               | CRN-6               |                                                                       | No relevant decisions were made                                                                                                                                                                    |
+
+# Iteration 3 
+
+
+### Step 2 Establish iteration goal by selecting drivers
+
+In this third iteration the following system’s drivers were considered:
+
+* Support the QA-2 quality attribute scenario (“The prototype requires authorization and authentication”)
+* Support the QA-4 quality attribute scenario ("Each component should be tested independently and within system workflows")
+* Support the QA-7 quality attribute scenario ("All authenticated requests use JWT")
+* Support the QA-9 quality attribute scenario ("Runtime support for multiple data models and IAM providers")
+* Support the CRN-4 architectural concern scenario ("Input Validation.")
+
+### Step 3 Choose elements of the system to refine
+
+
+
 
