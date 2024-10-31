@@ -1,4 +1,4 @@
-/*
+package pt.psoft.g1.psoftg1.auth.api;/*
 package pt.psoft.g1.psoftg1.auth.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,14 +22,36 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 */
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.net.HttpHeaders;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import pt.psoft.g1.psoftg1.testutils.JsonHelper;
+import pt.psoft.g1.psoftg1.testutils.UserTestDataFactory;
+import pt.psoft.g1.psoftg1.usermanagement.api.UserView;
+import pt.psoft.g1.psoftg1.usermanagement.services.CreateUserRequest;
+
+import static java.lang.System.currentTimeMillis;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 /**
  * Based on https://github.com/Yoh0xFF/java-spring-security-example
  *
- *//*
+ */
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class TestAuthApi {
+class AuthApiTest {
 
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
@@ -38,7 +60,7 @@ class TestAuthApi {
     private final String password = "Test12345_";
 
     @Autowired
-    public TestAuthApi(final MockMvc mockMvc, final ObjectMapper objectMapper,
+    public AuthApiTest(final MockMvc mockMvc, final ObjectMapper objectMapper,
                        final UserTestDataFactory userTestDataFactory) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
@@ -46,7 +68,7 @@ class TestAuthApi {
     }
 
     @Test
-    void testLoginSuccess() throws Exception {
+    public void testLoginSuccess() throws Exception {
         final UserView userView = userTestDataFactory
                 .createUser(String.format("test.user.%d@nix.io", currentTimeMillis()), "Test User", password);
 
@@ -63,7 +85,7 @@ class TestAuthApi {
     }
 
     @Test
-    void testLoginFail() throws Exception {
+    public void testLoginFail() throws Exception {
         final UserView userView = userTestDataFactory
                 .createUser(String.format("test.user.%d@nix.io", currentTimeMillis()), "Test User", password);
 
@@ -77,7 +99,7 @@ class TestAuthApi {
     }
 
     @Test
-    void testRegisterSuccess() throws Exception {
+    public void testRegisterSuccess() throws Exception {
         final CreateUserRequest goodRequest = new CreateUserRequest(
                 String.format("test.user.%d@nix.com", currentTimeMillis()), "Test User A", password);
 
@@ -92,7 +114,7 @@ class TestAuthApi {
     }
 
     @Test
-    void testRegisterFail() throws Exception {
+    public void testRegisterFail() throws Exception {
         final CreateUserRequest badRequest = new CreateUserRequest("invalid.username", "", "");
 
         this.mockMvc
@@ -101,4 +123,4 @@ class TestAuthApi {
                 .andExpect(status().isBadRequest()).andExpect(content().string(containsString("must not be blank")));
     }
 
-}*/
+}

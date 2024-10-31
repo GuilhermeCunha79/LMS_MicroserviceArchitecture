@@ -1,12 +1,15 @@
 package pt.psoft.g1.psoftg1.authormanagement.services;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.model.generateID.AuthorIDService;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
@@ -17,12 +20,25 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
+
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
     private final AuthorMapper mapper;
     private final PhotoRepository photoRepository;
+    private final AuthorIDService authorIDService;
+
+
+    @Autowired
+    public AuthorServiceImpl(
+            @Value("${author.repository.type}") String authorRepositoryType, @Value("${book.repository.type}") String bookRepositoryType,
+            ApplicationContext context, AuthorMapper mapper, PhotoRepository photoRepository, @Value("${universal.generateID}") String generateId) {
+        this.bookRepository = context.getBean(bookRepositoryType, BookRepository.class);
+        this.mapper = mapper;
+        this.photoRepository = photoRepository;
+        this.authorRepository = context.getBean(authorRepositoryType, AuthorRepository.class);
+        this.authorIDService = context.getBean(generateId, AuthorIDService.class);
+    }
 
     @Override
     public Iterable<Author> findAll() {
@@ -55,17 +71,18 @@ public class AuthorServiceImpl implements AuthorService {
 
         MultipartFile photo = resource.getPhoto();
         String photoURI = resource.getPhotoURI();
-        if(photo == null && photoURI != null || photo != null && photoURI == null) {
+        if (photo == null && photoURI != null || photo != null && photoURI == null) {
             resource.setPhoto(null);
             resource.setPhotoURI(null);
         }
         final Author author = mapper.create(resource);
+        author.setAuthorNumber(authorIDService.generateAuthorID());
         return authorRepository.save(author);
     }
 
     @Override
     public Author partialUpdate(final Long authorNumber, final UpdateAuthorRequest request, final long desiredVersion) {
-        // first let's check if the object exists so we don't create a new object with
+        // first let's check if the object exists, so we don't create a new object with
         // save
         final var author = findByAuthorNumber(authorNumber)
                 .orElseThrow(() -> new NotFoundException("Cannot update an object that does not yet exist"));
@@ -83,7 +100,7 @@ public class AuthorServiceImpl implements AuthorService {
 
         MultipartFile photo = request.getPhoto();
         String photoURI = request.getPhotoURI();
-        if(photo == null && photoURI != null || photo != null && photoURI == null) {
+        if (photo == null && photoURI != null || photo != null && photoURI == null) {
             request.setPhoto(null);
             request.setPhotoURI(null);
         }
@@ -96,14 +113,15 @@ public class AuthorServiceImpl implements AuthorService {
         // this updated object
         return authorRepository.save(author);
     }
+
     @Override
     public List<AuthorLendingView> findTopAuthorByLendings() {
-        Pageable pageableRules = PageRequest.of(0,5);
+        Pageable pageableRules = PageRequest.of(0, 5);
         return authorRepository.findTopAuthorByLendings(pageableRules).getContent();
     }
 
     @Override
-    public List<Book> findBooksByAuthorNumber(Long authorNumber){
+    public List<Book> findBooksByAuthorNumber(Long authorNumber) {
         return bookRepository.findBooksByAuthorNumber(authorNumber);
     }
 
@@ -111,6 +129,7 @@ public class AuthorServiceImpl implements AuthorService {
     public List<Author> findCoAuthorsByAuthorNumber(Long authorNumber) {
         return authorRepository.findCoAuthorsByAuthorNumber(authorNumber);
     }
+
     @Override
     public Optional<Author> removeAuthorPhoto(Long authorNumber, long desiredVersion) {
         Author author = authorRepository.findByAuthorNumber(authorNumber)

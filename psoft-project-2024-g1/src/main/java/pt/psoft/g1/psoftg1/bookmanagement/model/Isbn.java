@@ -13,7 +13,6 @@ import java.io.Serializable;
 public class Isbn implements Serializable {
     @Size(min = 10, max = 13)
     @Column(name="ISBN", length = 16)
-
     String isbn;
 
     public Isbn(String isbn) {

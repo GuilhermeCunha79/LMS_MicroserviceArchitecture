@@ -1,7 +1,10 @@
 package pt.psoft.g1.psoftg1.bootstrapping;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,18 +33,31 @@ import java.util.Optional;
 @Order(1)
 public class UserBootstrapper implements CommandLineRunner {
 
+
     private final UserRepository userRepository;
     private final ReaderRepository readerRepository;
     private final GenreRepository genreRepository;
     private final JdbcTemplate jdbcTemplate;
     private List<String> queriesToExecute = new ArrayList<>();
 
+    @Autowired
+    public UserBootstrapper(@Value("${user.repository.type}") String userRepository,
+                            @Value("${reader.repository.type}") String readerRepository,
+                            ApplicationContext context, @Value("${genre.repository.type}") String genreRepository
+            , JdbcTemplate jdbcTemplate) {
+        this.userRepository = context.getBean(userRepository, UserRepository.class);
+        this.readerRepository = context.getBean(readerRepository, ReaderRepository.class);
+        this.genreRepository = context.getBean(genreRepository, GenreRepository.class);
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Override
     @Transactional
-    public void run(final String... args)  {
+    public void run(final String... args) {
         createReaders();
         createLibrarian();
         executeQueries();
+        System.out.println("OLAAAAAAAAAAAAAAAAAA");
     }
 
     private void createReaders() {
@@ -51,20 +67,20 @@ public class UserBootstrapper implements CommandLineRunner {
             userRepository.save(manuel);
 
             //String dateFormat = LocalDateTime.of(LocalDate.of(2024, 1, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String dateFormat = LocalDateTime.of(2024,1,20,0,0,0,0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            String dateFormat = LocalDateTime.of(2024, 1, 20, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
             String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, manuel.getUsername());
             //jdbcTemplate.update(query);
             queriesToExecute.add(query);
 
-            Optional<ReaderDetails> readerDetails1= readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/1");
+            Optional<ReaderDetails> readerDetails1 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/1");
             Optional<Genre> g1 = genreRepository.findByString("Fantasia");
             Optional<Genre> g2 = genreRepository.findByString("Infantil");
             List<Genre> interestList = new ArrayList<>();
-            if(g1.isPresent()) {
+            if (g1.isPresent()) {
                 interestList.add(g1.get());
             }
 
-            if(g2.isPresent()) {
+            if (g2.isPresent()) {
                 interestList.add(g2.get());
             }
 
@@ -255,7 +271,7 @@ public class UserBootstrapper implements CommandLineRunner {
         }
     }
 
-    private void createLibrarian(){
+    private void createLibrarian() {
         // Maria
         if (userRepository.findByUsername("maria@gmail.com").isEmpty()) {
             final User maria = Librarian.newLibrarian("maria@gmail.com", "Mariaroberta!123", "Maria Roberta");

@@ -5,16 +5,17 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 import pt.psoft.g1.psoftg1.shared.model.StringUtilsCustom;
 
 @Embeddable
 public class Bio {
-    @Transient
-    private final int BIO_MAX_LENGTH = 4096;
 
-    @Column(nullable = false, length = BIO_MAX_LENGTH)
+    @Column(nullable = false, length = 4096)
     @NotNull
-    @Size(min = 1, max = BIO_MAX_LENGTH)
+    @Size(min = 1, max = 4096)
+    @Getter
     private String bio;
 
     public Bio(String bio) {
@@ -29,7 +30,7 @@ public class Bio {
             throw new IllegalArgumentException("Bio cannot be null");
         if(bio.isBlank())
             throw new IllegalArgumentException("Bio cannot be blank");
-        if(bio.length() > BIO_MAX_LENGTH)
+        if(bio.length() > 4096)
             throw new IllegalArgumentException("Bio has a maximum of 4096 characters");
         this.bio = StringUtilsCustom.sanitizeHtml(bio);
     }

@@ -1,6 +1,8 @@
 package pt.psoft.g1.psoftg1.bookmanagement.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +29,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
-@PropertySource({"classpath:config/library.properties"})
 public class BookServiceImpl implements BookService {
 
 	private final BookRepository bookRepository;
@@ -40,8 +40,22 @@ public class BookServiceImpl implements BookService {
 	@Value("${suggestionsLimitPerGenre}")
 	private long suggestionsLimitPerGenre;
 
-	@Override
-	public Book create(CreateBookRequest request, String isbn) {
+    @Autowired
+    public BookServiceImpl(@Value("${author.repository.type}") String authorRepositoryType,
+						   @Value("${book.repository.type}") String bookRepositoryType,
+						   @Value("${genre.repository.type}") String genreRepositoryType,
+						   @Value("${reader.repository.type}") String readerRepositoryType,
+						   ApplicationContext context, PhotoRepository photoRepository
+                           ) {
+        this.bookRepository = context.getBean(bookRepositoryType, BookRepository.class);
+        this.genreRepository = context.getBean(genreRepositoryType, GenreRepository.class);
+        this.authorRepository = context.getBean(authorRepositoryType, AuthorRepository.class);
+        this.photoRepository = photoRepository;
+        this.readerRepository = context.getBean(readerRepositoryType, ReaderRepository.class);
+    }
+
+    @Override
+    public Book create(CreateBookRequest request, String isbn) {
 
 		if(bookRepository.findByIsbn(isbn).isPresent()){
 			throw new ConflictException("Book with ISBN " + isbn + " already exists");

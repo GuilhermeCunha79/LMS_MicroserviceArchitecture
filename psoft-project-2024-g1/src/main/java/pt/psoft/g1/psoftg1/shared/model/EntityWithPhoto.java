@@ -6,12 +6,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
 @Getter
 @MappedSuperclass
+@NoArgsConstructor
 public abstract class EntityWithPhoto {
     @Nullable
     @OneToOne(cascade = CascadeType.ALL)
@@ -24,7 +26,7 @@ public abstract class EntityWithPhoto {
         this.setPhotoInternal(photoUri);
     }
 
-    protected void setPhotoInternal(String photoURI) {
+    protected void setPhotoInternal(@Nullable String photoURI) {
         if (photoURI == null) {
             this.photo = null;
         } else {

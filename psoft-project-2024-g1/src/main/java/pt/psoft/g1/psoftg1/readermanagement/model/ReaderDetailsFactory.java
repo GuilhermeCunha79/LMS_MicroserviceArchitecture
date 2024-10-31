@@ -9,7 +9,8 @@ import java.util.List;
 @Component
 public class ReaderDetailsFactory {
 
-    public ReaderDetails create(int readerNumber, Reader reader, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI, List<Genre> interestList) {
+    public static ReaderDetails create(int readerNumber, Reader reader, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI, List<Genre> interestList) {
         return new ReaderDetails(readerNumber, reader, birthDate, phoneNumber,gdpr,marketing,thirdParty,photoURI, interestList);
     }
+
 }

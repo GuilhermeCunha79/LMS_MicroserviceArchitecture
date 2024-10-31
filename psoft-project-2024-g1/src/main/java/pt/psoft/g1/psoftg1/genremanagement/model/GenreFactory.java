@@ -4,7 +4,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GenreFactory {
-    public Genre create(String genre){
+    public static Genre create(String genre){
         return new Genre(genre);
+    }
+
+    public static GenreMongo createMongo(String genre){
+        return new GenreMongo(genre);
     }
 }

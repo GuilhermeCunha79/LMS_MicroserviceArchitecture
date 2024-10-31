@@ -37,6 +37,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pt.psoft.g1.psoftg1.shared.model.Generator;
 import pt.psoft.g1.psoftg1.shared.model.Name;
 
 import lombok.Getter;
@@ -112,7 +113,8 @@ public class User implements UserDetails {
 
 	@ElementCollection
 	@Getter
-	private final Set<Role> authorities = new HashSet<>();
+	@Setter
+	private Set<Role> authorities = new HashSet<>();
 
 	protected User() {
 		// for ORM only
@@ -124,6 +126,7 @@ public class User implements UserDetails {
 	 * @param password
 	 */
 	public User(final String username, final String password) {
+		this.id= Generator.generateLongID();
 		this.username = username;
 		setPassword(password);
 	}

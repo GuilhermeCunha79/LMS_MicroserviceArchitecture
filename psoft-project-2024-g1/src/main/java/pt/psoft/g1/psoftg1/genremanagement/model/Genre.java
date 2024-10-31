@@ -3,12 +3,15 @@ package pt.psoft.g1.psoftg1.genremanagement.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
+import pt.psoft.g1.psoftg1.shared.model.Generator;
 
 @Entity
-@Table
 public class Genre {
     @Transient
-    private final int GENRE_MAX_LENGTH = 100;
+    @Setter
+    @Getter
+    private static final int GENRE_MAX_LENGTH = 100;
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     long pk;
@@ -21,6 +24,7 @@ public class Genre {
     protected Genre(){}
 
     public Genre(String genre) {
+        this.pk= Generator.generateLongID();
         setGenre(genre);
     }
 

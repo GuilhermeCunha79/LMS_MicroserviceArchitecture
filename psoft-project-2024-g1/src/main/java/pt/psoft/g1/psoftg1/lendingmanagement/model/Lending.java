@@ -122,7 +122,7 @@ public class Lending {
      * Constructs a new {@code Lending} object to be persisted in the database.
      * <p>
      * Sets {@code startDate} as the current date, and {@code limitDate} as the current date plus the
-     * business specified number of days a reader can take to return the book ({@link Lending#MAX_DAYS_PER_LENDING}).
+     * business specified number of days a reader can take to return the book
      *
      * @param       book {@code Book} object, which should be retrieved from the database.
      * @param       readerDetails {@code Reader} object, which should be retrieved from the database.
@@ -144,6 +144,8 @@ public class Lending {
         setDaysUntilReturn();
         setDaysOverdue();
     }
+
+
 
     /**
      * <p>Sets {@code commentary} and the current date as {@code returnedDate}.
@@ -169,6 +171,13 @@ public class Lending {
         this.returnedDate = LocalDate.now();
     }
 
+    public void setCommentary(final String commentary){
+
+        if(commentary != null)
+            this.commentary = commentary;
+
+    }
+
     /**
      * <p>Returns the number of days that the lending is/was past its due date</p>
      * @return      If the book was returned on time, or there is still time for it be returned, returns 0.
@@ -182,6 +191,10 @@ public class Lending {
         }else{
             return Math.max((int) ChronoUnit.DAYS.between(this.limitDate, LocalDate.now()), 0);
         }
+    }
+
+    public String getCommentary(){
+        return this.commentary;
     }
 
     private void setDaysUntilReturn(){

@@ -1,14 +1,19 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingView;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingFactory;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.recommendation.LendingRecommendation;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
@@ -23,36 +28,58 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @PropertySource({"classpath:config/library.properties"})
-public class LendingServiceImpl implements LendingService{
+public class LendingServiceImpl implements LendingService {
     private final LendingRepository lendingRepository;
     private final FineRepository fineRepository;
     private final BookRepository bookRepository;
     private final ReaderRepository readerRepository;
+    private final LendingRecommendation lendingRecommendation;
+    private final LendingFactory lendingFactory;
 
     @Value("${lendingDurationInDays}")
     private int lendingDurationInDays;
     @Value("${fineValuePerDayInCents}")
     private int fineValuePerDayInCents;
 
+    @Autowired
+    public LendingServiceImpl(@Value("${reader.repository.type}") String readerRepositoryType,
+                              @Value("${book.repository.type}") String bookRepositoryType,
+                              ApplicationContext context,
+                              @Value("${lending.repository.type}") String lendingRepositoryType,
+                              @Value("${fine.repository.type}") String fineRepositoryType,
+                              LendingFactory lendingFactory, @Value("${universal.lendingRecommendation.algorithm}") String beanContext) {
+        this.readerRepository = context.getBean(readerRepositoryType, ReaderRepository.class);
+        this.lendingFactory = lendingFactory;
+        this.lendingRepository = context.getBean(lendingRepositoryType, LendingRepository.class);
+        this.fineRepository = context.getBean(fineRepositoryType, FineRepository.class);
+        this.bookRepository = context.getBean(bookRepositoryType, BookRepository.class);
+        this.lendingRecommendation = context.getBean(beanContext, LendingRecommendation.class);
+    }
+
     @Override
-    public Optional<Lending> findByLendingNumber(String lendingNumber){
+    public Optional<Lending> findByLendingNumber(String lendingNumber) {
         return lendingRepository.findByLendingNumber(lendingNumber);
     }
 
     @Override
-    public List<Lending> listByReaderNumberAndIsbn(String readerNumber, String isbn, Optional<Boolean> returned){
+    public List<Lending> listByReaderNumberAndIsbn(String readerNumber, String isbn, Optional<Boolean> returned) {
         List<Lending> lendings = lendingRepository.listByReaderNumberAndIsbn(readerNumber, isbn);
-        if(returned.isEmpty()){
+        if (returned.isEmpty()) {
             return lendings;
-        }else{
-            for(int i = 0; i < lendings.size(); i++){
-                if ((lendings.get(i).getReturnedDate() == null) == returned.get()){
+        } else {
+            for (int i = 0; i < lendings.size(); i++) {
+                if ((lendings.get(i).getReturnedDate() == null) == returned.get()) {
                     lendings.remove(i);
                     i--;
                 }
             }
         }
         return lendings;
+    }
+
+    @Override
+    public Iterable<LendingView> generateLendingRecommendations(final CreateLendingRequest resource) {
+        return lendingRecommendation.bookRecommendation(resource);
     }
 
     @Override
@@ -76,8 +103,8 @@ public class LendingServiceImpl implements LendingService{
                 .orElseThrow(() -> new NotFoundException("Book not found"));
         final var r = readerRepository.findByReaderNumber(resource.getReaderNumber())
                 .orElseThrow(() -> new NotFoundException("Reader not found"));
-        int seq = lendingRepository.getCountFromCurrentYear()+1;
-        final Lending l = new Lending(b,r,seq, lendingDurationInDays, fineValuePerDayInCents );
+        int seq = lendingRepository.getCountFromCurrentYear() + 1;
+        final Lending l = LendingFactory.create(b, r, seq, lendingDurationInDays, fineValuePerDayInCents);
 
         return lendingRepository.save(l);
     }
@@ -90,7 +117,7 @@ public class LendingServiceImpl implements LendingService{
 
         lending.setReturned(desiredVersion, resource.getCommentary());
 
-        if(lending.getDaysDelayed() > 0){
+        if (lending.getDaysDelayed() > 0) {
             final var fine = new Fine(lending);
             fineRepository.save(fine);
         }
@@ -99,9 +126,9 @@ public class LendingServiceImpl implements LendingService{
     }
 
     @Override
-    public Double getAverageDuration(){
+    public Double getAverageDuration() {
         Double avg = lendingRepository.getAverageDuration();
-        return Double.valueOf(String.format(Locale.US,"%.1f", avg));
+        return Double.valueOf(String.format(Locale.US, "%.1f", avg));
     }
 
     @Override
@@ -113,13 +140,13 @@ public class LendingServiceImpl implements LendingService{
     }
 
     @Override
-    public Double getAvgLendingDurationByIsbn(String isbn){
+    public Double getAvgLendingDurationByIsbn(String isbn) {
         Double avg = lendingRepository.getAvgLendingDurationByIsbn(isbn);
-        return Double.valueOf(String.format(Locale.US,"%.1f", avg));
+        return Double.valueOf(String.format(Locale.US, "%.1f", avg));
     }
 
     @Override
-    public List<Lending> searchLendings(Page page, SearchLendingQuery query){
+    public List<Lending> searchLendings(Page page, SearchLendingQuery query) {
         LocalDate startDate = null;
         LocalDate endDate = null;
 
@@ -134,9 +161,9 @@ public class LendingServiceImpl implements LendingService{
                     null);
 
         try {
-            if(query.getStartDate()!=null)
+            if (query.getStartDate() != null)
                 startDate = LocalDate.parse(query.getStartDate());
-            if(query.getEndDate()!=null)
+            if (query.getEndDate() != null)
                 endDate = LocalDate.parse(query.getEndDate());
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Expected format is YYYY-MM-DD");
@@ -150,7 +177,6 @@ public class LendingServiceImpl implements LendingService{
                 endDate);
 
     }
-
 
 
 }
