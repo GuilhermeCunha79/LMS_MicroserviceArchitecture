@@ -127,30 +127,30 @@ public class RelationalBookRepository implements BookRepository {
 
     @Override
     public List<Book> findXBooksByYGenre(@Param("x") int x, @Param("y") int y) {
-        return entityManager.createNativeQuery("""
-                            SELECT b.*
-                                                    FROM (
-                                                             SELECT
-                                                                 b.*,
-                                                                 ROW_NUMBER() OVER (PARTITION BY b.GENRE_PK ORDER BY b.TITLE) AS rn
-                                                             FROM Book b
-                                                                      JOIN Genre g ON b.GENRE_PK = g.PK
-                                                             WHERE g.PK IN (
-                                                                 SELECT g.PK
-                                                                 FROM Genre g
-                                                                          JOIN Book b ON b.GENRE_PK = g.PK
-                                                                 GROUP BY g.PK
-                                                                 ORDER BY COUNT(b.PK) DESC
-                                                                 LIMIT :y
-                                                                 )
-                                                         ) AS b
-                                                    WHERE rn <= :x
-                                                    ORDER BY b.GENRE_PK, b.TITLE;
-                        """, Book.class)
+        return entityManager.createNativeQuery(
+                        "SELECT b.* " +
+                                "FROM ( " +
+                                "    SELECT b.*, " +
+                                "           ROW_NUMBER() OVER (PARTITION BY b.GENRE_PK ORDER BY b.TITLE) AS rn " +
+                                "    FROM Book b " +
+                                "    JOIN Genre g ON b.GENRE_PK = g.PK " +
+                                "    WHERE g.PK IN ( " +
+                                "        SELECT g.PK " +
+                                "        FROM Genre g " +
+                                "        JOIN Book b ON b.GENRE_PK = g.PK " +
+                                "        GROUP BY g.PK " +
+                                "        ORDER BY COUNT(b.PK) DESC " +
+                                "        LIMIT :y " +
+                                "    ) " +
+                                ") AS b " +
+                                "WHERE rn <= :x " +
+                                "ORDER BY b.GENRE_PK, b.TITLE;",
+                        Book.class)
                 .setParameter("x", x)
                 .setParameter("y", y)
                 .getResultList();
     }
+
 
 
     @Override
@@ -162,38 +162,40 @@ public class RelationalBookRepository implements BookRepository {
     }
 
     @Override
-    @Query(value = """
-            SELECT b.* 
-            FROM Book b 
-            JOIN BOOK_AUTHORS on b.pk = BOOK_AUTHORS.BOOK_PK 
-            JOIN AUTHOR a on BOOK_AUTHORS.AUTHORS_AUTHOR_NUMBER = a.AUTHOR_NUMBER 
-            WHERE a.NAME LIKE %:authorName%
-            """, nativeQuery = true)
+    @Query(value =
+            "SELECT b.* " +
+                    "FROM Book b " +
+                    "JOIN BOOK_AUTHORS ON b.pk = BOOK_AUTHORS.BOOK_PK " +
+                    "JOIN AUTHOR a ON BOOK_AUTHORS.AUTHORS_AUTHOR_NUMBER = a.AUTHOR_NUMBER " +
+                    "WHERE a.NAME LIKE %:authorName%",
+            nativeQuery = true)
     public List<Book> findByAuthorName(@Param("authorName") String authorName) {
         // O parâmetro authorName é passado corretamente pela anotação @Query.
-        return entityManager.createNativeQuery("""
-                        SELECT b.* 
-                        FROM Book b 
-                        JOIN BOOK_AUTHORS on b.pk = BOOK_AUTHORS.BOOK_PK 
-                        JOIN AUTHOR a on BOOK_AUTHORS.AUTHORS_AUTHOR_NUMBER = a.AUTHOR_NUMBER 
-                        WHERE a.NAME LIKE %:authorName%
-                        """, Book.class)
+        return entityManager.createNativeQuery(
+                        "SELECT b.* " +
+                                "FROM Book b " +
+                                "JOIN BOOK_AUTHORS ON b.pk = BOOK_AUTHORS.BOOK_PK " +
+                                "JOIN AUTHOR a ON BOOK_AUTHORS.AUTHORS_AUTHOR_NUMBER = a.AUTHOR_NUMBER " +
+                                "WHERE a.NAME LIKE %:authorName%",
+                        Book.class)
                 .setParameter("authorName", authorName)
                 .getResultList();
     }
 
 
+
     @Override
-    @Query(value = """
-            SELECT b.* 
-            FROM Book b 
-            JOIN BOOK_AUTHORS on b.pk = BOOK_AUTHORS.BOOK_PK 
-            JOIN AUTHOR a on BOOK_AUTHORS.AUTHORS_AUTHOR_NUMBER = a.AUTHOR_NUMBER 
-            WHERE a.AUTHOR_NUMBER = :authorNumber 
-            """, nativeQuery = true)
+    @Query(value =
+            "SELECT b.* " +
+                    "FROM Book b " +
+                    "JOIN BOOK_AUTHORS ON b.pk = BOOK_AUTHORS.BOOK_PK " +
+                    "JOIN AUTHOR a ON BOOK_AUTHORS.AUTHORS_AUTHOR_NUMBER = a.AUTHOR_NUMBER " +
+                    "WHERE a.AUTHOR_NUMBER = :authorNumber",
+            nativeQuery = true)
     public List<Book> findBooksByAuthorNumber(@Param("authorNumber") String authorNumber) {
         return findBooksByAuthorNumber(authorNumber);
     }
+
 
 
     @Override
