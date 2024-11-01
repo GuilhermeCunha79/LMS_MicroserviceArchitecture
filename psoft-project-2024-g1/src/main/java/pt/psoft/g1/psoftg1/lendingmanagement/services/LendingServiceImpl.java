@@ -109,7 +109,7 @@ public class LendingServiceImpl implements LendingService {
                 .orElseThrow(() -> new NotFoundException("Reader not found"));
         int seq = lendingRepository.getCountFromCurrentYear() + 1;
         final Lending l = LendingFactory.create(b, r, seq, lendingDurationInDays, fineValuePerDayInCents);
-        l.setPk(lendingIDService.generateLendingID());
+        l.setPk(String.valueOf(lendingIDService.generateLendingID()));
         return lendingRepository.save(l);
     }
 

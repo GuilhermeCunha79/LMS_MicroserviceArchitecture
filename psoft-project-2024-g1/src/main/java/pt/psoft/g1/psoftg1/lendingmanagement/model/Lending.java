@@ -38,6 +38,7 @@ public class Lending {
      * @author pgsousa
      */
     @Id
+    @Setter
     private String pk;
 
     /**
