@@ -1,26 +1,20 @@
-package pt.psoft.g1.psoftg1.authormanagement.model.generateID;
+package pt.psoft.g1.psoftg1.shared.model.generateID;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import pt.psoft.g1.psoftg1.authormanagement.api.AuthorView;
-import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-@Component("AuthorIDService2")
+@Component("IDService2")
 @Primary
-public class AuthorIDService2Impl implements AuthorIDService {
+public class GenerateIDService2Impl implements GenerateIDService {
 
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final String ALPHANUMERIC_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int ID_LENGTH = 20; // 20 characters long
 
     @Override
-    public String generateAuthorID() {
+    public String generateID() {
         StringBuilder result = new StringBuilder(ID_LENGTH);
 
         for (int i = 0; i < ID_LENGTH; i++) {
