@@ -28,7 +28,7 @@
         <maven.compiler.release>17</maven.compiler.release>
         <spring.boot.dependencies.version>2.5.7</spring.boot.dependencies.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <sonar.host.url>http://192.168.1.74:9000</sonar.host.url>
         <sonar.token>sqa_d56451cd29ebce31eb9bb7e531158d9454dd7424</sonar.token>
         <!-- automatically run annotation processors within the incremental compilation -->
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
