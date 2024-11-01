@@ -41,7 +41,7 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'mvn test'
+                            sh 'mvn clean test'
                         } else if (isWindows()) {
                             bat 'mvn test'
                         }
@@ -61,6 +61,7 @@ pipeline {
 
         stage('Publish JaCoCo Report') {
             steps {
+            dir(POM_LOC) {
                 publishHTML([
                     reportDir: 'target/site/jacoco',
                     reportFiles: 'index.html',
@@ -69,6 +70,7 @@ pipeline {
                     allowMissing: false,
                     alwaysLinkToLastBuild: true
                 ])
+            }
             }
         }
 
