@@ -1,22 +1,21 @@
-#!/usr/bin/env groovy
-pipeline{
+pipeline {
     agent any
     environment {
-         POM_LOC = "psoft-project-2024-g1"
+        POM_LOC = "psoft-project-2024-g1"
     }
-    stages{
+    stages {
         stage('Checkout') {
             steps {
                 git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git', credentialsId: 'jenkins_1201506', branch: 'main'
             }
         }
 
-        stage('Clean'){
-            steps{
-                script{
-                    if(isUnix()){
+        stage('Clean') {
+            steps {
+                script {
+                    if (isUnix()) {
                         sh 'rm -rf target/'
-                    } else if(isWindows()){
+                    } else if (isWindows()) {
                         bat 'rd /s /q target'
                     }
                 }
@@ -37,83 +36,82 @@ pipeline{
             }
         }
 
-        stage('Jacoco Report') {
-                    steps {
-                        jacoco execPattern: '**/target/jacoco.exec',
-                               classPattern: '**/target/classes',
-                               sourcePattern: '**/src/main/java',
-                               inclusionPattern: '**/*.class'
-                    }
-                }
-
-                stage('Publish JaCoCo Report') {
-                    steps {
-                        publishHTML([
-                            reportDir: 'target/site/jacoco',
-                            reportFiles: 'index.html',
-                            reportName: 'JaCoCo Report',
-                            keepAll: true,
-                            allowMissing: false,
-                            alwaysLinkToLastBuild: true
-                        ])
-                    }
-                }
-
-        stage('Unit Testing'){
-            steps{
-                script{
+        stage('Unit Testing') {
+            steps {
+                script {
                     dir(POM_LOC) {
-                        if(isUnix()){
+                        if (isUnix()) {
                             sh 'mvn test'
-                        } else if(isWindows()){
+                        } else if (isWindows()) {
                             bat 'mvn test'
                         }
                     }
                 }
             }
         }
-        stage('Mutation Testing'){
-            steps{
-                script{
+
+        stage('Jacoco Report') {
+            steps {
+                jacoco execPattern: '**/target/jacoco.exec',
+                       classPattern: '**/target/classes',
+                       sourcePattern: '**/src/main/java',
+                       inclusionPattern: '**/*.class'
+            }
+        }
+
+        stage('Publish JaCoCo Report') {
+            steps {
+                publishHTML([
+                    reportDir: 'target/site/jacoco',
+                    reportFiles: 'index.html',
+                    reportName: 'JaCoCo Report',
+                    keepAll: true,
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true
+                ])
+            }
+        }
+
+        stage('Mutation Testing') {
+            steps {
+                script {
                     dir(POM_LOC) {
-                        if(isUnix()){
+                        if (isUnix()) {
                             sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-                        } else if(isWindows()){
+                        } else if (isWindows()) {
                             bat 'mvn org.pitest:pitest-maven:mutationCoverage'
                         }
                     }
                 }
             }
         }
-        stage('Integration Testing'){
-            steps{
-                script{
+
+        stage('Integration Testing') {
+            steps {
+                script {
                     dir(POM_LOC) {
-                        if(isUnix()){
+                        if (isUnix()) {
                             sh 'mvn verify -DskipTests'
-                        } else if(isWindows()){
+                        } else if (isWindows()) {
                             bat 'mvn verify -DskipTests'
                         }
                     }
                 }
             }
         }
-        stage('Install'){
-            steps{
-                script{
+
+        stage('Install') {
+            steps {
+                script {
                     dir(POM_LOC) {
-                        if(isUnix()){
+                        if (isUnix()) {
                             sh 'mvn install -DskipTests -DskipITs -DskipPitest'
-                        } else if(isWindows()){
+                        } else if (isWindows()) {
                             bat 'mvn install -DskipTests -DskipITs -DskipPitest'
                         }
                     }
                 }
             }
         }
- /*       stage('Deploy'){
-        }
-        stage('Smoke Testing'){
-        }*/
     }
 }
