@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.authormanagement.model.generateID.AuthorIDService;
+import pt.psoft.g1.psoftg1.shared.model.generateID.GenerateIDService;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
@@ -26,7 +26,7 @@ public class AuthorServiceImpl implements AuthorService {
     private final BookRepository bookRepository;
     private final AuthorMapper mapper;
     private final PhotoRepository photoRepository;
-    private final AuthorIDService authorIDService;
+    private final GenerateIDService authorIDService;
 
 
     @Autowired
@@ -37,7 +37,7 @@ public class AuthorServiceImpl implements AuthorService {
         this.mapper = mapper;
         this.photoRepository = photoRepository;
         this.authorRepository = context.getBean(authorRepositoryType, AuthorRepository.class);
-        this.authorIDService = context.getBean(generateId, AuthorIDService.class);
+        this.authorIDService = context.getBean(generateId, GenerateIDService.class);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class AuthorServiceImpl implements AuthorService {
             resource.setPhotoURI(null);
         }
         final Author author = mapper.create(resource);
-        author.setAuthorNumber(authorIDService.generateAuthorID());
+        author.setAuthorNumber(authorIDService.generateID());
         return authorRepository.save(author);
     }
 
