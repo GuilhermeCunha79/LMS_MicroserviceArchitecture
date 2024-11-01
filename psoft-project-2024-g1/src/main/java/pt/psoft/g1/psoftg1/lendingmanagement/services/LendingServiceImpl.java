@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import pt.psoft.g1.psoftg1.authormanagement.model.generateID.AuthorIDService;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
@@ -13,6 +14,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingView;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingFactory;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.generateID.LendingIDService;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.recommendation.LendingRecommendation;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
@@ -35,6 +37,7 @@ public class LendingServiceImpl implements LendingService {
     private final ReaderRepository readerRepository;
     private final LendingRecommendation lendingRecommendation;
     private final LendingFactory lendingFactory;
+    private final LendingIDService lendingIDService;
 
     @Value("${lendingDurationInDays}")
     private int lendingDurationInDays;
@@ -47,13 +50,14 @@ public class LendingServiceImpl implements LendingService {
                               ApplicationContext context,
                               @Value("${lending.repository.type}") String lendingRepositoryType,
                               @Value("${fine.repository.type}") String fineRepositoryType,
-                              LendingFactory lendingFactory, @Value("${universal.lendingRecommendation.algorithm}") String beanContext) {
+                              LendingFactory lendingFactory, @Value("${universal.lendingRecommendation.algorithm}") String beanContext,  @Value("${universal.generateIDLending}") String generateId) {
         this.readerRepository = context.getBean(readerRepositoryType, ReaderRepository.class);
         this.lendingFactory = lendingFactory;
         this.lendingRepository = context.getBean(lendingRepositoryType, LendingRepository.class);
         this.fineRepository = context.getBean(fineRepositoryType, FineRepository.class);
         this.bookRepository = context.getBean(bookRepositoryType, BookRepository.class);
         this.lendingRecommendation = context.getBean(beanContext, LendingRecommendation.class);
+        this.lendingIDService = context.getBean(generateId, LendingIDService.class);
     }
 
     @Override
@@ -105,7 +109,7 @@ public class LendingServiceImpl implements LendingService {
                 .orElseThrow(() -> new NotFoundException("Reader not found"));
         int seq = lendingRepository.getCountFromCurrentYear() + 1;
         final Lending l = LendingFactory.create(b, r, seq, lendingDurationInDays, fineValuePerDayInCents);
-
+        l.setPk(lendingIDService.generateLendingID());
         return lendingRepository.save(l);
     }
 
