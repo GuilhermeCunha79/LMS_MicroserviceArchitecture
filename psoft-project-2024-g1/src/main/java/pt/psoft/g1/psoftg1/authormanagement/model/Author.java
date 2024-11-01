@@ -12,6 +12,7 @@ import pt.psoft.g1.psoftg1.shared.model.Name;
 
 import java.util.List;
 
+
 @Entity
 public class Author extends EntityWithPhoto {
     @Id

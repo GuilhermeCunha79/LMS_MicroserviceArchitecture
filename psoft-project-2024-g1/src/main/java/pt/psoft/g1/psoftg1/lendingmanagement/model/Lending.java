@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
@@ -38,7 +39,8 @@ public class Lending {
      * @author pgsousa
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Setter
+    //@GeneratedValue(strategy = GenerationType.AUTO)
     private Long pk;
 
     /**
