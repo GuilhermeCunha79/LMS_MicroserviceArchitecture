@@ -36,12 +36,26 @@ pipeline {
             }
         }
 
+        stage('Sonar') {
+            steps {
+                 withSonarQubeEnv('sonarqube') {
+                     script {
+                          if (isUnix()) {
+                                sh './mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.0.2155:sonar'
+                          } else {
+                                bat 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.0.2155:sonar'
+                          }
+                     }
+                 }
+            }
+        }
+
         stage('Unit Testing') {
             steps {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'mvn clean test'
+                            sh 'mvn test'
                         } else if (isWindows()) {
                             bat 'mvn test'
                         }
