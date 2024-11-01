@@ -6,7 +6,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git', credentialsId: 'jenkins_1201506', branch: 'main'
+                git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git',
+                    credentialsId: 'jenkins_1201506',
+                    branch: 'main'
             }
         }
 
@@ -50,22 +52,47 @@ pipeline {
             }
         }
 
-        stage("Static Code Analysis"){
+        stage("Static Code Analysis") {
             steps {
-                            script {
-                                dir(POM_LOC) {
-                                    if (isUnix()) {
-                                        sh 'mvn pmd:pmd'
-                                        sh 'mvn checkstyle:checkstyle'
-                                        sh 'mvn spotbugs:spotbugs'
-                                    } else if (isWindows()) {
-                                        bat 'mvn pmd:pmd'
-                                        bat 'mvn checkstyle:checkstyle'
-                                        bat 'mvn spotbugs:spotbugs'
-                                    }
-                                }
-                            }
+                script {
+                    dir(POM_LOC) {
+                        if (isUnix()) {
+                            sh 'mvn pmd:pmd'
+                            sh 'mvn checkstyle:checkstyle'
+                            sh 'mvn spotbugs:spotbugs'
+                        } else if (isWindows()) {
+                            bat 'mvn pmd:pmd'
+                            bat 'mvn checkstyle:checkstyle'
+                            bat 'mvn spotbugs:spotbugs'
                         }
+                    }
+                }
+            }
+        }
+
+        stage("Publish Static Code Analysis") {
+            steps {
+                script {
+                    dir(POM_LOC) {
+                        recordIssues tools: [java(), javaDoc()], aggregatingResults: true,
+                            id: 'java', name: 'Java', filters: [excludeFile('.*Assert.java')]
+
+                        recordIssues tool: errorProne(), healthy: 1, unhealthy: 20
+
+                        recordIssues tools: [
+                            checkStyle(pattern: 'target/checkstyle-result.xml'),
+                            spotBugs(pattern: 'target/spotbugsXml.xml'),
+                            pmdParser(pattern: 'target/pmd.xml'),
+                            taskScanner(
+                                highTags: 'FIXME',
+                                normalTags: 'TODO',
+                                includePattern: '**/*.java',
+                                excludePattern: 'target/**/*'
+                            )
+                        ]
+                    }
+                }
+            }
         }
 
         stage('Jacoco Report') {
@@ -79,16 +106,16 @@ pipeline {
 
         stage('Publish JaCoCo Report') {
             steps {
-            dir(POM_LOC) {
-                publishHTML([
-                    reportDir: 'target/site/jacoco',
-                    reportFiles: 'index.html',
-                    reportName: 'JaCoCo Report',
-                    keepAll: true,
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true
-                ])
-            }
+                dir(POM_LOC) {
+                    publishHTML([
+                        reportDir: 'target/site/jacoco',
+                        reportFiles: 'index.html',
+                        reportName: 'JaCoCo Report',
+                        keepAll: true,
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true
+                    ])
+                }
             }
         }
 
@@ -128,6 +155,25 @@ pipeline {
                             sh 'mvn install -DskipTests -DskipITs -DskipPitest'
                         } else if (isWindows()) {
                             bat 'mvn install -DskipTests -DskipITs -DskipPitest'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    dir(env.PROJECT_DIR) {
+                        if (fileExists('target/psoft-g1-0.0.1-SNAPSHOT.jar')) {
+                            echo 'Deploying application...'
+                            if (isUnix()) {
+                                sh 'java -jar target/psoft-g1-0.0.1-SNAPSHOT.jar &'
+                            } else {
+                                bat 'start java -jar target\\psoft-g1-0.0.1-SNAPSHOT.jar'
+                            }
+                        } else {
+                            error 'JAR file not found. Aborting deployment.'
                         }
                     }
                 }
