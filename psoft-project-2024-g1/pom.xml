@@ -73,6 +73,25 @@
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-tree</artifactId>
+            <version>9.1</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- OAuth2 Client for Google Login -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -263,6 +282,7 @@
                     <timestampedReports>false</timestampedReports>
                 </configuration>
             </plugin>
+
 
             <plugin>
                 <groupId>org.jacoco</groupId>
