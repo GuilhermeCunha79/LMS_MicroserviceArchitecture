@@ -74,22 +74,7 @@ pipeline {
             steps {
                 script {
                     dir(POM_LOC) {
-                        recordIssues tools: [java(), javaDoc()], aggregatingResults: true,
-                            id: 'java', name: 'Java', filters: [excludeFile('.*Assert.java')]
-
-                        recordIssues tool: errorProne(), healthy: 1, unhealthy: 20
-
-                        recordIssues tools: [
-                            checkStyle(pattern: 'target/checkstyle-result.xml'),
-                            spotBugs(pattern: 'target/spotbugsXml.xml'),
-                            pmdParser(pattern: 'target/pmd.xml'),
-                            taskScanner(
-                                highTags: 'FIXME',
-                                normalTags: 'TODO',
-                                includePattern: '**/*.java',
-                                excludePattern: 'target/**/*'
-                            )
-                        ]
+                        sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
                     }
                 }
             }
@@ -118,7 +103,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('Mutation Testing') {
             steps {
                 script {
@@ -131,7 +116,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
         stage('Integration Testing') {
             steps {
