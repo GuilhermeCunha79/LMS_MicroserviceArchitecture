@@ -13,7 +13,7 @@ import java.util.Map;
 @Schema(description = "A Lending")
 public class AuthorView {
     @NotNull
-    private Long authorNumber;
+    private String authorNumber;
     @NotNull
     private String name;
     @NotNull
