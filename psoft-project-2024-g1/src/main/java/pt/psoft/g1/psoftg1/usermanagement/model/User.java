@@ -20,6 +20,7 @@
  */
 package pt.psoft.g1.psoftg1.usermanagement.model;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -63,7 +64,8 @@ public class User implements UserDetails {
 
 	// optimistic lock concurrency control
 	@Version
-	private Long version;
+	@Getter
+	private long version =0L;
 
 	// auditing info
 	@CreatedDate
@@ -126,7 +128,6 @@ public class User implements UserDetails {
 	 * @param password
 	 */
 	public User(final String username, final String password) {
-		this.id= Generator.generateLongID();
 		this.username = username;
 		setPassword(password);
 	}

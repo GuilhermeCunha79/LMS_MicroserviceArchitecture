@@ -22,7 +22,7 @@ public class LendingMongo {
 
     @Id
     @Getter
-    private String id; // Usando String como ID para MongoDB
+    private String id;
 
     @Field("lending_number")
     private LendingNumber lendingNumber;

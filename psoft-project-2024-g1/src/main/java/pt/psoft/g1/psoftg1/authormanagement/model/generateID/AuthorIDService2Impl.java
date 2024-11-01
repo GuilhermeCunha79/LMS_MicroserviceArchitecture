@@ -20,7 +20,7 @@ public class AuthorIDService2Impl implements AuthorIDService {
     private static final int ID_LENGTH = 20; // 20 characters long
 
     @Override
-    public Long generateAuthorID() {
+    public String generateAuthorID() {
         StringBuilder result = new StringBuilder(ID_LENGTH);
 
         for (int i = 0; i < ID_LENGTH; i++) {
@@ -29,6 +29,6 @@ public class AuthorIDService2Impl implements AuthorIDService {
             result.append(ALPHANUMERIC_CHARACTERS.charAt(index));
         }
 
-        return Long.valueOf(result.toString());
+        return String.valueOf(result);
     }
 }

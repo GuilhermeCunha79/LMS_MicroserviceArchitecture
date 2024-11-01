@@ -42,7 +42,7 @@ pipeline {
                      script {
                         dir(POM_LOC) {
                           if (isUnix()) {
-                                sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.0.2155:sonar'
+                                sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.0.2155:sonar -Dsonar.token=sqa_d56451cd29ebce31eb9bb7e531158d9454dd7424 -Dsonar.java.binaries=target\\classes'
                           } else {
                                 bat 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.0.2155:sonar'
                           }

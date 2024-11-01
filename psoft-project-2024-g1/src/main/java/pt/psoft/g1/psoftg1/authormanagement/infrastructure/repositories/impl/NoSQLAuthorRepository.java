@@ -41,7 +41,7 @@ public class NoSQLAuthorRepository implements AuthorRepository {
     }
 
     @Override
-    public Optional<Author> findByAuthorNumber(Long authorNumber) {
+    public Optional<Author> findByAuthorNumber(String authorNumber) {
         Query query = new Query(Criteria.where("authorNumber").is(authorNumber));
         Author author = authorMapper.toAuthor(mongoTemplate.findOne(query, AuthorMongo.class));
 
@@ -95,7 +95,7 @@ public class NoSQLAuthorRepository implements AuthorRepository {
     }
 
     @Override
-    public List<Author> findCoAuthorsByAuthorNumber(Long authorNumber) {
+    public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
         Query query = new Query(Criteria.where("authors.authorNumber").is(authorNumber));
         List<AuthorMongo> authorMongoList = mongoTemplate.find(query, AuthorMongo.class);
 

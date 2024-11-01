@@ -46,7 +46,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Optional<Author> findByAuthorNumber(final Long authorNumber) {
+    public Optional<Author> findByAuthorNumber(final String authorNumber) {
         return authorRepository.findByAuthorNumber(authorNumber);
     }
 
@@ -81,7 +81,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Author partialUpdate(final Long authorNumber, final UpdateAuthorRequest request, final long desiredVersion) {
+    public Author partialUpdate(final String authorNumber, final UpdateAuthorRequest request, final long desiredVersion) {
         // first let's check if the object exists, so we don't create a new object with
         // save
         final var author = findByAuthorNumber(authorNumber)
@@ -121,17 +121,17 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<Book> findBooksByAuthorNumber(Long authorNumber) {
+    public List<Book> findBooksByAuthorNumber(String authorNumber) {
         return bookRepository.findBooksByAuthorNumber(authorNumber);
     }
 
     @Override
-    public List<Author> findCoAuthorsByAuthorNumber(Long authorNumber) {
+    public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
         return authorRepository.findCoAuthorsByAuthorNumber(authorNumber);
     }
 
     @Override
-    public Optional<Author> removeAuthorPhoto(Long authorNumber, long desiredVersion) {
+    public Optional<Author> removeAuthorPhoto(String authorNumber, long desiredVersion) {
         Author author = authorRepository.findByAuthorNumber(authorNumber)
                 .orElseThrow(() -> new NotFoundException("Cannot find reader"));
 

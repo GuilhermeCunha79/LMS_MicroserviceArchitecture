@@ -24,7 +24,6 @@ public class Genre {
     protected Genre(){}
 
     public Genre(String genre) {
-        this.pk= Generator.generateLongID();
         setGenre(genre);
     }
 

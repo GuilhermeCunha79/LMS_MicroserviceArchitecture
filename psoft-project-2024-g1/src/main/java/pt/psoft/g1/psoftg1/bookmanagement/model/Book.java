@@ -64,7 +64,6 @@ public class Book extends EntityWithPhoto {
     public String getDescription(){ return this.description.toString(); }
 
     public Book(String isbn, String title, String description, Genre genre, List<Author> authors, String photoURI) {
-        this.pk= Generator.generateLongID();
         setTitle(title);
         setIsbn(isbn);
         if(description != null)

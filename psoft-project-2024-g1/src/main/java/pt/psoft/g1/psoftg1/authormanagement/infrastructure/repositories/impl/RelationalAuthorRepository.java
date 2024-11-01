@@ -26,7 +26,7 @@ public class RelationalAuthorRepository implements AuthorRepository {
     private EntityManager entityManager;
 
     @Override
-    public Optional<Author> findByAuthorNumber(Long authorNumber) {
+    public Optional<Author> findByAuthorNumber(String authorNumber) {
         return Optional.ofNullable(entityManager.find(Author.class, authorNumber));
     }
 
@@ -56,7 +56,7 @@ public class RelationalAuthorRepository implements AuthorRepository {
     }
 
     @Override
-    public List<Author> findCoAuthorsByAuthorNumber(Long authorNumber) {
+    public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
         return entityManager.createQuery(
                         "SELECT DISTINCT coAuthor FROM Book b " +
                                 "JOIN b.authors coAuthor " +

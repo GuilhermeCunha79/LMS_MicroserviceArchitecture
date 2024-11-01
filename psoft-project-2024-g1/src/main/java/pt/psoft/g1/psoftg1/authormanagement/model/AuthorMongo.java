@@ -29,7 +29,7 @@ public class AuthorMongo extends EntityWithPhoto {
     @Field(targetType = FieldType.INT64, name = "authorNumber")
     @Setter
     @Getter
-    private Long authorNumber;
+    private String authorNumber;
 
     @Version
     public Long version;
@@ -49,7 +49,7 @@ public class AuthorMongo extends EntityWithPhoto {
     }
 
     public AuthorMongo(String name, String bio, String photoURI) {
-        this.authorNumber= Generator.generateLongID();
+        this.authorNumber= String.valueOf(Generator.generateLongID());
         setName(name);
         setBio(bio);
         setPhotoInternal(photoURI);

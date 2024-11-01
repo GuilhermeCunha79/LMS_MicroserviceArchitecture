@@ -130,7 +130,7 @@ public class NoSQLBookRepository implements BookRepository {
     }
 
     @Override
-    public List<Book> findBooksByAuthorNumber(Long authorNumber) {
+    public List<Book> findBooksByAuthorNumber(String authorNumber) {
         Query query = new Query(Criteria.where("authors.authorNumber").is(authorNumber));
         List<BookMongo> bookList = mongoTemplate.find(query, BookMongo.class);
         return bookList.stream()

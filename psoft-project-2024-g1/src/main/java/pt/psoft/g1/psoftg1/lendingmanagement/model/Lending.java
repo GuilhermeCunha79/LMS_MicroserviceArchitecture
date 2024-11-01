@@ -5,9 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
+import pt.psoft.g1.psoftg1.shared.model.Generator;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -24,8 +26,6 @@ import java.util.Optional;
  * natural key ({@code LendingNumber}) with its own business rules.
  * @author  rmfranca*/
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames={"LENDING_NUMBER"})})
 public class Lending {
 
     /**
@@ -38,8 +38,7 @@ public class Lending {
      * @author pgsousa
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long pk;
+    private String pk;
 
     /**
      * Natural key, which is not in use as it has its own business rules.
@@ -130,6 +129,7 @@ public class Lending {
      * @throws      NullPointerException if any of the arguments is {@code null}
      * */
     public Lending(Book book, ReaderDetails readerDetails, int seq, int lendingDuration, int fineValuePerDayInCents){
+        this.pk= String.valueOf(Generator.generateLongID());
         try {
             this.book = Objects.requireNonNull(book);
             this.readerDetails = Objects.requireNonNull(readerDetails);
@@ -256,7 +256,7 @@ public class Lending {
                                     int lendingDuration,
                                     int fineValuePerDayInCents){
         Lending lending = new Lending();
-
+        lending.pk= String.valueOf(Generator.generateLongID());
         try {
             lending.book = Objects.requireNonNull(book);
             lending.readerDetails = Objects.requireNonNull(readerDetails);

@@ -95,7 +95,7 @@ public class AuthorController {
         if (fileName != null) {
             resource.setPhotoURI(fileName);
         }
-        Author author = authorService.partialUpdate(authorNumber, resource, concurrencyService.getVersionFromIfMatchHeader(ifMatchValue));
+        Author author = authorService.partialUpdate(String.valueOf(authorNumber), resource, concurrencyService.getVersionFromIfMatchHeader(ifMatchValue));
 
         return ResponseEntity.ok()
                 .eTag(Long.toString(author.getVersion()))
@@ -109,7 +109,7 @@ public class AuthorController {
             @PathVariable("authorNumber")
             @Parameter(description = "The number of the Author to find") final Long authorNumber) {
 
-        final var author = authorService.findByAuthorNumber(authorNumber)
+        final var author = authorService.findByAuthorNumber(String.valueOf(authorNumber))
                 .orElseThrow(() -> new NotFoundException(Author.class, authorNumber));
 
         return ResponseEntity.ok()
@@ -132,7 +132,7 @@ public class AuthorController {
     public ListResponse<BookView> getBooksByAuthorNumber(
            @PathVariable("authorNumber")
              @Parameter(description = "The number of the Author to find")
-             final Long authorNumber) {
+             final String authorNumber) {
 
         //Checking if author exists with this id
         authorService.findByAuthorNumber(authorNumber)
@@ -161,7 +161,7 @@ public class AuthorController {
                                                              @Parameter(description = "The number of the Author to find")
                                                              final Long authorNumber) {
 
-        Author authorDetails = authorService.findByAuthorNumber(authorNumber)
+        Author authorDetails = authorService.findByAuthorNumber(authorNumber.toString())
                 .orElseThrow(() -> new NotFoundException(Author.class, authorNumber));
 
         //In case the user has no photo, just return a 200 OK without body
@@ -186,9 +186,9 @@ public class AuthorController {
     @Operation(summary = "Get co-authors and their respective books for a specific author")
     @GetMapping("/{authorNumber}/coauthors")
     public AuthorCoAuthorBooksView getAuthorWithCoAuthors(@PathVariable("authorNumber")Long authorNumber) {
-        var author = authorService.findByAuthorNumber(authorNumber)
+        var author = authorService.findByAuthorNumber(String.valueOf(authorNumber))
                 .orElseThrow(() -> new NotFoundException("Author not found"));
-        var coAuthors = authorService.findCoAuthorsByAuthorNumber(authorNumber);
+        var coAuthors = authorService.findCoAuthorsByAuthorNumber(String.valueOf(authorNumber));
         List<CoAuthorView> coAuthorViews = new ArrayList<>();
         for (Author coAuthor : coAuthors ) {
             var books = authorService.findBooksByAuthorNumber(coAuthor.getAuthorNumber());
@@ -203,7 +203,7 @@ public class AuthorController {
     @DeleteMapping("/{authorNumber}/photo")
     public ResponseEntity<Void> deleteBookPhoto(@PathVariable("authorNumber") final Long authorNumber) {
 
-        Optional<Author> optionalAuthor = authorService.findByAuthorNumber(authorNumber);
+        Optional<Author> optionalAuthor = authorService.findByAuthorNumber(String.valueOf(authorNumber));
         if(optionalAuthor.isEmpty()) {
             throw new AccessDeniedException("A author could not be found with provided authorNumber");
         }

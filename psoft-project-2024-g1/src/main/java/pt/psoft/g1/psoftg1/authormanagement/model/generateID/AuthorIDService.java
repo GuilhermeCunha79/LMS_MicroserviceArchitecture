@@ -5,5 +5,5 @@ import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
 
 public interface AuthorIDService {
 
-    Long generateAuthorID();
+    String generateAuthorID();
 }

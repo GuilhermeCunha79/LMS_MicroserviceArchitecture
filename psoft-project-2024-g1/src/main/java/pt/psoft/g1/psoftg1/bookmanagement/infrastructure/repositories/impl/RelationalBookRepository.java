@@ -191,7 +191,7 @@ public class RelationalBookRepository implements BookRepository {
             JOIN AUTHOR a on BOOK_AUTHORS.AUTHORS_AUTHOR_NUMBER = a.AUTHOR_NUMBER 
             WHERE a.AUTHOR_NUMBER = :authorNumber 
             """, nativeQuery = true)
-    public List<Book> findBooksByAuthorNumber(@Param("authorNumber") Long authorNumber) {
+    public List<Book> findBooksByAuthorNumber(@Param("authorNumber") String authorNumber) {
         return findBooksByAuthorNumber(authorNumber);
     }
 

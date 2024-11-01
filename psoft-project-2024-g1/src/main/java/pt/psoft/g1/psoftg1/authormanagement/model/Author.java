@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
+import pt.psoft.g1.psoftg1.shared.model.Generator;
 import pt.psoft.g1.psoftg1.shared.model.Name;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class Author extends EntityWithPhoto {
     @Column(name = "AUTHOR_NUMBER")
     @Setter
     @Getter
-    private Long authorNumber;
+    private String authorNumber;
 
     @Version
     private long version;
@@ -46,6 +47,7 @@ public class Author extends EntityWithPhoto {
     }
 
     public Author(String name, String bio, String photoURI) {
+        this.authorNumber= String.valueOf(Generator.generateLongID());
         setName(name);
         setBio(bio);
         setPhotoInternal(photoURI);

@@ -83,7 +83,7 @@ class AuthorControllerTest {
         when(webRequest.getHeader("If-Match")).thenReturn("*");
 
         // Simular que o autor não existe
-        when(authorService.partialUpdate(eq(nonExistentAuthorId), eq(request), anyLong()))
+        when(authorService.partialUpdate(eq(nonExistentAuthorId.toString()), eq(request), anyLong()))
                 .thenThrow(new NotFoundException("Cannot update an object that does not yet exist"));
 
         // Act + Assert
@@ -100,7 +100,7 @@ class AuthorControllerTest {
         // Arrange
         Long authorId = 1L;
         Author author = mock(Author.class);
-        when(authorService.findByAuthorNumber(authorId)).thenReturn(Optional.of(author));
+        when(authorService.findByAuthorNumber(String.valueOf(authorId))).thenReturn(Optional.of(author));
 
         // Act
         ResponseEntity<?> response = authorController.findByAuthorNumber(authorId);
@@ -114,7 +114,7 @@ class AuthorControllerTest {
         // Arrange
         Long authorId = 1L;
         Author author = mock(Author.class);
-        when(authorService.findByAuthorNumber(authorId)).thenReturn(Optional.of(author));
+        when(authorService.findByAuthorNumber(String.valueOf(authorId))).thenReturn(Optional.of(author));
         when(author.getPhoto()).thenReturn(null);
 
         // Act

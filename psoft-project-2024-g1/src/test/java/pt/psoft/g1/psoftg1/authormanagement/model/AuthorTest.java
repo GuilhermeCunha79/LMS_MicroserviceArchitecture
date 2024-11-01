@@ -144,8 +144,8 @@ class AuthorTest {
 
     @Test
     void testGetAuthorNumber() {
-        author.setAuthorNumber(42L);
-        assertEquals(Long.valueOf(42), author.getAuthorNumber());
+        author.setAuthorNumber(String.valueOf(42L));
+        assertEquals(String.valueOf(42L), author.getAuthorNumber());
     }
 
     @Test
