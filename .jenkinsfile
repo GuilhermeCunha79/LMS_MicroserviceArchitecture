@@ -50,6 +50,24 @@ pipeline {
             }
         }
 
+        stage("Static Code Analysis"){
+            steps {
+                            script {
+                                dir(POM_LOC) {
+                                    if (isUnix()) {
+                                        sh 'mvn pmd:pmd'
+                                        sh 'mvn checkstyle:checkstyle'
+                                        sh 'mvn spotbugs:spotbugs'
+                                    } else if (isWindows()) {
+                                        bat 'mvn pmd:pmd'
+                                        bat 'mvn checkstyle:checkstyle'
+                                        bat 'mvn spotbugs:spotbugs'
+                                    }
+                                }
+                            }
+                        }
+        }
+
         stage('Jacoco Report') {
             steps {
                 jacoco execPattern: '**/target/jacoco.exec',
