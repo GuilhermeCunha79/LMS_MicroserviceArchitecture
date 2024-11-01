@@ -30,7 +30,7 @@ public class LendingFactoryTest {
         int seq = 1;
         String seq1="2024/1";
         int lendingDuration = 15;
-        LocalDate date = LocalDate.of(2024, 11, 15);
+        LocalDate date = LocalDate.now();
         int fineValuePerDayInCents = 100;
 
         Lending lending = LendingFactory.create(book, readerDetails, seq, lendingDuration, fineValuePerDayInCents);
@@ -39,7 +39,7 @@ public class LendingFactoryTest {
         assertThat(lending.getBook()).isEqualTo(book);
         assertThat(lending.getReaderDetails()).isEqualTo(readerDetails);
         assertThat(lending.getLendingNumber()).isEqualTo(seq1);
-        assertThat(lending.getLimitDate()).isEqualTo(date);
+        assertThat(lending.getLimitDate()).isEqualTo(date.plusDays(lendingDuration));
         assertThat(lending.getFineValuePerDayInCents()).isEqualTo(fineValuePerDayInCents);
     }
 
@@ -54,7 +54,7 @@ public class LendingFactoryTest {
         int seq = 1;
         String seq1 = "2024/1";
         int lendingDuration = 15;
-        LocalDate date = LocalDate.of(2024, 11, 15);
+        LocalDate date = LocalDate.now();
         int fineValuePerDayInCents = 100;
 
         LendingMongo lendingMongo = LendingFactory.createMongo(book, readerDetails, seq, lendingDuration, fineValuePerDayInCents);
@@ -63,7 +63,7 @@ public class LendingFactoryTest {
         assertThat(lendingMongo.getBook()).isEqualTo(book);
         assertThat(lendingMongo.getReaderDetails()).isEqualTo(readerDetails);
         assertThat(lendingMongo.getLendingNumber()).isEqualTo(seq1);
-        assertThat(lendingMongo.getLimitDate()).isEqualTo(date);
+        assertThat(lendingMongo.getLimitDate()).isEqualTo(date.plusDays(lendingDuration));
         assertThat(lendingMongo.getFineValuePerDayInCents()).isEqualTo(fineValuePerDayInCents);
     }
 }
