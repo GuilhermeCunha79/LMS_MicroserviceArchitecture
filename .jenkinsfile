@@ -54,26 +54,27 @@ pipeline {
             steps {
                 script {
                     dir(POM_LOC) {
-                        sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
+                        withSonarQubeEnv('sonarqube') {
+                            sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
+                        }
                     }
                 }
             }
         }
 
-stage("SonarQube Quality Gate") {
-    steps {
-        script {
-            timeout(time: 1, unit: 'HOURS') {
-                def qualityGateResult = waitForQualityGate abortPipeline: true
+        stage("SonarQube Quality Gate") {
+            steps {
+                script {
+                    timeout(time: 1, unit: 'HOURS') {
+                        def qualityGateResult = waitForQualityGate abortPipeline: true
 
-                if (qualityGateResult.status == 'OK') {
-                    echo 'Quality gate passed. Proceeding with the pipeline.'
+                        if (qualityGateResult.status == 'OK') {
+                            echo 'Quality gate passed. Proceeding with the pipeline.'
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
 
         stage('Jacoco Report') {
             steps {
@@ -132,7 +133,7 @@ stage("SonarQube Quality Gate") {
         stage('Deploy') {
             steps {
                 script {
-                    dir(env.PROJECT_DIR) {
+                    dir(POM_LOC) {
                         if (fileExists('target/psoft-g1-0.0.1-SNAPSHOT.jar')) {
                             echo 'Deploying application...'
                             if (isUnix()) {
@@ -148,5 +149,18 @@ stage("SonarQube Quality Gate") {
             }
         }
         */
+
+        post {
+                always {
+                    echo 'Pipeline completed. Workspace cleaned.'
+                    cleanWs()
+                }
+                success {
+                    echo 'Pipeline succeeded.'
+                }
+                failure {
+                    echo 'Pipeline failed.'
+                }
+            }
     }
 }
