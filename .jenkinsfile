@@ -6,9 +6,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git',
-                    credentialsId: 'jenkins_1201506',
-                    branch: 'main'
+                checkout scm
             }
         }
 
@@ -52,24 +50,6 @@ pipeline {
             }
         }
 
-        stage("Static Code Analysis") {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn pmd:check'
-                            sh 'mvn checkstyle:check'
-                            sh 'mvn spotbugs:check'
-                        } else if (isWindows()) {
-                            bat 'mvn pmd:check'
-                            bat 'mvn checkstyle:check'
-                            bat 'mvn spotbugs:check'
-                        }
-                    }
-                }
-            }
-        }
-/*
         stage("Publish Static Code Analysis") {
             steps {
                 script {
@@ -80,15 +60,20 @@ pipeline {
             }
         }
 
-        stage("SonarQube Quality Gate") {
-                    steps {
-                        script {
-                            timeout(time: 1, unit: 'HOURS') {
-                                waitForQualityGate abortPipeline: true
-                            }
-                        }
-                    }
-                }*/
+stage("SonarQube Quality Gate") {
+    steps {
+        script {
+            timeout(time: 1, unit: 'HOURS') {
+                def qualityGateResult = waitForQualityGate abortPipeline: true
+
+                if (qualityGateResult.status == 'OK') {
+                    echo 'Quality gate passed. Proceeding with the pipeline.'
+                }
+            }
+        }
+    }
+}
+
 
         stage('Jacoco Report') {
             steps {
@@ -99,7 +84,7 @@ pipeline {
             }
         }
 
-/*
+        /*
         stage('Mutation Testing') {
             steps {
                 script {
@@ -112,7 +97,8 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
+        */
 
         stage('Integration Testing') {
             steps {
@@ -141,7 +127,8 @@ pipeline {
                 }
             }
         }
-/*
+
+        /*
         stage('Deploy') {
             steps {
                 script {
@@ -159,6 +146,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
+        */
     }
 }
