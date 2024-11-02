@@ -53,17 +53,18 @@ pipeline {
             }
         }
 
-        stage('Publish Static Code Analysis') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        withSonarQubeEnv('sonarqube') {
-                            sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=sqa_d56451cd29ebce31eb9bb7e531158d9454dd7424 Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
-                        }
-                    }
+stage('Publish Static Code Analysis') {
+    steps {
+        script {
+            dir(POM_LOC) {
+                withSonarQubeEnv('sonarqube') {
+                    sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=sqa_d56451cd29ebce31eb9bb7e531158d9454dd7424 -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
                 }
             }
         }
+    }
+}
+
 
         stage('SonarQube Quality Gate') {
             steps {
