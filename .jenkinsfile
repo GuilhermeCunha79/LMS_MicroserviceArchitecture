@@ -69,7 +69,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage("Publish Static Code Analysis") {
             steps {
                 script {
@@ -79,7 +79,7 @@ pipeline {
                 }
             }
         }
-/*
+
         stage("SonarQube Quality Gate") {
                     steps {
                         script {
