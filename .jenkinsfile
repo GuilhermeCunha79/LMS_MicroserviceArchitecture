@@ -57,14 +57,14 @@ stage('Publish Static Code Analysis') {
     steps {
         script {
             dir(POM_LOC) {
-                withSonarQubeEnv('sonarqube') {
+
                  if (isUnix()) {
-                                            sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=sqa_d56451cd29ebce31eb9bb7e531158d9454dd7424 -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
+                                            sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=sqa_d56451cd29ebce31eb9bb7e531158d9454dd7424 -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
                                         } else {
-                                            bat 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.token=sqa_d56451cd29ebce31eb9bb7e531158d9454dd7424 -Dsonar=sonar.organization=1201506 -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439 -Dsonar.java.binaries=target/classes'
+                                            bat 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.token=d13f61e5408a26e887b09f49a9ea03a7d692139e -Dsonar=sonar.organization=1201506 -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439 -Dsonar.java.binaries=target/classes'
                                         }
 
-                }
+
             }
         }
     }
