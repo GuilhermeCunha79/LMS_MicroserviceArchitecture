@@ -1,8 +1,8 @@
 pipeline {
     agent any
-        tools {
-            maven 'Maven 3.9.9'
-        }
+    tools {
+        maven 'Maven 3.9.9'
+    }
     environment {
         POM_LOC = "psoft-project-2024-g1"
     }
@@ -53,30 +53,27 @@ pipeline {
             }
         }
 
-stage('Publish Static Code Analysis') {
-    steps {
-        script {
-            dir(POM_LOC) {
-                withSonarQubeEnv('sonarqube') {
-                 if (isUnix()) {
-                                            sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
-                                        } else {
-                                            bat 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
-                                        }
-
+        stage('Publish Static Code Analysis') {
+            steps {
+                script {
+                    dir(POM_LOC) {
+                        withSonarQubeEnv('sonarqube') {
+                            if (isUnix()) {
+                                sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
+                            } else {
+                                bat 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
+                            }
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
 
         stage('SonarQube Quality Gate') {
             steps {
                 script {
                     timeout(time: 1, unit: 'HOURS') {
                         def qualityGateResult = waitForQualityGate abortPipeline: true
-
                         if (qualityGateResult.status == 'OK') {
                             echo 'Quality gate passed. Proceeding with the pipeline.'
                         }

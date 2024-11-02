@@ -53,6 +53,7 @@ public class RelationalBookRepository implements BookRepository {
                 .setMaxResults(x)
                 .getResultList();
     }
+
     @Override
     public List<Book> findTopXBooksFromMostLentGenreByReader(String readerNumber, @Param("x") int x) {
         return entityManager.createNativeQuery(
@@ -152,7 +153,6 @@ public class RelationalBookRepository implements BookRepository {
     }
 
 
-
     @Override
     @Query("SELECT b FROM Book b WHERE b.title.title LIKE %:title%")
     public List<Book> findByTitle(@Param("title") String title) {
@@ -183,19 +183,17 @@ public class RelationalBookRepository implements BookRepository {
     }
 
 
-
     @Override
-    @Query(value =
-            "SELECT b.* " +
-                    "FROM Book b " +
-                    "JOIN BOOK_AUTHORS ON b.pk = BOOK_AUTHORS.BOOK_PK " +
-                    "JOIN AUTHOR a ON BOOK_AUTHORS.AUTHORS_AUTHOR_NUMBER = a.AUTHOR_NUMBER " +
-                    "WHERE a.AUTHOR_NUMBER = :authorNumber",
-            nativeQuery = true)
-    public List<Book> findBooksByAuthorNumber(@Param("authorNumber") String authorNumber) {
-        return findBooksByAuthorNumber(authorNumber);
+    public List<Book> findBooksByAuthorNumber(String authorNumber) {
+        return entityManager.createNativeQuery(
+                        "SELECT b.* " +
+                                "FROM Book b " +
+                                "JOIN BOOK_AUTHORS ON b.pk = BOOK_AUTHORS.BOOK_PK " +
+                                "JOIN AUTHOR a ON BOOK_AUTHORS.AUTHORS_AUTHOR_NUMBER = a.AUTHOR_NUMBER " +
+                                "WHERE a.AUTHOR_NUMBER = :authorNumber", Book.class)
+                .setParameter("authorNumber", authorNumber)
+                .getResultList();
     }
-
 
 
     @Override

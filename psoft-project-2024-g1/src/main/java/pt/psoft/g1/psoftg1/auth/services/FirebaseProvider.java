@@ -11,26 +11,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import com.google.firebase.auth.FirebaseToken;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import pt.psoft.g1.psoftg1.auth.api.AuthRequest;
 import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 @Component("firebase")
 public class FirebaseProvider implements AuthProvider {
@@ -58,9 +47,6 @@ public class FirebaseProvider implements AuthProvider {
         try {
             initializeFirebase();
 
-            // Troca o código de autorização pelo token de ID
-           // String idToken = exchangeCodeForToken(request);
-            // Verifica o token de ID com o Firebase
             UserRecord decodedToken = FirebaseAuth.getInstance().getUser(request);
             String email = decodedToken.getEmail();
 
@@ -68,7 +54,7 @@ public class FirebaseProvider implements AuthProvider {
                 throw new AuthenticationException("Email não encontrado no token");
             }
 
-            // Carrega os detalhes do usuário com base no email
+            // Carrega os detalhes do user com base no email
             UserDetails userDetails = userService.loadUserByUsername(email);
 
             if (userDetails == null) {
@@ -98,51 +84,6 @@ public class FirebaseProvider implements AuthProvider {
         }
     }
 
-    private String exchangeCodeForToken(String code) {
-        String tokenEndpoint = "https://oauth2.googleapis.com/token";
-
-        // Monta a solicitação para o endpoint de token
-        String params = String.format(
-                "client_id=%s&client_secret=%s&code=%s&grant_type=authorization_code&redirect_uri=%s",
-                clientId, clientSecret, code, redirectUrii
-        );
-
-        // Realiza a chamada POST para o endpoint de token
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        HttpEntity<String> requestEntity = new HttpEntity<>(params, headers);
-
-        ResponseEntity<Map> response = restTemplate.exchange(
-                tokenEndpoint, HttpMethod.POST, requestEntity, Map.class
-        );
-
-        // Extrai o token de ID da resposta
-        return (String) Objects.requireNonNull(response.getBody()).get("id_token");
-    }
-
-    private String login(AuthRequest request) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        // Defina os cabeçalhos para a requisição
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // Corpo da requisição com email e senha
-        Map<String, String> body = new HashMap<>();
-        body.put("email", request.getUsername());
-        body.put("password", request.getPassword());
-        body.put("returnSecureToken", "true");
-
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                SIGN_IN_BASE_URL, HttpMethod.POST, entity, String.class);
-
-        return response.getBody();
-    }
-
-    // Exceção personalizada para autenticação
     public static class AuthenticationException extends RuntimeException {
         public AuthenticationException(String message) {
             super(message);
