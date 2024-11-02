@@ -15,7 +15,7 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh 'rm -rf target/'
-                    } else if (isWindows()) {
+                    } else {
                         bat 'rd /s /q target'
                     }
                 }
@@ -28,7 +28,7 @@ pipeline {
                     dir(POM_LOC) {
                         if (isUnix()) {
                             sh 'mvn clean package -DskipTests'
-                        } else if (isWindows()) {
+                        } else {
                             bat 'mvn clean package -DskipTests'
                         }
                     }
@@ -42,7 +42,7 @@ pipeline {
                     dir(POM_LOC) {
                         if (isUnix()) {
                             sh 'mvn test'
-                        } else if (isWindows()) {
+                        } else {
                             bat 'mvn test'
                         }
                     }
@@ -92,7 +92,7 @@ pipeline {
                     dir(POM_LOC) {
                         if (isUnix()) {
                             sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-                        } else if (isWindows()) {
+                        } else {
                             bat 'mvn org.pitest:pitest-maven:mutationCoverage'
                         }
                     }
@@ -107,7 +107,7 @@ pipeline {
                     dir(POM_LOC) {
                         if (isUnix()) {
                             sh 'mvn verify -DskipTests'
-                        } else if (isWindows()) {
+                        } else {
                             bat 'mvn verify -DskipTests'
                         }
                     }
@@ -121,7 +121,7 @@ pipeline {
                     dir(POM_LOC) {
                         if (isUnix()) {
                             sh 'mvn install -DskipTests -DskipITs -DskipPitest'
-                        } else if (isWindows()) {
+                        } else {
                             bat 'mvn install -DskipTests -DskipITs -DskipPitest'
                         }
                     }
