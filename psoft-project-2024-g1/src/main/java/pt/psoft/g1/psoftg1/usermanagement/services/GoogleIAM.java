@@ -4,6 +4,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,23 +43,16 @@ public class GoogleIAM implements UserIAM{
                     .setAudience(Collections.singletonList(clientId)) // Substitua pelo seu CLIENT_ID do Google
                     .build();
 
-            // Verifica o token JWT do Google
-            GoogleIdToken idToken = verifier.verify(accessToken);
-            if (idToken == null) {
-                return Optional.empty(); // Retorna um Optional vazio se o token não for válido
-            }
-
             // Extrai as informações do utilizador a partir do payload
-            GoogleIdToken.Payload payload = idToken.getPayload();
-            String userId = payload.getSubject(); // ID único do Google para o utilizador
-            String email = payload.getEmail();
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(accessToken);
+            String email = decodedToken.getEmail();
 
             // Busca ou cria um utilizador na base de dados usando o userId e email
-            if(userRepo.findByUsername(email).isPresent() && Objects.equals(userRepo.findByUsername(email).get().getPassword(), userId)){
+            if(userRepo.findByUsername(email).isPresent() && Objects.equals(userRepo.findByUsername(email).get().getPassword(), accessToken)){
                 return Optional.of(userRepo.findByUsername(email).get());
             }
 
-            User user = new User(email,userId);
+            User user = new User(email,accessToken);
 
             userRepo.save(user);
 

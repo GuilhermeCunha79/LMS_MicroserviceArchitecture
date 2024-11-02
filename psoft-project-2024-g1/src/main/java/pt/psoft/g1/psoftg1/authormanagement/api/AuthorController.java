@@ -69,7 +69,6 @@ public class AuthorController {
 
         return ResponseEntity.created(newauthorUri).eTag(Long.toString(author.getVersion()))
                 .body(authorViewMapper.toAuthorView(author));
-
     }
 
 
