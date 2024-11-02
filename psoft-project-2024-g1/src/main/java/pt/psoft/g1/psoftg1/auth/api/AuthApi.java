@@ -34,10 +34,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
