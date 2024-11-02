@@ -57,13 +57,13 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'mvn pmd:pmd'
-                            sh 'mvn checkstyle:checkstyle'
-                            sh 'mvn spotbugs:spotbugs'
+                            sh 'mvn pmd:check'
+                            sh 'mvn checkstyle:check'
+                            sh 'mvn spotbugs:check'
                         } else if (isWindows()) {
-                            bat 'mvn pmd:pmd'
-                            bat 'mvn checkstyle:checkstyle'
-                            bat 'mvn spotbugs:spotbugs'
+                            bat 'mvn pmd:check'
+                            bat 'mvn checkstyle:check'
+                            bat 'mvn spotbugs:check'
                         }
                     }
                 }
@@ -79,6 +79,16 @@ pipeline {
                 }
             }
         }
+/*
+        stage("SonarQube Quality Gate") {
+                    steps {
+                        script {
+                            timeout(time: 1, unit: 'HOURS') {
+                                waitForQualityGate abortPipeline: true
+                            }
+                        }
+                    }
+                }*/
 
         stage('Jacoco Report') {
             steps {
@@ -89,20 +99,6 @@ pipeline {
             }
         }
 
-        stage('Publish JaCoCo Report') {
-            steps {
-                dir(POM_LOC) {
-                    publishHTML([
-                        reportDir: 'target/site/jacoco',
-                        reportFiles: 'index.html',
-                        reportName: 'JaCoCo Report',
-                        keepAll: true,
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: true
-                    ])
-                }
-            }
-        }
 /*
         stage('Mutation Testing') {
             steps {
