@@ -135,6 +135,22 @@ pipeline {
             }
         }
 
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t pt.psoft.g1.psoft .'
+            }
+        }
+
+        stage('Docker Run') {
+            steps {
+                // Parar e remover qualquer container existente
+                sh 'docker stop psoft-container || true && docker rm psoft-container || true'
+                // Executar o container
+                sh 'docker run -d --name psoft-container -p 8080:8080 pt.psoft.g1.psoft'
+            }
+        }
+
+
         /*
         stage('Deploy') {
             steps {
