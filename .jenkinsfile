@@ -16,7 +16,7 @@ pipeline {
                     if (isUnix()) {
                         sh 'rm -rf target/'
                     } else {
-                        bat 'rd /s /q target'
+                        bat 'if exist target rd /s /q target'
                     }
                 }
             }
@@ -55,7 +55,7 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         withSonarQubeEnv('sonarqube') {
-                            sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
+                            sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=sqa_d56451cd29ebce31eb9bb7e531158d9454dd7424 Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
                         }
                     }
                 }
