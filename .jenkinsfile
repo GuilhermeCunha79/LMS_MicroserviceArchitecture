@@ -50,7 +50,7 @@ pipeline {
             }
         }
 
-        stage("Publish Static Code Analysis") {
+        stage('Publish Static Code Analysis') {
             steps {
                 script {
                     dir(POM_LOC) {
@@ -62,7 +62,7 @@ pipeline {
             }
         }
 
-        stage("SonarQube Quality Gate") {
+        stage('SonarQube Quality Gate') {
             steps {
                 script {
                     timeout(time: 1, unit: 'HOURS') {
@@ -149,18 +149,18 @@ pipeline {
             }
         }
         */
+    }
 
-        post {
-                always {
-                    echo 'Pipeline completed. Workspace cleaned.'
-                    cleanWs()
-                }
-                success {
-                    echo 'Pipeline succeeded.'
-                }
-                failure {
-                    echo 'Pipeline failed.'
-                }
-            }
+    post {
+        always {
+            echo 'Pipeline completed. Workspace cleaned.'
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline succeeded.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
     }
 }
