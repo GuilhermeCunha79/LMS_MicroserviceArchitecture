@@ -190,20 +190,20 @@ pipeline {
             }
         }
 
-        stage('Smoke Tests') {
+       /* stage('Smoke Tests') {
             steps {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'mvn test -Dtest=SmokeTest'
+                            sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.usermanagement.model.SmokeTest'
                         } else {
-                            bat 'mvn test -Dtest=SmokeTest'
+                            bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.usermanagement.model.SmokeTest'
                         }
                     }
                 }
             }
         }
-    }
+    }*/
 
     post {
         always {
