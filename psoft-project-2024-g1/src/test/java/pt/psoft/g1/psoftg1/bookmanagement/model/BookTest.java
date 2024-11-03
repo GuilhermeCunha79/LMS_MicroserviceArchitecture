@@ -1,15 +1,25 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedConstruction;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.model.AuthorFactory;
+import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.model.GenreFactory;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class BookTest {
     private final String validIsbn = "9782826012092";
@@ -29,6 +39,92 @@ class BookTest {
         authors.add(validAuthor1);
         assertThrows(IllegalArgumentException.class, () -> BookFactory.create(null, validTitle, null, validGenre, authors, null));
     }
+
+
+    //white box unit
+    @Test
+    void verifyPatchApplicationBehavior_WhenNoChangesMadeToValidParameters() {
+        try (MockedConstruction<Title> mockedTitle = mockConstruction(Title.class);
+             MockedConstruction<Isbn> mockedIsbn = mockConstruction(Isbn.class);
+             MockedConstruction<Description> mockedDescription = mockConstruction(Description.class)) {
+
+            String isbn = "1234567890123";
+            String title = "Banana Selvagem";
+            String description = "Texto aleatório sobre uma fruta";
+            Genre genre = mock(Genre.class);
+            Author author = AuthorFactory.create("Zé das Couves", "Zé é um famoso cozinheiro", null);
+            List<Author> authors = Collections.singletonList(author);
+            String photoUri = "imagem_aleatoria.png";
+
+            UpdateBookRequest updateRequest = mock(UpdateBookRequest.class);
+            when(updateRequest.getAuthorObjList()).thenReturn(null);
+
+            Book book = BookFactory.create(isbn, title, description, genre, authors, photoUri);
+            book.setVersion(1L);
+
+            when(mockedIsbn.constructed().get(0).toString()).thenReturn(isbn);
+            when(mockedTitle.constructed().get(0).toString()).thenReturn(title);
+            when(genre.toString()).thenReturn("Fantasia");
+            when(mockedDescription.constructed().get(0).toString()).thenReturn(description);
+
+            book.applyPatch(1L, updateRequest);
+
+            verify(updateRequest).getTitle();
+            verify(updateRequest).getDescription();
+            verify(updateRequest).getGenreObj();
+            verify(updateRequest).getAuthorObjList();
+            verify(updateRequest).getPhotoURI();
+
+            assertEquals(genre, book.getGenre());
+            assertEquals(isbn, book.getIsbn());
+            assertEquals(title, book.getTitle().toString());
+            assertEquals(authors, book.getAuthors());
+            assertEquals(description, book.getDescription());
+            assertEquals(photoUri, book.getPhoto().getPhotoFile());
+        }
+    }
+
+
+    @Test
+    void verifyPatchApplicationBehavior_WhenChangingValidParameters() {
+        try (MockedConstruction<Title> mockedTitle = mockConstruction(Title.class);
+             MockedConstruction<Isbn> mockedIsbn = mockConstruction(Isbn.class);
+             MockedConstruction<Description> mockedDescription = mockConstruction(Description.class)) {
+
+            String isbn = "1234567890123";
+            String title = "Banana Selvagem";
+            String description = "Texto aleatório sobre uma fruta";
+            Genre genre = mock(Genre.class);
+            Author author = AuthorFactory.create("Zé das Couves", "Zé é um famoso cozinheiro", null);
+            List<Author> authors = Collections.singletonList(author);
+            String photoUri = "imagem_aleatoria.png";
+
+            UpdateBookRequest updateRequest = mock(UpdateBookRequest.class);
+            Book book = new Book(null, null, "", genre, authors, "null");
+            book.setVersion(1L);
+
+            when(mockedIsbn.constructed().get(0).toString()).thenReturn(isbn);
+            when(mockedTitle.constructed().get(0).toString()).thenReturn(title);
+            when(genre.toString()).thenReturn("Ficção");
+            when(mockedDescription.constructed().get(0).toString()).thenReturn(description);
+            when(updateRequest.getAuthorObjList()).thenReturn(null);
+
+            book.applyPatch(1L, updateRequest);
+
+            verify(updateRequest).getTitle();
+            verify(updateRequest).getDescription();
+            verify(updateRequest).getGenreObj();
+            verify(updateRequest).getAuthorObjList();
+            verify(updateRequest).getPhotoURI();
+
+            assertEquals(genre, book.getGenre());
+            assertEquals(isbn, book.getIsbn());
+            assertEquals(title, book.getTitle().toString());
+            assertEquals(authors, book.getAuthors());
+            assertEquals(description, book.getDescription());
+        }
+    }
+
 
     @Test
     void ensureTitleNotNull(){

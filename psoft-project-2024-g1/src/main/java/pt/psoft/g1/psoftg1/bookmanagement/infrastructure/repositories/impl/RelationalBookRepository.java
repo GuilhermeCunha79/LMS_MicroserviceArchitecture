@@ -100,10 +100,11 @@ public class RelationalBookRepository implements BookRepository {
 
 
     @Override
-    @Query("SELECT b FROM Book b WHERE b.genre.genre LIKE %:genre%")
+    @Query("SELECT b FROM Book b WHERE b.genre.genre LIKE :genre")
     public List<Book> findByGenre(@Param("genre") String genre) {
-        return entityManager.createQuery("SELECT b FROM Book b WHERE b.genre.genre LIKE %:genre%", Book.class)
-                .setParameter("genre", genre)
+        String formattedGenre = "%" + genre + "%"; // Adiciona os caracteres de wildcard
+        return entityManager.createQuery("SELECT b FROM Book b WHERE b.genre.genre LIKE :genre", Book.class)
+                .setParameter("genre", formattedGenre)
                 .getResultList();
     }
 

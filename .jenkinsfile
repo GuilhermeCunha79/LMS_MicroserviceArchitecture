@@ -5,6 +5,11 @@ pipeline {
     }
     environment {
         POM_LOC = "psoft-project-2024-g1"
+        DOCKER_IMAGE = "pt.psoft.g1.psoft"
+        VM_USER = "root"
+        VM_HOST = "vsgate-ssh.dei.isep.ipp.pt"
+        VM_PORT = "11362"
+        VM_SSH_KEY = "~/.ssh/id_rsa_vs1362.txt"
     }
     stages {
         stage('Checkout') {
@@ -158,12 +163,36 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'docker stop psoft-container || true && docker rm psoft-container || true'
-                            sh 'docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
+                            sh 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8080 pt.psoft.g1.psoft'
                         } else {
-                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
-                            bat 'docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
+                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8080 pt.psoft.g1.psoft'
                         }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to VM') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh """
+                            ssh -i ${VM_SSH_KEY} -p ${VM_PORT} ${VM_USER}@${VM_HOST} '
+                                docker pull ${DOCKER_IMAGE} && \
+                                docker stop psoft-container || true && \
+                                docker rm psoft-container || true && \
+                                docker run -d --name psoft-container -p 8081:8081 ${DOCKER_IMAGE}
+                            '
+                        """
+                    } else {
+                        bat """
+                            ssh -i ${VM_SSH_KEY} -p ${VM_PORT} ${VM_USER}@${VM_HOST} "
+                                docker pull ${DOCKER_IMAGE} &&
+                                docker stop psoft-container || true &&
+                                docker rm psoft-container || true &&
+                                docker run -d --name psoft-container -p 8081:8081 ${DOCKER_IMAGE}
+                            "
+                        """
                     }
                 }
             }

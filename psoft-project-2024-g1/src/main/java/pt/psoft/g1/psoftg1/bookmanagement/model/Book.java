@@ -4,6 +4,7 @@ package pt.psoft.g1.psoftg1.bookmanagement.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
@@ -27,6 +28,7 @@ public class Book extends EntityWithPhoto {
 
     @Version
     @Getter
+    @Setter
     private Long version;
 
     @Embedded
