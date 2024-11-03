@@ -158,30 +158,15 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh '''
-                                if [ "$(docker ps -q -f name=psoft-container)" ]; then
-                                    docker stop psoft-container
-                                fi
-                                if [ "$(docker ps -aq -f name=psoft-container)" ]; then
-                                    docker rm psoft-container
-                                fi
-                                docker run -d --name psoft-container -p 8081:8080 pt.psoft.g1.psoft
-                            '''
+                            sh 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
                         } else {
-                            bat '''
-                                if (docker ps -q -f name=psoft-container) (
-                                    docker stop psoft-container
-                                )
-                                if (docker ps -aq -f name=psoft-container) (
-                                    docker rm psoft-container
-                                )
-                                docker run -d --name psoft-container -p 8081:8080 pt.psoft.g1.psoft
-                            '''
+                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
                         }
                     }
                 }
             }
         }
+
 
         stage('Smoke Tests') {
             steps {
