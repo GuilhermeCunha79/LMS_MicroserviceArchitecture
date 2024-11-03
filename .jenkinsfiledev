@@ -1,16 +1,14 @@
 pipeline {
     agent any
+
     tools {
         maven 'Maven 3.9.9'
     }
+
     environment {
         POM_LOC = "psoft-project-2024-g1"
-        DOCKER_IMAGE = "pt.psoft.g1.psoft"
-        VM_USER = "root"
-        VM_HOST = "vsgate-ssh.dei.isep.ipp.pt"
-        VM_PORT = "11362"
-        VM_SSH_KEY = "~/.ssh/id_rsa_vs1362.txt"
     }
+
     stages {
         stage('Checkout') {
             steps {
@@ -44,21 +42,39 @@ pipeline {
             }
         }
 
-        stage('Unit Testing') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn test'
-                        } else {
-                            bat 'mvn test'
+        stage('Unit + Integration Testing') {
+            parallel {
+                stage('Unit Testing') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn test'
+                                } else {
+                                    bat 'mvn test'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Integration Testing') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn verify -DskipTests'
+                                } else {
+                                    bat 'mvn verify -DskipTests'
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
-        stage('Publish Static Code Analysis') {
+        stage('Static Code Analysis') {
             steps {
                 script {
                     dir(POM_LOC) {
@@ -96,46 +112,14 @@ pipeline {
             }
         }
 
-        /*
-        stage('Mutation Testing') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-                        } else {
-                            bat 'mvn org.pitest:pitest-maven:mutationCoverage'
-                        }
-                    }
-                }
-            }
-        }
-        */
-
-        stage('Integration Testing') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn verify -DskipTests'
-                        } else {
-                            bat 'mvn verify -DskipTests'
-                        }
-                    }
-                }
-            }
-        }
-
         stage('Install') {
             steps {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
                             sh 'mvn install -DskipTests -DskipITs -DskipPitest'
-                            sh 'ls target'
                         } else {
                             bat 'mvn install -DskipTests -DskipITs -DskipPitest'
-                            bat 'dir target'
                         }
                     }
                 }
@@ -147,11 +131,9 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            // Construir a imagem Docker em Unix
-                            sh 'docker build -t ${DOCKER_IMAGE} -f Dockerfile .'
+                            sh 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
                         } else {
-                            // Construir a imagem Docker em Windows
-                            bat 'docker build -t ${DOCKER_IMAGE} -f Dockerfile .'
+                            bat 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
                         }
                     }
                 }
@@ -163,9 +145,9 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8081 ${DOCKER_IMAGE}'
+                            sh 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8081 pt.psoft.g1.psoft'
                         } else {
-                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8081 ${DOCKER_IMAGE}'
+                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8081 pt.psoft.g1.psoft'
                         }
                     }
                 }
@@ -175,10 +157,12 @@ pipeline {
         stage('Deploy to VM') {
             steps {
                 script {
-                    if (isUnix()) {
-                        sh 'scp -o StrictHostKeyChecking=no -P ${VM_PORT} -i ${VM_SSH_KEY} target/psoft-g1-0.0.1-SNAPSHOT.jar ${VM_USER}@${VM_HOST}:~/app/'
-                    } else {
-                        bat 'scp -o StrictHostKeyChecking=no -P ${VM_PORT} -i ${VM_SSH_KEY} target/psoft-g1-0.0.1-SNAPSHOT.jar ${VM_USER}@${VM_HOST}:~/app/'
+                    dir(POM_LOC) {
+                        if (isUnix()) {
+                            sh 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@vsgate-ssh.dei.isep.ipp.pt:~/app/'
+                        } else {
+                            bat 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@vsgate-ssh.dei.isep.ipp.pt:~/app/'
+                        }
                     }
                 }
             }
