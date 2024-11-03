@@ -91,7 +91,7 @@ pipeline {
             }
         }
 
-        /*
+        /* Uncomment this stage if mutation testing is needed
         stage('Mutation Testing') {
             steps {
                 script {
@@ -142,31 +142,53 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            // Construir a imagem Docker em Unix
-                            sh 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
+                            sh 'docker build -t pt.psoft.g1.psoft .'
                         } else {
-                            // Construir a imagem Docker em Windows
-                            bat 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
+                            bat 'docker build -t pt.psoft.g1.psoft .'
                         }
                     }
                 }
             }
         }
 
-        stage('Local deploy') {
+        stage('Check and Remove Existing Container') {
             steps {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
+                            sh '''
+                                if [ "$(docker ps -a -q -f name=psoft-container)" ]; then
+                                    docker stop psoft-container
+                                    docker rm psoft-container
+                                fi
+                            '''
                         } else {
-                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
+                            bat '''
+                                docker ps -a -q -f name=psoft-container > nul
+                                if %errorlevel% equ 0 (
+                                    docker stop psoft-container
+                                    docker rm psoft-container
+                                )
+                            '''
                         }
                     }
                 }
             }
         }
 
+        stage('Local Deploy') {
+            steps {
+                script {
+                    dir(POM_LOC) {
+                        if (isUnix()) {
+                            sh 'docker run -d --name psoft-container -p 8081:8081 pt.psoft.g1.psoft'
+                        } else {
+                            bat 'docker run -d --name psoft-container -p 8081:8081 pt.psoft.g1.psoft'
+                        }
+                    }
+                }
+            }
+        }
 
         stage('Smoke Tests') {
             steps {
