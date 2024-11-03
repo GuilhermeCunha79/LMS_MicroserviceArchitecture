@@ -153,7 +153,7 @@ pipeline {
             }
         }
 
-        stage('Docker Run') {
+        stage('Local deploy') {
             steps {
                 script {
                     dir(POM_LOC) {
@@ -161,9 +161,8 @@ pipeline {
                             sh 'docker stop psoft-container || true && docker rm psoft-container || true'
                             sh 'docker run -d --name psoft-container -p 8082:8080 pt.psoft.g1.psoft'
                         } else {
-                            //bat 'docker stop psoft-container || exit 0 && docker rm psoft-container || exit 0'
-                            //bat 'docker run -d --name psoft-container -p 8082:8080 pt.psoft.g1.psoft'
-                            bat 'copy target\\psoft-g1-0.0.1-SNAPSHOT.jar C:\\deploy'
+                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8082:8080 pt.psoft.g1.psoft'
+                            bat 'docker run -d --name psoft-container -p 8082:8080 pt.psoft.g1.psoft'
                         }
                     }
                 }
