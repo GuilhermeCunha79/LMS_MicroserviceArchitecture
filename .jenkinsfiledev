@@ -1,11 +1,14 @@
 pipeline {
     agent any
+
     tools {
         maven 'Maven 3.9.9'
     }
+
     environment {
         POM_LOC = "psoft-project-2024-g1"
     }
+
     stages {
         stage('Checkout') {
             steps {
@@ -39,21 +42,39 @@ pipeline {
             }
         }
 
-        stage('Unit Testing') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn test'
-                        } else {
-                            bat 'mvn test'
+        stage('Unit + Integration Testing') {
+            parallel {
+                stage('Unit Testing') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn test'
+                                } else {
+                                    bat 'mvn test'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Integration Testing') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn verify -DskipTests'
+                                } else {
+                                    bat 'mvn verify -DskipTests'
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
-        stage('Publish Static Code Analysis') {
+        stage('Static Code Analysis') {
             steps {
                 script {
                     dir(POM_LOC) {
@@ -88,36 +109,6 @@ pipeline {
                        classPattern: '**/target/classes',
                        sourcePattern: '**/src/main/java',
                        inclusionPattern: '**/*.class'
-            }
-        }
-
-        /*
-        stage('Mutation Testing') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-                        } else {
-                            bat 'mvn org.pitest:pitest-maven:mutationCoverage'
-                        }
-                    }
-                }
-            }
-        }
-        */
-
-        stage('Integration Testing') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn verify -DskipTests'
-                        } else {
-                            bat 'mvn verify -DskipTests'
-                        }
-                    }
-                }
             }
         }
 
@@ -166,29 +157,17 @@ pipeline {
         stage('Deploy to VM') {
             steps {
                 script {
-                    if (isUnix()) {
-                        sh 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@$vsgate-ssh.dei.isep.ipp.pt:~/app/'
-                    } else {
-                        bat 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@$vsgate-ssh.dei.isep.ipp.pt:~/app/'
+                    dir(POM_LOC) {
+                        if (isUnix()) {
+                            sh 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@$vsgate-ssh.dei.isep.ipp.pt:~/app/'
+                        } else {
+                            bat 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@$vsgate-ssh.dei.isep.ipp.pt:~/app/'
+                        }
                     }
                 }
             }
         }
-/*
-
-
-        stage('Smoke Testing'){
-            steps{
-                if (isUnix()) {
-                                        sh 'mvn test -Dtest=SmokeTest'
-                                    } else {
-                                        bat 'mvn test -Dtest=SmokeTest'
-                                    }
-            }
-        }*/
     }
-
-
 
     post {
         always {
