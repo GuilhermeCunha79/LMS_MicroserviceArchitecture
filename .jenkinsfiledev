@@ -162,7 +162,6 @@ pipeline {
                             sh 'docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
                         } else {
                             bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
-                            bat 'docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
                         }
                     }
                 }
@@ -189,16 +188,16 @@ pipeline {
             }
         }
         */
-    }
 
-    stage('Smoke Tests') {
-        steps {
-            script {
-                dir(POM_LOC) {
-                    if (isUnix()) {
-                        sh 'mvn test -Dtest=SmokeTest'
-                    } else {
-                        bat 'mvn test -Dtest=SmokeTest'
+        stage('Smoke Tests') {
+            steps {
+                script {
+                    dir(POM_LOC) {
+                        if (isUnix()) {
+                            sh 'mvn test -Dtest=SmokeTest'
+                        } else {
+                            bat 'mvn test -Dtest=SmokeTest'
+                        }
                     }
                 }
             }
