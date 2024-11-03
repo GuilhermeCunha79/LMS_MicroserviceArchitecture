@@ -155,11 +155,12 @@ public class RelationalBookRepository implements BookRepository {
 
 
     @Override
-    @Query("SELECT b FROM Book b WHERE b.title.title LIKE %:title%")
+    @Query("SELECT b FROM Book b WHERE b.title.title LIKE :title")
     public List<Book> findByTitle(@Param("title") String title) {
-        return entityManager.createQuery("SELECT b FROM Book b WHERE b.title.title LIKE %:title%", Book.class)
-                .setParameter("title", title)
-                .getResultList();
+        String formattedTitle = "%" + title + "%"; // Adiciona os caracteres de wildcard
+        return entityManager.createQuery("SELECT b FROM Book b WHERE b.title.title LIKE :title", Book.class)
+                .setParameter("title", formattedTitle) // Define o parâmetro formatado
+                .getResultList(); // Executa a consulta
     }
 
     @Override

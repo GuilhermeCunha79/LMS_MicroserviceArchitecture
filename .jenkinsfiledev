@@ -5,6 +5,11 @@ pipeline {
     }
     environment {
         POM_LOC = "psoft-project-2024-g1"
+        DOCKER_IMAGE = "pt.psoft.g1.psoft"
+        VM_USER = "root"
+        VM_HOST = "vsgate-ssh.dei.isep.ipp.pt"
+        VM_PORT = "11362"
+        VM_SSH_KEY = "~/.ssh/id_rsa_vs1362.txt"
     }
     stages {
         stage('Checkout') {
@@ -91,7 +96,7 @@ pipeline {
             }
         }
 
-        /* Uncomment this stage if mutation testing is needed
+        /*
         stage('Mutation Testing') {
             steps {
                 script {
@@ -142,67 +147,77 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'docker build -t pt.psoft.g1.psoft .'
+                            // Construir a imagem Docker em Unix
+                            sh 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
                         } else {
-                            bat 'docker build -t pt.psoft.g1.psoft .'
+                            // Construir a imagem Docker em Windows
+                            bat 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
                         }
                     }
                 }
             }
         }
 
-        stage('Check and Remove Existing Container') {
+        stage('Local deploy') {
             steps {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh '''
-                                if [ "$(docker ps -a -q -f name=psoft-container)" ]; then
-                                    docker stop psoft-container
-                                    docker rm psoft-container
-                                fi
-                            '''
+                            sh 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8080 pt.psoft.g1.psoft'
                         } else {
-                            bat '''
-                                docker ps -a -q -f name=psoft-container > nul
-                                if %errorlevel% equ 0 (
-                                    docker stop psoft-container
-                                    docker rm psoft-container
-                                )
-                            '''
+                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8080 pt.psoft.g1.psoft'
                         }
                     }
                 }
             }
         }
 
-        stage('Local Deploy') {
+        stage('Deploy to VM') {
             steps {
                 script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'docker run -d --name psoft-container -p 8081:8081 pt.psoft.g1.psoft'
-                        } else {
-                            bat 'docker run -d --name psoft-container -p 8081:8081 pt.psoft.g1.psoft'
-                        }
+                    if (isUnix()) {
+                        sh """
+                            ssh -i ${VM_SSH_KEY} -p ${VM_PORT} ${VM_USER}@${VM_HOST} '
+                                docker pull ${DOCKER_IMAGE} && \
+                                docker stop psoft-container || true && \
+                                docker rm psoft-container || true && \
+                                docker run -d --name psoft-container -p 8081:8081 ${DOCKER_IMAGE}
+                            '
+                        """
+                    } else {
+                        bat """
+                            ssh -i ${VM_SSH_KEY} -p ${VM_PORT} ${VM_USER}@${VM_HOST} "
+                                docker pull ${DOCKER_IMAGE} &&
+                                docker stop psoft-container || true &&
+                                docker rm psoft-container || true &&
+                                docker run -d --name psoft-container -p 8081:8081 ${DOCKER_IMAGE}
+                            "
+                        """
                     }
                 }
             }
         }
 
-       /* stage('Smoke Tests') {
+        /*
+        stage('Deploy') {
             steps {
                 script {
                     dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.usermanagement.model.SmokeTest'
+                        if (fileExists('target/psoft-g1-0.0.1-SNAPSHOT.jar')) {
+                            echo 'Deploying application...'
+                            if (isUnix()) {
+                                sh 'java -jar target/psoft-g1-0.0.1-SNAPSHOT.jar &'
+                            } else {
+                                bat 'start java -jar target\\psoft-g1-0.0.1-SNAPSHOT.jar'
+                            }
                         } else {
-                            bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.usermanagement.model.SmokeTest'
+                            error 'JAR file not found. Aborting deployment.'
                         }
                     }
                 }
             }
-        }*/
+        }
+        */
     }
 
     post {

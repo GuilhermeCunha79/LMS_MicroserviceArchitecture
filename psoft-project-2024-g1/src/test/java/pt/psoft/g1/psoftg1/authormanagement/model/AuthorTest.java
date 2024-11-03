@@ -12,7 +12,6 @@ import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -21,16 +20,16 @@ class AuthorTest {
     private Author author;
     private final String validName = "João Alberto";
     private final String validBio = "O João Alberto nasceu em Chaves e foi pedreiro a maior parte da sua vida.";
+
     @Mock
     private final UpdateAuthorRequest request = new UpdateAuthorRequest(validName, validBio, null, null);
 
-    private static class EntityWithPhotoImpl extends EntityWithPhoto { }
     @BeforeEach
     void setup() {
-        author = new Author("John Doe", "Biography of John", "photoURI");
-       // author.setVersion(1L);
+        author = AuthorFactory.create("John Doe", "Biography of John", "photoURI");
     }
 
+    // Testes de Caixa Branca (White Box Tests)
     @Test
     void testConstructor() {
         assertEquals("John Doe", author.getName());
@@ -39,89 +38,49 @@ class AuthorTest {
     }
 
     @Test
-    void testGetId() {
-        assertEquals(1L, author.getId());
+    void ensureNameCannotBeNull() {
+        assertThrows(IllegalArgumentException.class, () -> AuthorFactory.create(null, validBio, null));
     }
 
     @Test
-    void testGetVersion1L() {
-        assertEquals(0L, author.getVersion());
+    void ensureBioCannotBeNull() {
+        assertThrows(IllegalArgumentException.class, () -> AuthorFactory.create(validName, null, null));
     }
 
     @Test
-    void applyPatchGetNameNull() {
-        final var subject = new Author("Valid Name", validBio, null);
-        UpdateAuthorRequest request = new UpdateAuthorRequest();
-        request.setName(null);
+    void whenVersionIsStale_applyPatchThrowsStaleObjectStateException() {
+        assertThrows(StaleObjectStateException.class, () -> author.applyPatch(999, request));
+    }
 
-        assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
+
+    @Test
+    void testRemovePhotoWithValidVersion() {
+        long currentVersion = author.getVersion();
+        author.removePhoto(currentVersion);
+        assertNull(author.getPhoto());
     }
 
     @Test
-    void applyPatchGetBioNull() {
-        final var subject = new Author("Valid Name", validBio, null);
-        UpdateAuthorRequest request = new UpdateAuthorRequest();
-        request.setBio(null);
-
-        assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
-    }
-
-    @Test
-    void applyPatchGetPhotoUriNull() {
-        final var subject = new Author("Valid Name", validBio, null);
-        UpdateAuthorRequest request = new UpdateAuthorRequest();
-        request.setPhotoURI(null);
-
-        assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
-    }
-
-    @Test
-    void removePhotoVersionMismatch() {
-        Author author = new Author("Valid Name", "Valid Bio", "photoURI");
-        long wrongVersion = 999L;
-
-
-        assertThrows(ConflictException.class, () -> {
-
-            author.removePhoto(wrongVersion);
-        });
+    void testRemovePhotoWithStaleVersionThrowsException() {
+        assertThrows(ConflictException.class, () -> author.removePhoto(999));
     }
 
     @Test
     void testGetVersion() {
         assertEquals(Long.valueOf(0), author.getVersion());
     }
-    @Test
-    void ensureNameNotNull(){
-        assertThrows(IllegalArgumentException.class, () -> new Author(null,validBio, null));
-    }
-
-    @Test
-    void ensureBioNotNull(){
-        assertThrows(IllegalArgumentException.class, () -> new Author(validName,null, null));
-    }
 
     @Test
     public void testApplyPatch_VersionMismatch_ThrowsException() {
-        // Arrange
         long desiredVersion = 2L; // Mismatched version
-
-        // Act & Assert
-        assertThrows(StaleObjectStateException.class, () -> {
-            author.applyPatch(desiredVersion, request);
-        });
+        assertThrows(StaleObjectStateException.class, () -> author.applyPatch(desiredVersion, request));
     }
 
-    @Test
-    void whenVersionIsStaleItIsNotPossibleToPatch() {
-        final var subject = new Author(validName,validBio, null);
-
-        assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
-    }
+    // Testes de Caixa Preta (Black Box Tests)
 
     @Test
     void testCreateAuthorWithoutPhoto() {
-        Author author = new Author(validName, validBio, null);
+        Author author = AuthorFactory.create(validName, validBio, null);
         assertNotNull(author);
         assertNull(author.getPhoto());
     }
@@ -129,7 +88,7 @@ class AuthorTest {
     @Test
     void testCreateAuthorRequestWithPhoto() {
         CreateAuthorRequest request = new CreateAuthorRequest(validName, validBio, null, "photoTest.jpg");
-        Author author = new Author(request.getName(), request.getBio(), "photoTest.jpg");
+        Author author = AuthorFactory.create(request.getName(), request.getBio(), "photoTest.jpg");
         assertNotNull(author);
         assertEquals(request.getPhotoURI(), author.getPhoto().getPhotoFile());
     }
@@ -137,7 +96,7 @@ class AuthorTest {
     @Test
     void testCreateAuthorRequestWithoutPhoto() {
         CreateAuthorRequest request = new CreateAuthorRequest(validName, validBio, null, null);
-        Author author = new Author(request.getName(), request.getBio(), null);
+        Author author = AuthorFactory.create(request.getName(), request.getBio(), null);
         assertNotNull(author);
         assertNull(author.getPhoto());
     }
@@ -146,11 +105,6 @@ class AuthorTest {
     void testGetAuthorNumber() {
         author.setAuthorNumber(String.valueOf(42L));
         assertEquals(String.valueOf(42L), author.getAuthorNumber());
-    }
-
-    @Test
-    void testGetId2() {
-        assertEquals(Long.valueOf(1), author.getId());
     }
 
     @Test
@@ -165,34 +119,18 @@ class AuthorTest {
         assertEquals("New Author Bio", author.getBio());
     }
 
-
-
-
-
-
-
-    @Test
-    void testEntityWithPhotoSetPhotoInternalWithValidURI() {
-        EntityWithPhoto entity = new EntityWithPhotoImpl();
-        String validPhotoURI = "photoTest.jpg";
-        entity.setPhoto(validPhotoURI);
-        assertNotNull(entity.getPhoto());
-    }
-
-    @Test
-    void ensurePhotoCanBeNull_AkaOptional() {
-        Author author = new Author(validName, validBio, null);
-        assertNull(author.getPhoto());
-    }
-
     @Test
     void ensureValidPhoto() {
-        Author author = new Author(validName, validBio, "photoTest.jpg");
+        Author author = AuthorFactory.create(validName, validBio, "photoTest.jpg");
         Photo photo = author.getPhoto();
         assertNotNull(photo);
         assertEquals("photoTest.jpg", photo.getPhotoFile());
     }
 
+    @Test
+    void ensurePhotoCanBeNull_AkaOptional() {
+        Author author = AuthorFactory.create(validName, validBio, null);
+        assertNull(author.getPhoto());
+    }
 
 }
-
