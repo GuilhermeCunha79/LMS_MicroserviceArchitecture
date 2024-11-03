@@ -24,17 +24,6 @@ import java.io.IOException;
 @Component("firebase")
 public class FirebaseProvider implements AuthProvider {
 
-    @Value("${firebase.sign_in_base_url}")
-    private String SIGN_IN_BASE_URL;
-    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
-    private String clientSecret;
-
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
-    private String clientId;
-
-    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
-    private String redirectUrii;
-
     private final UserService userService;
 
     @Autowired
@@ -58,7 +47,7 @@ public class FirebaseProvider implements AuthProvider {
             UserDetails userDetails = userService.loadUserByUsername(email);
 
             if (userDetails == null) {
-                throw new AuthenticationException("Usuário não encontrado: " + email);
+                throw new AuthenticationException("Utilizador não encontrado: " + email);
             }
 
             // Retorna o token de autenticação
