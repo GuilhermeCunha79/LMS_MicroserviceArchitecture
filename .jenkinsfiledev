@@ -203,6 +203,7 @@ pipeline {
                 }
             }
         }
+    }
 
     post {
         always {
