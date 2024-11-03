@@ -76,6 +76,8 @@ pipeline {
                         def qualityGateResult = waitForQualityGate abortPipeline: true
                         if (qualityGateResult.status == 'OK') {
                             echo 'Quality gate passed. Proceeding with the pipeline.'
+                        } else {
+                            error 'Quality gate failed. Aborting pipeline.'
                         }
                     }
                 }
@@ -164,8 +166,7 @@ pipeline {
                             '''
                         } else {
                             bat '''
-                                docker ps -a -q -f name=psoft-container > nul
-                                if %errorlevel% equ 0 (
+                                for /f "delims=" %%i in ('docker ps -a -q -f name=psoft-container') do (
                                     docker stop psoft-container
                                     docker rm psoft-container
                                 )
@@ -190,7 +191,8 @@ pipeline {
             }
         }
 
-       /* stage('Smoke Tests') {
+        /*
+        stage('Smoke Tests') {
             steps {
                 script {
                     dir(POM_LOC) {
@@ -203,7 +205,8 @@ pipeline {
                 }
             }
         }
-    }*/
+        */
+    }
 
     post {
         always {
