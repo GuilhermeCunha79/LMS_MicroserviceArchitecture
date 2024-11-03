@@ -127,8 +127,10 @@ pipeline {
                     dir(POM_LOC) {
                         if (isUnix()) {
                             sh 'mvn install -DskipTests -DskipITs -DskipPitest'
+                            sh 'ls target'
                         } else {
                             bat 'mvn install -DskipTests -DskipITs -DskipPitest'
+                            bat 'dir target'
                         }
                     }
                 }
