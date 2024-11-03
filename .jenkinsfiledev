@@ -189,8 +189,6 @@ pipeline {
                         bat """
                             ssh root@vsgate-ssh.dei.isep.ipp.pt -p 11362 -i ~/.ssh/id_rsa_vs1362.txt ^
                                 "set -e  # Para garantir que o script falhe em qualquer erro ^
-                                docker pull ${DOCKER_IMAGE} && ^
-                                docker stop psoft-container || true && ^
                                 docker rm psoft-container || true && ^
                                 docker run -d --name psoft-container -p 8081:8081 ${DOCKER_IMAGE}"
                         """
