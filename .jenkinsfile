@@ -142,12 +142,12 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            // Construir a imagem Docker em Unix
-                            sh 'docker build -t pt.psoft.g1.psoft .'
-                        } else {
-                            // Construir a imagem Docker em Windows
-                            bat 'docker build -t pt.psoft.g1.psoft .'
-                        }
+                                                    // Construir a imagem Docker em Unix
+                                                    sh 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
+                                                } else {
+                                                    // Construir a imagem Docker em Windows
+                                                    bat 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
+                                                }
                     }
                 }
             }
