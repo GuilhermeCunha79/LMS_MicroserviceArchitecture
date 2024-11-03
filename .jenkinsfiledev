@@ -191,6 +191,19 @@ pipeline {
         */
     }
 
+    stage('Smoke Tests') {
+        steps {
+            script {
+                dir(POM_LOC) {
+                    if (isUnix()) {
+                        sh 'mvn test -Dtest=SmokeTest'
+                    } else {
+                        bat 'mvn test -Dtest=SmokeTest'
+                    }
+                }
+            }
+        }
+
     post {
         always {
             echo 'Pipeline completed. Workspace cleaned.'
