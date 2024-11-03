@@ -2,40 +2,46 @@ package pt.psoft.g1.psoftg1.bookmanagement.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.test.web.servlet.MvcResult;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.api.BookController;
 import pt.psoft.g1.psoftg1.bookmanagement.api.BookView;
 import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewMapper;
-import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
 import pt.psoft.g1.psoftg1.bookmanagement.services.CreateBookRequest;
-import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
-import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
 import pt.psoft.g1.psoftg1.shared.services.ConcurrencyService;
 import pt.psoft.g1.psoftg1.shared.services.FileStorageService;
 import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-/*
-@SpringBootTest
+
+
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(BookController.class)
 @AutoConfigureMockMvc
-class BookControllerTest {
+public class BookControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,101 +50,121 @@ class BookControllerTest {
     private BookService bookService;
 
     @MockBean
-    private FileStorageService fileStorageService;
+    private BookViewMapper bookViewMapper;
+
+    @MockBean
+    private BookRepository bookRepository;
+
+    @MockBean
+    private LendingService lendingService;
 
     @MockBean
     private ConcurrencyService concurrencyService;
 
     @MockBean
-    private BookViewMapper bookViewMapper;
+    private FileStorageService fileStorageService;
 
-    private BookController bookController;
+    @MockBean
+    private UserService userService;
+
+    @MockBean
+    private ReaderService readerService;
 
     @BeforeEach
-    void setup() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
-        FileStorageService fileStorageService = mock(FileStorageService.class);
-        bookController = new BookController(
-                bookService,
-                mock(LendingService.class),
-                concurrencyService,
-                fileStorageService,
-                mock(UserService.class),
-                mock(ReaderService.class),
-                bookViewMapper
-        );
     }
 
+    /*@WithMockUser(username = "user", roles = {"ADMIN"})
     @Test
-    @WithMockUser(username = "ADMIN", roles = {"ADMIN"})
-    void whenCreateBook_thenReturnsCreatedStatus() throws Exception {
+    public void testCreateBook_Success() throws Exception {
         // Arrange
-        String isbn = "978-3-16-148410-0";
-        CreateBookRequest request = new CreateBookRequest();
-        Book bookDouble = mock(Book.class);
+        String isbn = "9781234567897";
+        List<Author> authors = new ArrayList<>(); // Inicializa a lista mutável
+        authors.add(new Author("Author1", "Biography1", null)); // Adiciona autor sem erro
+        Book book = BookFactory.create(isbn, "New Book Title", "New Book Description", new Genre("infantil"), authors , "photo.jpg");
 
-        when(bookService.create(any(CreateBookRequest.class), eq(isbn))).thenReturn(bookDouble);
-        when(bookViewMapper.toBookView(bookDouble)).thenReturn(new BookView());
+        CreateBookRequest createBookRequest = new CreateBookRequest();
+        createBookRequest.setTitle("New Book Title");
+        createBookRequest.setDescription("New Book Description");
+        createBookRequest.setGenre("infantil");
+        createBookRequest.setAuthors(Collections.singletonList(1L));
+        createBookRequest.setPhoto(null); // Assuming photo is optional
+
+        given(bookService.create(createBookRequest, isbn)).willReturn(book);
+        given(bookViewMapper.toBookView(book)).willReturn(new BookView());
+
+        // Act and Assert
+        mockMvc.perform(put("/api/books/{isbn}", isbn)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"New Book Title\",\"description\":\"New Book Description\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/books/" + isbn))
+                .andExpect(jsonPath("$.title").value("New Book Title"))
+                .andExpect(jsonPath("$.description").value("New Book Description"));
+    }
+    */
+
+    @WithMockUser(username = "user", roles = {"ADMIN"})
+    @Test
+    public void testFindByIsbn_Success() throws Exception {
+        // Arrange
+        String isbn = "9781234567897";
+        List<Author> authors = new ArrayList<>();
+        authors.add(new Author("Author1", "Biography1", null)); // Adiciona autor sem erro
+        Book book = BookFactory.create(isbn, "New Book Title", "New Book Description", new Genre("infantil"), authors , "photo.jpg");
+        book.setVersion(1L);
+        given(bookService.findByIsbn(isbn)).willReturn(book);
+        given(bookViewMapper.toBookView(book)).willReturn(new BookView());
 
         // Act
-        ResponseEntity<?> response = bookController.create(request, isbn);
+        MvcResult result = mockMvc.perform(get("/api/books/{isbn}", isbn)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        // Assertions
+        String responseBody = result.getResponse().getContentAsString();
+        assertNotNull(responseBody);
     }
+/*
 
+
+    @WithMockUser(username = "user", roles = {"ADMIN"})
     @Test
-    void whenUpdateNonExistentBook_thenThrowsNotFoundException() {
-        String nonExistentIsbn = "999-9999999999";
-        UpdateBookRequest request = mock(UpdateBookRequest.class);
-
-        WebRequest webRequest = mock(WebRequest.class);
-        when(webRequest.getHeader("If-Match")).thenReturn("*");
-
-        // Mock do serviço para retornar null quando o livro não existe
-        when(bookService.findByIsbn(nonExistentIsbn)).thenReturn(null); // Mock para encontrar livro
-        when(bookService.update(eq(request), eq(nonExistentIsbn)))
-                .thenThrow(new NotFoundException("Cannot update a book that does not exist"));
-
-        // Verificação da exceção esperada
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-                bookController.updateBook(nonExistentIsbn, webRequest, request)
-        );
-
-        // Verificação da mensagem da exceção
-        assertEquals("Cannot update a book that does not exist", exception.getMessage());
-    }
-
-    @Test
-    void whenFindExistingBook_thenReturnsBook() {
+    public void testDeleteBookPhoto_NotFound() throws Exception {
         // Arrange
-        String isbn = "978-3-16-148410-0";
-        Book book = mock(Book.class);
+        String isbn = "9781234567897";
+        List<Author> authors = new ArrayList<>(); // Inicializa a lista mutável
+        authors.add(new Author("Author1", "Biography1", null)); // Adiciona autor sem erro
+        Book book = BookFactory.create(isbn, "New Book Title", "New Book Description", new Genre("infantil"), authors , "photo.jpg");
+        given(bookService.findByIsbn(isbn)).willReturn(book);
 
-        when(bookService.findByIsbn(isbn)).thenReturn(book);
+        // Act and Assert
+        mockMvc.perform(delete("/api/books/{isbn}/photo", isbn)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+     */
+
+    @Test
+    void testFindByTitle_Success() {
+        // Arrange
+        String isbn = "9781234567897";
+        String title = "Java Basics";
+        List<Author> authors = new ArrayList<>(); // Inicializa a lista mutável
+        authors.add(new Author("Author1", "Biography1", null));
+        Book book = BookFactory.create(isbn, title, "New Book Description", new Genre("infantil"), authors , "photo.jpg");
+        given(bookRepository.findByTitle(title)).willReturn(List.of(book)); // Simula o retorno do repositório
 
         // Act
-        ResponseEntity<?> response = bookController.findByIsbn(isbn);
+        List<Book> foundBooks = bookRepository.findByTitle(title);
 
         // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(foundBooks).isNotEmpty(); // Verifica que a lista não está vazia
+        assertThat(foundBooks.get(0).getTitle()).isEqualTo(book.getTitle()); // Verifica o título
     }
 
-    @Test
-    void whenGetNonExistentPhoto_thenReturnsOkWithoutBody() {
-        // Arrange
-        String isbn = "978-3-16-148410-0";
-        Book book = mock(Book.class);
 
-        when(bookService.findByIsbn(isbn)).thenReturn(book);
-        when(book.getPhoto()).thenReturn(null);
-
-        // Act
-        ResponseEntity<byte[]> response = bookController.getSpecificBookPhoto(isbn);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNull(response.getBody());
-    }
-}*/
+}
