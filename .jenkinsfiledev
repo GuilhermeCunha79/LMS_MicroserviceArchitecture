@@ -159,9 +159,9 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@$vsgate-ssh.dei.isep.ipp.pt:~/app/'
+                            sh 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@vsgate-ssh.dei.isep.ipp.pt:~/app/'
                         } else {
-                            bat 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@$vsgate-ssh.dei.isep.ipp.pt:~/app/'
+                            bat 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@vsgate-ssh.dei.isep.ipp.pt:~/app/'
                         }
                     }
                 }
