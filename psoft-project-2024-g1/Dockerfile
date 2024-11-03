@@ -8,7 +8,7 @@ WORKDIR /app
 COPY /target/psoft-g1-0.0.1-SNAPSHOT.jar app.jar
 
 # Exponha a porta que o aplicativo irá usar
-EXPOSE 8080
+EXPOSE 8082
 
 # Comando para executar o aplicativo
 CMD ["java", "-jar", "app.jar"]
