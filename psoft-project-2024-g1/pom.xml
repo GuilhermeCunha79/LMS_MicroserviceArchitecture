@@ -110,6 +110,12 @@
             <version>2.3.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+
         <!-- validation of requests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
