@@ -5,7 +5,7 @@ FROM openjdk:11-jre-slim
 WORKDIR /app
 
 # Copie o arquivo JAR do seu projeto para o contêiner
-COPY target/psoft-g1-0.0.1-SNAPSHOT.jar app.jar
+COPY /target/psoft-g1-0.0.1-SNAPSHOT.jar app.jar
 
 # Exponha a porta que o aplicativo irá usar
 EXPOSE 8080
