@@ -70,10 +70,10 @@ public class AuthorControllerIT {
         Long authorNumber = 1L;
 
         // Act and Assert
-        /*mockMvc.perform(get("/api/authors/{authorNumber}/coauthors", authorNumber)
+        mockMvc.perform(get("/api/authors/{authorNumber}/coauthors", authorNumber)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
-        */
+
 
         mockMvc.perform(get("/api/authors/{authorNumber}/photo", authorNumber)
                         .contentType(MediaType.APPLICATION_JSON))
