@@ -25,13 +25,16 @@ class AuthorMongoTest {
     private final UpdateAuthorRequest request = new UpdateAuthorRequest(validName, validBio, null, null);
 
     private static class EntityWithPhotoImpl extends EntityWithPhoto { }
+
     @BeforeEach
     void setup() {
+        // Configuração inicial do teste, criando uma instância de AuthorMongo com dados válidos.
         author = new AuthorMongo("John Doe", "Biography of John", "photoURI");
     }
 
     @Test
     void testConstructor() {
+        // Teste de caixa preta: verifica se o construtor inicializa corretamente os campos.
         assertEquals("John Doe", author.getName());
         assertEquals("Biography of John", author.getBio());
         assertEquals("photoURI", author.getPhoto().getPhotoFile());
@@ -39,6 +42,7 @@ class AuthorMongoTest {
 
     @Test
     void applyPatchGetNameNull() {
+        // Teste de caixa branca: verifica a lógica do método applyPatch ao passar nome nulo.
         final var subject = new Author("Valid Name", validBio, null);
         UpdateAuthorRequest request = new UpdateAuthorRequest();
         request.setName(null);
@@ -48,6 +52,7 @@ class AuthorMongoTest {
 
     @Test
     void applyPatchGetBioNull() {
+        // Teste de caixa branca: verifica a lógica do método applyPatch ao passar bio nula.
         final var subject = new Author("Valid Name", validBio, null);
         UpdateAuthorRequest request = new UpdateAuthorRequest();
         request.setBio(null);
@@ -57,6 +62,7 @@ class AuthorMongoTest {
 
     @Test
     void applyPatchGetPhotoUriNull() {
+        // Teste de caixa branca: assegura que uma exceção é lançada se photoURI for nulo.
         final var subject = new Author("Valid Name", validBio, null);
         UpdateAuthorRequest request = new UpdateAuthorRequest();
         request.setPhotoURI(null);
@@ -66,35 +72,38 @@ class AuthorMongoTest {
 
     @Test
     void removePhotoVersionMismatch() {
+        // Teste de caixa branca: verifica se a versão correta é usada ao remover uma foto.
         Author author = new Author("Valid Name", "Valid Bio", "photoURI");
         long wrongVersion = 999L;
 
-
         assertThrows(ConflictException.class, () -> {
-
+            // Verifica se a remoção de foto com versão errada lança uma exceção.
             author.removePhoto(wrongVersion);
         });
     }
 
     @Test
-    void ensureNameNotNull(){
-        assertThrows(IllegalArgumentException.class, () -> new Author(null,validBio, null));
+    void ensureNameNotNull() {
+        // Teste de caixa preta: assegura que um nome nulo gera uma exceção no construtor.
+        assertThrows(IllegalArgumentException.class, () -> new Author(null, validBio, null));
     }
 
     @Test
-    void ensureBioNotNull(){
-        assertThrows(IllegalArgumentException.class, () -> new Author(validName,null, null));
+    void ensureBioNotNull() {
+        // Teste de caixa preta: assegura que uma biografia nula gera uma exceção no construtor.
+        assertThrows(IllegalArgumentException.class, () -> new Author(validName, null, null));
     }
 
     @Test
     void whenVersionIsStaleItIsNotPossibleToPatch() {
-        final var subject = new Author(validName,validBio, null);
-
+        // Teste de caixa branca: assegura que uma versão desatualizada gera uma exceção ao tentar aplicar um patch.
+        final var subject = new Author(validName, validBio, null);
         assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
     }
 
     @Test
     void testCreateAuthorWithoutPhoto() {
+        // Teste de caixa preta: verifica a criação de um autor sem foto.
         Author author = new Author(validName, validBio, null);
         assertNotNull(author);
         assertNull(author.getPhoto());
@@ -102,6 +111,7 @@ class AuthorMongoTest {
 
     @Test
     void testCreateAuthorRequestWithPhoto() {
+        // Teste de caixa preta: verifica a criação de um autor a partir de um CreateAuthorRequest com foto.
         CreateAuthorRequest request = new CreateAuthorRequest(validName, validBio, null, "photoTest.jpg");
         Author author = new Author(request.getName(), request.getBio(), "photoTest.jpg");
         assertNotNull(author);
@@ -110,6 +120,7 @@ class AuthorMongoTest {
 
     @Test
     void testCreateAuthorRequestWithoutPhoto() {
+        // Teste de caixa preta: verifica a criação de um autor a partir de um CreateAuthorRequest sem foto.
         CreateAuthorRequest request = new CreateAuthorRequest(validName, validBio, null, null);
         Author author = new Author(request.getName(), request.getBio(), null);
         assertNotNull(author);
@@ -118,30 +129,28 @@ class AuthorMongoTest {
 
     @Test
     void testGetAuthorNumber() {
+        // Teste de caixa branca: verifica a lógica do método getAuthorNumber.
         author.setAuthorNumber(String.valueOf(42L));
         assertEquals(String.valueOf(42), author.getAuthorNumber());
     }
 
     @Test
     void testSetName() {
+        // Teste de caixa branca: assegura que o método setName atualiza corretamente o nome.
         author.setName("New Author Name");
         assertEquals("New Author Name", author.getName());
     }
 
     @Test
     void testSetBio() {
+        // Teste de caixa branca: assegura que o método setBio atualiza corretamente a biografia.
         author.setBio("New Author Bio");
         assertEquals("New Author Bio", author.getBio());
     }
 
-
-
-
-
-
-
     @Test
     void testEntityWithPhotoSetPhotoInternalWithValidURI() {
+        // Teste de caixa branca: verifica a lógica de setPhoto na classe interna EntityWithPhotoImpl.
         EntityWithPhoto entity = new EntityWithPhotoImpl();
         String validPhotoURI = "photoTest.jpg";
         entity.setPhoto(validPhotoURI);
@@ -150,17 +159,17 @@ class AuthorMongoTest {
 
     @Test
     void ensurePhotoCanBeNull_AkaOptional() {
+        // Teste de caixa preta: verifica se a foto pode ser nula sem causar exceções.
         Author author = new Author(validName, validBio, null);
         assertNull(author.getPhoto());
     }
 
     @Test
     void ensureValidPhoto() {
+        // Teste de caixa preta: verifica se um autor pode ser criado com uma foto válida.
         Author author = new Author(validName, validBio, "photoTest.jpg");
         Photo photo = author.getPhoto();
         assertNotNull(photo);
         assertEquals("photoTest.jpg", photo.getPhotoFile());
     }
-
-
 }
