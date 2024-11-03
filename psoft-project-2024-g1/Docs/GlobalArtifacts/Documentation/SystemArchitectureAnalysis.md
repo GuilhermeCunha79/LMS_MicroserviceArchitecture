@@ -112,7 +112,7 @@ chosen based on their importance in the design and refactoring of the applicatio
 | Response         | The system must filter lendings that reflect individual user specifications and preferences.                                               |
 | Response Measure | The system can recommend lendings according to the specifications.                                                                         |
 
-## Architetural concerns
+## Architectural concerns
 
 | ID               | Concern                                                                                                                                    |
 |------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
@@ -159,8 +159,8 @@ chosen based on their importance in the design and refactoring of the applicatio
 
 | Not Addressed | Partially Addressed | Completely Addressed | Design Decisions made during the Iteration                                                                     |
 |---------------|---------------------|----------------------|----------------------------------------------------------------------------------------------------------------|
-|               |                     | QA-1                 | No relevant decisions made.                                                                                    |
-|               |                     | QA-2                 | No relevant decisions made.                                                                                    |
+|               | QA-1                |                      | No relevant decisions made.                                                                                    |
+|               | QA-2                |                      | No relevant decisions made.                                                                                    |
 |               |                     | QA-3                 | No relevant decisions made.                                                                                    |
 |               |                     | QA-4                 | No relevant decisions made.                                                                                    |
 |               |                     | QA-5                 | The @Value annotation will be employed to retrieve supported languages from the "application.properties" file. |
@@ -170,6 +170,87 @@ chosen based on their importance in the design and refactoring of the applicatio
 |               |                     | CON-4                | No relevant decisions made.                                                                                    |
 |               |                     | CON-5                | No relevant decisions made.                                                                                    |
 |               |                     | CON-6                | No relevant decisions made.                                                                                    |
+
+## Iteration 4
+
+### Step 2
+
+#### Goal:
+
+- Support the QA-1 quality attribute scenario (“Application should support various data models.”);
+- Support the QA-2 quality attribute scenario (“The data model, IAM provider, lending and author ID formats, as well as
+  the lending recommendation logic, should be dynamically configurable through a configuration file.”);
+
+### Step 3
+
+Elements to refine:
+
+- Backend project
+
+### Step 4
+
+| Design Decisions and Location | Rationale and Assumptions                                                                                                                                                                                                                                                                                          |
+|-------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Use of property file          | TA property file will provide easy access to modify system configurations, enabling support for various data models (QA-1) and dynamic configurations (QA-2). Properties will be loaded at application startup using Spring's @Value annotation to ensure they are available throughout the application lifecycle. |
+
+
+### Step 7
+
+| Not Addressed | Partially Addressed | Completely Addressed | Design Decisions made during the Iteration                                                         |
+|---------------|---------------------|----------------------|----------------------------------------------------------------------------------------------------|
+|               |                     | QA-1                 | Use a property file to configure the way the system runs, allowing for flexibility in data models. |
+|               |                     | QA-2                 | Use a property file to configure the data model, IAM provider, and ID formats dynamically.         |
+|               |                     | QA-3                 | No relevant decisions made.                                                                        |
+|               |                     | QA-4                 | No relevant decisions made.                                                                        |
+|               |                     | QA-5                 | No relevant decisions made.                                                                        |
+|               |                     | CON-1                | No relevant decisions made.                                                                        |
+|               |                     | CON-2                | No relevant decisions made.                                                                        |
+|               |                     | CON-3                | No relevant decisions made.                                                                        |
+|               |                     | CON-4                | No relevant decisions made.                                                                        |
+|               |                     | CON-5                | No relevant decisions made.                                                                        |
+|               |                     | CON-6                | No relevant decisions made.                                                                        |
+
+## Iteration 5
+
+### Step 2
+
+#### Goal:
+
+- Support the QA-4 quality attribute scenario (“All functionalities should be tested.”);
+- Support the CON-4 quality attribute scenario (“The system must support runtime configuration.”);
+
+### Step 3
+
+Elements to refine:
+
+- Backend project
+
+### Step 4
+
+| Design Decisions and Location                        | Rationale and Assumptions                                                                                                                                                                                                                                                                                                                              |
+|------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Use Unit, Integration, Acceptance and Mutation tests | These tests will ensure that all functionalities are thoroughly tested and meet quality requirements (QA-4). Unit tests will cover individual components, integration tests will verify the interactions between components, acceptance tests will validate the overall functionality, and mutation tests will help ensure robustness against changes. |
+| Runtime configuration                                | Implementing runtime configuration will allow dynamic updates to system settings without requiring a restart, thus improving flexibility and responsiveness to configuration changes (CON-4). This can be achieved using Spring Cloud Config or a similar mechanism.                                                                                   |
+
+### Step 7
+
+| Not Addressed | Partially Addressed | Completely Addressed | Design Decisions made during the Iteration                                                                  |
+|---------------|---------------------|----------------------|-------------------------------------------------------------------------------------------------------------|
+|               |                     | QA-1                 | No relevant decisions made.                                                                                 |
+|               |                     | QA-2                 | No relevant decisions made.                                                                                 |
+|               |                     | QA-3                 | No relevant decisions made.                                                                                 |
+|               |                     | QA-4                 | Use Unit, Integration, Acceptance, and Mutation tests to ensure all functionalities are tested effectively. |
+|               |                     | QA-5                 | No relevant decisions made.                                                                                 |
+|               |                     | CON-1                | No relevant decisions made.                                                                                 |
+|               |                     | CON-2                | No relevant decisions made.                                                                                 |
+|               |                     | CON-3                | No relevant decisions made.                                                                                 |
+|               |                     | CON-4                | Implement runtime configuration to allow dynamic updates to settings.                                       |
+|               |                     | CON-5                | No relevant decisions made.                                                                                 |
+
+
+
+
+
 
 # References
 
