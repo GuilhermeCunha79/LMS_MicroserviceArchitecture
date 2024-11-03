@@ -80,8 +80,8 @@ public class BookControllerTest {
     public void testCreateBook_Success() throws Exception {
         // Arrange
         String isbn = "9781234567897";
-        List<Author> authors = new ArrayList<>(); // Inicializa a lista mutável
-        authors.add(new Author("Author1", "Biography1", null)); // Adiciona autor sem erro
+        List<Author> authors = new ArrayList<>();
+        authors.add(new Author("Author1", "Biography1", null));
         Book book = BookFactory.create(isbn, "New Book Title", "New Book Description", new Genre("infantil"), authors , "photo.jpg");
 
         CreateBookRequest createBookRequest = new CreateBookRequest();
