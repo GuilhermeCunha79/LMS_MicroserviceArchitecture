@@ -78,6 +78,7 @@ public class Bootstrapper implements CommandLineRunner {
             final Author author = new Author("Manuel Antonio Pina",
                     "Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões",
                     null);
+            author.setAuthorNumber("1");
             authorRepository.save(author);
         }
         if (authorRepository.searchByNameName("Antoine de Saint Exupéry").isEmpty()) {
