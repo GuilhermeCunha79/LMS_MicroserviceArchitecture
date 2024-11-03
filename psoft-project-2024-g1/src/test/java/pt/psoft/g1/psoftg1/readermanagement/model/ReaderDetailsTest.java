@@ -83,7 +83,7 @@ public class ReaderDetailsTest {
         assertThat(readerDetails.getPhoneNumber()).isEqualTo("987654321");
         assertThat(readerDetails.isMarketingConsent()).isFalse();
         assertThat(readerDetails.isThirdPartySharingConsent()).isTrue();
-    }*/
+    }
 
     @Test
     public void testRemovePhotoWithMismatchedVersion() {
@@ -95,7 +95,7 @@ public class ReaderDetailsTest {
                 .hasMessage("Cannot invoke \"java.lang.Long.longValue()\" because \"this.version\" is null");
     }
 
-   /* @Test
+  @Test
     public void testRemovePhotoWithMatchingVersion() {
         reader = new Reader("userna22me@gmail.com", "paRss!*ord5!");
         ReaderDetails readerDetails = new ReaderDetails(123, reader, "1990-01-01", "223456789", true, true, true, "photoURI", interestList);

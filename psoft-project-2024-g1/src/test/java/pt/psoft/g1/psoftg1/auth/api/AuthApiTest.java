@@ -48,11 +48,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Based on https://github.com/Yoh0xFF/java-spring-security-example
  *
  */
+    /*
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class AuthApiTest {
-    /*
+public class AuthApiTest {
+
 
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
@@ -124,6 +125,6 @@ class AuthApiTest {
                 .andExpect(status().isBadRequest()).andExpect(content().string(containsString("must not be blank")));
     }
 
-     */
 
-}
+
+}    */
