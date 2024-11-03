@@ -162,12 +162,12 @@ chosen based on their importance in the design and refactoring of the applicatio
 |               | QA-1                |                      | No relevant decisions made.                                                                                    |
 |               | QA-2                |                      | No relevant decisions made.                                                                                    |
 |               |                     | QA-3                 | No relevant decisions made.                                                                                    |
-|               |                     | QA-4                 | No relevant decisions made.                                                                                    |
+|               | QA-4                |                      | No relevant decisions made.                                                                                    |
 |               |                     | QA-5                 | The @Value annotation will be employed to retrieve supported languages from the "application.properties" file. |
 |               |                     | CON-1                | No relevant decisions made.                                                                                    |
 |               |                     | CON-2                | No relevant decisions made.                                                                                    |
 |               |                     | CON-3                | No relevant decisions made.                                                                                    |
-|               |                     | CON-4                | No relevant decisions made.                                                                                    |
+|               | CON-4               |                      | No relevant decisions made.                                                                                    |
 |               |                     | CON-5                | No relevant decisions made.                                                                                    |
 |               |                     | CON-6                | No relevant decisions made.                                                                                    |
 
@@ -201,12 +201,12 @@ Elements to refine:
 |               |                     | QA-1                 | Use a property file to configure the way the system runs, allowing for flexibility in data models. |
 |               |                     | QA-2                 | Use a property file to configure the data model, IAM provider, and ID formats dynamically.         |
 |               |                     | QA-3                 | No relevant decisions made.                                                                        |
-|               |                     | QA-4                 | No relevant decisions made.                                                                        |
+|               | QA-4                |                      | No relevant decisions made.                                                                        |
 |               |                     | QA-5                 | No relevant decisions made.                                                                        |
 |               |                     | CON-1                | No relevant decisions made.                                                                        |
 |               |                     | CON-2                | No relevant decisions made.                                                                        |
 |               |                     | CON-3                | No relevant decisions made.                                                                        |
-|               |                     | CON-4                | No relevant decisions made.                                                                        |
+|               | CON-4               |                      | No relevant decisions made.                                                                        |
 |               |                     | CON-5                | No relevant decisions made.                                                                        |
 |               |                     | CON-6                | No relevant decisions made.                                                                        |
 
