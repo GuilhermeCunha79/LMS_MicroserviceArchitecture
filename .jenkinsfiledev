@@ -42,7 +42,7 @@ pipeline {
             }
         }
 
-        stage('Unit + Integration Testing') {
+        stage('Testing') {
             parallel {
                 stage('Unit Testing') {
                     steps {
@@ -68,6 +68,20 @@ pipeline {
                                     bat 'mvn verify -DskipTests'
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Mutation Testing') {
+            steps {
+                script {
+                    dir(POM_LOC) {
+                        if (isUnix()) {
+                            sh 'mvn org.pitest:pitest-maven:mutationCoverage'
+                        } else {
+                            bat 'mvn org.pitest:pitest-maven:mutationCoverage'
                         }
                     }
                 }
