@@ -142,12 +142,12 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                                                    // Construir a imagem Docker em Unix
-                                                    sh 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
-                                                } else {
-                                                    // Construir a imagem Docker em Windows
-                                                    bat 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
-                                                }
+                            // Construir a imagem Docker em Unix
+                            sh 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
+                        } else {
+                            // Construir a imagem Docker em Windows
+                            bat 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
+                        }
                     }
                 }
             }
@@ -158,14 +158,10 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            // Parar e remover qualquer container existente em Unix
                             sh 'docker stop psoft-container || true && docker rm psoft-container || true'
-                            // Executar o container em Unix
                             sh 'docker run -d --name psoft-container -p 8080:8080 pt.psoft.g1.psoft'
                         } else {
-                            // Parar e remover qualquer container existente em Windows
                             bat 'docker stop psoft-container || exit 0 && docker rm psoft-container || exit 0'
-                            // Executar o container em Windows
                             bat 'docker run -d --name psoft-container -p 8080:8080 pt.psoft.g1.psoft'
                         }
                     }
