@@ -158,36 +158,30 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'docker stop psoft-container || true && docker rm psoft-container || true'
-                            sh 'docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
+                            sh '''
+                                if [ "$(docker ps -q -f name=psoft-container)" ]; then
+                                    docker stop psoft-container
+                                fi
+                                if [ "$(docker ps -aq -f name=psoft-container)" ]; then
+                                    docker rm psoft-container
+                                fi
+                                docker run -d --name psoft-container -p 8081:8080 pt.psoft.g1.psoft
+                            '''
                         } else {
-                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8083:8080 pt.psoft.g1.psoft'
+                            bat '''
+                                if (docker ps -q -f name=psoft-container) (
+                                    docker stop psoft-container
+                                )
+                                if (docker ps -aq -f name=psoft-container) (
+                                    docker rm psoft-container
+                                )
+                                docker run -d --name psoft-container -p 8081:8080 pt.psoft.g1.psoft
+                            '''
                         }
                     }
                 }
             }
         }
-
-        /*
-        stage('Deploy') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (fileExists('target/psoft-g1-0.0.1-SNAPSHOT.jar')) {
-                            echo 'Deploying application...'
-                            if (isUnix()) {
-                                sh 'java -jar target/psoft-g1-0.0.1-SNAPSHOT.jar &'
-                            } else {
-                                bat 'start java -jar target\\psoft-g1-0.0.1-SNAPSHOT.jar'
-                            }
-                        } else {
-                            error 'JAR file not found. Aborting deployment.'
-                        }
-                    }
-                }
-            }
-        }
-        */
 
         stage('Smoke Tests') {
             steps {

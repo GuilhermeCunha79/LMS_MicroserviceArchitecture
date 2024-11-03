@@ -1,0 +1,27 @@
+services:
+  h2:
+    image: oscarfonts/h2
+    ports:
+      - "8082:8082"  # Porta para acessar o console H2
+      - "9092:9092"  # Porta para conexão TCP com o banco de dados
+    environment:
+      H2_OPTIONS: "-tcp -tcpAllowOthers -ifNotExists"  # Permite conexões TCP de outros hosts
+    volumes:
+      - h2_data:/data  # Persistência dos dados
+    networks:
+      - psoft-net
+
+  app:
+    image: pt.psoft.g1.psoft  # Altere para a imagem do seu aplicativo Spring Boot
+    ports:
+      - "8083:8081"  # Porta onde seu aplicativo estará exposto
+    depends_on:
+      - h2
+    networks:
+      - psoft-net
+
+volumes:
+  h2_data:  # Volume para persistir os dados do H2
+
+networks:
+  psoft-net:  # Rede para comunicação entre os serviços
