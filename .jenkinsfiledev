@@ -183,7 +183,19 @@ pipeline {
                 }
             }
         }
+/*
+        stage('Smoke Testing'){
+            steps{
+                if (isUnix()) {
+                                        sh 'mvn test -Dtest=SmokeTest'
+                                    } else {
+                                        bat 'mvn test -Dtest=SmokeTest'
+                                    }
+            }
+        }*/
     }
+
+
 
     post {
         always {
