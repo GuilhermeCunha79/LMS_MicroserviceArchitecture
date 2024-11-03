@@ -177,7 +177,7 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh """
-                            ssh -i ${VM_SSH_KEY} -p ${VM_PORT} ${VM_USER}@${VM_HOST} '
+                            ssh root@vsgate-ssh.dei.isep.ipp.pt -p 11362 -i ~/.ssh/id_rsa_vs1362.txt '
                                 set -e  # Para garantir que o script falhe em qualquer erro
                                 docker pull ${DOCKER_IMAGE} && \
                                 docker stop psoft-container || true && \
@@ -187,7 +187,7 @@ pipeline {
                         """
                     } else {
                         bat """
-                            ssh -i ${VM_SSH_KEY} -p ${VM_PORT} ${VM_USER}@${VM_HOST} ^
+                            ssh root@vsgate-ssh.dei.isep.ipp.pt -p 11362 -i ~/.ssh/id_rsa_vs1362.txt ^
                                 "set -e  # Para garantir que o script falhe em qualquer erro ^
                                 docker pull ${DOCKER_IMAGE} && ^
                                 docker stop psoft-container || true && ^
