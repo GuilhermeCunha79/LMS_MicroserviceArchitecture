@@ -5,10 +5,6 @@ pipeline {
     }
     environment {
         POM_LOC = "psoft-project-2024-g1"
-        VM_USER = "root"
-        VM_HOST = "vsgate-ssh.dei.isep.ipp.pt"
-        VM_PORT = "11362"
-        VM_SSH_KEY = "~/.ssh/id_rsa_vs1362.txt"
     }
     stages {
         stage('Checkout') {
@@ -131,10 +127,8 @@ pipeline {
                     dir(POM_LOC) {
                         if (isUnix()) {
                             sh 'mvn install -DskipTests -DskipITs -DskipPitest'
-                            sh 'ls target'
                         } else {
                             bat 'mvn install -DskipTests -DskipITs -DskipPitest'
-                            bat 'dir target'
                         }
                     }
                 }
@@ -146,10 +140,8 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            // Construir a imagem Docker em Unix
                             sh 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
                         } else {
-                            // Construir a imagem Docker em Windows
                             bat 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
                         }
                     }
@@ -175,14 +167,16 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'scp -o StrictHostKeyChecking=no -P ${VM_PORT} -i ${VM_SSH_KEY} target/psoft-g1-0.0.1-SNAPSHOT.jar ${VM_USER}@${VM_HOST}:~/app/'
+                        sh 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@$vsgate-ssh.dei.isep.ipp.pt:~/app/'
                     } else {
-                        bat 'scp -o StrictHostKeyChecking=no -P ${VM_PORT} -i ${VM_SSH_KEY} target/psoft-g1-0.0.1-SNAPSHOT.jar ${VM_USER}@${VM_HOST}:~/app/'
+                        bat 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@$vsgate-ssh.dei.isep.ipp.pt:~/app/'
                     }
                 }
             }
         }
 /*
+
+
         stage('Smoke Testing'){
             steps{
                 if (isUnix()) {
