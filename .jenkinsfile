@@ -163,9 +163,9 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8080 pt.psoft.g1.psoft'
+                            sh 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8081 pt.psoft.g1.psoft'
                         } else {
-                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8080 pt.psoft.g1.psoft'
+                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8081 pt.psoft.g1.psoft'
                         }
                     }
                 }
@@ -177,26 +177,29 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh """
-                            ssh -i ${VM_SSH_KEY} -p ${VM_PORT} ${VM_USER}@${VM_HOST} '
+                            ssh -i ${VM_SSH_KEY} -p ${VM_PORT} ${VM_USER}@${VM_HOST} 'bash -c "
+                                set -e  # Para garantir que o script falhe em qualquer erro
                                 docker pull ${DOCKER_IMAGE} && \
                                 docker stop psoft-container || true && \
                                 docker rm psoft-container || true && \
                                 docker run -d --name psoft-container -p 8081:8081 ${DOCKER_IMAGE}
-                            '
+                            "'
                         """
                     } else {
                         bat """
-                            ssh -i ${VM_SSH_KEY} -p ${VM_PORT} ${VM_USER}@${VM_HOST} "
+                            ssh -i ${VM_SSH_KEY} -p ${VM_PORT} ${VM_USER}@${VM_HOST} "bash -c "
+                                set -e  # Para garantir que o script falhe em qualquer erro
                                 docker pull ${DOCKER_IMAGE} &&
                                 docker stop psoft-container || true &&
                                 docker rm psoft-container || true &&
                                 docker run -d --name psoft-container -p 8081:8081 ${DOCKER_IMAGE}
-                            "
+                            ""
                         """
                     }
                 }
             }
         }
+
 
         /*
         stage('Deploy') {
