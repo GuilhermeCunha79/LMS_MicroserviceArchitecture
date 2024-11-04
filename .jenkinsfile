@@ -173,25 +173,43 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@vsgate-ssh.dei.isep.ipp.pt:~/app/ && ssh root@vsgate-ssh.dei.isep.ipp.pt -p 11362 -i ~/.ssh/id_rsa_vs1362.txt "nohup java -jar -Dserver.port=2228 ~/app/psoft-g1-0.0.1-SNAPSHOT.jar > ~/app/app.log 2>&1 &"'
+                            sh '''
+                                scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@vsgate-ssh.dei.isep.ipp.pt:~/app/
+                                ssh root@vsgate-ssh.dei.isep.ipp.pt -p 11362 -i ~/.ssh/id_rsa_vs1362.txt "nohup java -jar -Dserver.port=2228 ~/app/psoft-g1-0.0.1-SNAPSHOT.jar > ~/app/app.log 2>&1 &"
+                            '''
+                            echo 'Aguardando a aplicação iniciar na porta 2228...'
+                            timeout(time: 60, unit: 'SECONDS') {
+                                waitUntil {
+                                    def result = bat(script: "powershell -Command \"Test-NetConnection -ComputerName vsgate-ssh.dei.isep.ipp.pt -Port 2228 | Select-Object -ExpandProperty TcpTestSucceeded\"", returnStatus: true)
+                                    return result == 0
+                                }
+                            }
                         } else {
-                            bat 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@vsgate-ssh.dei.isep.ipp.pt:~/app/ && ssh root@vsgate-ssh.dei.isep.ipp.pt -p 11362 -i ~/.ssh/id_rsa_vs1362.txt "nohup java -jar -Dserver.port=2228 ~/app/psoft-g1-0.0.1-SNAPSHOT.jar > ~/app/app.log 2>&1 &"'
+                            bat '''
+                                scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@vsgate-ssh.dei.isep.ipp.pt:~/app/
+                                ssh root@vsgate-ssh.dei.isep.ipp.pt -p 11362 -i ~/.ssh/id_rsa_vs1362.txt "nohup java -jar -Dserver.port=2228 ~/app/psoft-g1-0.0.1-SNAPSHOT.jar > ~/app/app.log 2>&1 &"
+                            '''
+                            echo 'Aguardando a aplicação iniciar na porta 2228...'
+                            timeout(time: 60, unit: 'SECONDS') {
+                                waitUntil {
+                                    def result = bat(script: "powershell -Command \"Test-NetConnection -ComputerName vsgate-ssh.dei.isep.ipp.pt -Port 2228 | Select-Object -ExpandProperty TcpTestSucceeded\"", returnStatus: true)
+                                    return result == 0
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
-         //Should listen on (https://vs-gate.dei.isep.ipp.pt:31362)
+        // Should listen on (https://vs-gate.dei.isep.ipp.pt:31362)
         stage('Smoke Tests') {
             steps {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'sleep 60'
                             sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         } else {
-                            bat 'timeout /t 60 /nobreak'
                             bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         }
                     }
