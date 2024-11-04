@@ -188,9 +188,11 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'mvn test -Dtest=SmokeTeste'
+                            sh 'sleep 60'
+                            sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         } else {
-                            bat 'mvn test -Dtest=SmokeTeste'
+                            bat 'timeout /t 60 /nobreak'
+                            bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         }
                     }
                 }

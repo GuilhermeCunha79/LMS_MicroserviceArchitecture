@@ -216,6 +216,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
                 <configuration>
+                    <excludes>
+                        <excludedClass>pt.psoft.g1.psoftg1.SmokeTeste</excludedClass>
+                    </excludes>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
@@ -379,6 +382,9 @@
                 <artifactId>pitest-maven</artifactId>
                 <version>1.16.1</version> <!-- Verifique a versão mais recente -->
                 <configuration>
+                    <excludedClasses>
+                        <excludedClass>pt.psoft.g1.psoftg1.SmokeTeste</excludedClass>
+                    </excludedClasses>
                     <!-- Pacote principal para incluir no teste de mutação -->
                     <targetClasses>
                         <param>pt.psoft.g1.psoftg1.*</param>
