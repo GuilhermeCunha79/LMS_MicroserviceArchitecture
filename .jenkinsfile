@@ -42,7 +42,7 @@ pipeline {
             }
         }
 
-
+        stage('Unit + Integration Testing') {
 
                 stage('Unit Testing') {
                     steps {
@@ -72,7 +72,7 @@ pipeline {
                     }
 
             }
-
+        }
 
         stage('Mutation Testing') {
             steps {
