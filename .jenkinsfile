@@ -42,7 +42,7 @@ pipeline {
             }
         }
 
-        stage('Testing') {
+        stage('Unit + Integration Testing') {
             parallel {
                 stage('Unit Testing') {
                     steps {
