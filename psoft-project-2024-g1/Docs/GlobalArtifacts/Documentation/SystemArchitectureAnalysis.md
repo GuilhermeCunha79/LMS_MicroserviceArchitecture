@@ -30,8 +30,10 @@ chosen based on their importance in the design and refactoring of the applicatio
 
 - **Extensibility:** The system should easily accommodate new features and modules with minimal disruption to existing
   components.
+
 - **Configurability:** The design allow administrators to adjust system parameters and behaviours without requiring
   changes to the source code.
+
 - **Modifiability:** The system should be easily modified to accommodate new requirements or changes in existing
   features.
 
