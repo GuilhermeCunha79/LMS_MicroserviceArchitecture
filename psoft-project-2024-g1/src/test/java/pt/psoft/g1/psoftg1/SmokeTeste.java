@@ -6,14 +6,11 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
 import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
-import org.apache.hc.client5.http.ssl.TrustAllStrategy;
 import org.apache.hc.core5.http.URIScheme;
 import org.apache.hc.core5.http.config.Registry;
 import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +19,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorView;
 
@@ -30,22 +26,14 @@ import org.springframework.http.*;
 
 
 import java.security.cert.X509Certificate;
-import java.util.Map;
-
-import org.apache.http.HttpStatus;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
-import org.apache.hc.core5.ssl.SSLContextBuilder;
 
 import javax.net.ssl.SSLContext;
-import java.security.cert.X509Certificate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
-public class SmokeTest {
+public class SmokeTeste {
 
     @Autowired
     private RestTemplateBuilder restTemplateBuilder;
