@@ -207,7 +207,7 @@
                 <version>2.22.2</version>
                 <configuration>
                     <includes>
-                        <include>**/*Test.java</include> <!-- Padrão para testes unitários -->
+                        <include>**/*Test.java</include>
                     </includes>
                 </configuration>
             </plugin>
@@ -382,6 +382,7 @@
                         <param>HTML</param>
                     </outputFormats>
                     <timestampedReports>false</timestampedReports>
+                    <threads>4</threads>
                 </configuration>
             </plugin>
 
