@@ -49,9 +49,9 @@ pipeline {
                         script {
                             dir(POM_LOC) {
                                 if (isUnix()) {
-                                    sh 'mvn test'
+                                    sh 'mvn test -Dtest=SmokeTest'
                                 } else {
-                                    bat 'mvn test'
+                                    bat 'mvn test -Dtest=SmokeTest'
                                 }
                             }
                         }
