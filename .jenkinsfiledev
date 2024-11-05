@@ -191,7 +191,7 @@ pipeline {
                             sh 'sleep 60'
                             sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         } else {
-                            bat 'timeout /t 15 /nobreak'
+                            bat 'timeout /t 15'
                             bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         }
                     }
