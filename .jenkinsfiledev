@@ -122,27 +122,42 @@ pipeline {
             }
         }
 
-        stage('SonarQube Quality Gate') {
-            steps {
-                script {
-                    timeout(time: 1, unit: 'HOURS') {
-                        def qualityGateResult = waitForQualityGate abortPipeline: true
-                        if (qualityGateResult.status == 'OK') {
-                            echo 'Quality gate passed. Proceeding with the pipeline.'
+        stage('Quality Gate, Checkstyle & Jacoco Reports') {
+            parallel {
+                stage('Quality Gate Check') {
+                    steps {
+                        script {
+                            timeout(time: 1, unit: 'HOURS') {
+                                def qualityGateResult = waitForQualityGate abortPipeline: true
+                                if (qualityGateResult.status == 'OK') {
+                                    echo 'Quality gate passed. Proceeding with the pipeline.'
+                                } else {
+                                    error "Pipeline aborted due to Quality Gate failure: ${qualityGateResult.status}"
+                                }
+                            }
                         }
+                    }
+                }
+
+                stage('Publish Checkstyle Report') {
+                    steps {
+                        script {
+                            publishChecks checks: [checkStyle(reportPattern: '**/target/reports/checkstyle-result.xml')]
+                        }
+                    }
+                }
+
+                stage('Jacoco Report') {
+                    steps {
+                        jacoco execPattern: '**/target/jacoco.exec',
+                               classPattern: '**/target/classes',
+                               sourcePattern: '**/src/main/java',
+                               inclusionPattern: '**/*.class'
                     }
                 }
             }
         }
 
-        stage('Jacoco Report') {
-            steps {
-                jacoco execPattern: '**/target/jacoco.exec',
-                       classPattern: '**/target/classes',
-                       sourcePattern: '**/src/main/java',
-                       inclusionPattern: '**/*.class'
-            }
-        }
 
         stage('Install') {
             steps {
@@ -200,15 +215,14 @@ pipeline {
             }
         }
 
-        // Should listen on (https://vs-gate.dei.isep.ipp.pt:31362)
         stage('Smoke Tests') {
             steps {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'ping 127.0.0.1 -n 30 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
+                            sh 'ping 127.0.0.1 -n 35 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         } else {
-                            bat 'ping 127.0.0.1 -n 30 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
+                            bat 'ping 127.0.0.1 -n 35 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         }
                     }
                 }
