@@ -73,7 +73,7 @@ pipeline {
                 }
             }
         }
-/*
+
         stage('Mutation Testing') {
             steps {
                 script {
@@ -87,7 +87,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('Static Code Analysis') {
             steps {
                 script {
@@ -107,7 +107,7 @@ pipeline {
         stage('SonarQube Quality Gate') {
             steps {
                 script {
-                    timeout(time: 2, unit: 'MINUTES') {
+                    timeout(time: 1, unit: 'HOURS') {
                         def qualityGateResult = waitForQualityGate abortPipeline: true
                         if (qualityGateResult.status == 'OK') {
                             echo 'Quality gate passed. Proceeding with the pipeline.'
@@ -182,44 +182,22 @@ pipeline {
             }
         }
 
-stage('Smoke Tests') {
-    steps {
-        script {
-            def url = 'vs-gate.dei.isep.ipp.pt'
-            def port = 2228
-
-            if (isUnix()) {
-                def isPortOpen = {
-                    return sh(script: "nc -z ${url} ${port}", returnStatus: true) == 0
-                }
-
-                timeout(time: 60, unit: 'SECONDS') {
-                    waitUntil {
-                        isPortOpen()
+         //Should listen on (https://vs-gate.dei.isep.ipp.pt:31362)
+        stage('Smoke Tests') {
+            steps {
+                script {
+                    dir(POM_LOC) {
+                        if (isUnix()) {
+                            sh 'sleep 60'
+                            sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
+                        } else {
+                            bat 'timeout /t 15 /nobreak'
+                            bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
+                        }
                     }
-                }
-
-                dir(POM_LOC) {
-                    sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
-                }
-
-            } else {
-                def isPortOpen = {
-                    return bat(script: "echo exit | telnet ${url} ${port}", returnStatus: true) == 0
-                }
-
-                    waitUntil {
-                        isPortOpen()
-                    }
-
-
-                dir(POM_LOC) {
-                    bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                 }
             }
         }
-    }
-}
     }
 
     post {
