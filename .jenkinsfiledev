@@ -73,7 +73,7 @@ pipeline {
                 }
             }
         }
-/*
+
         stage('Mutation Testing') {
             steps {
                 script {
@@ -115,7 +115,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
 
         stage('Jacoco Report') {
             steps {
@@ -182,17 +182,15 @@ pipeline {
             }
         }
 
-         //Should listen on (https://vs-gate.dei.isep.ipp.pt:31362)
+        // Should listen on (https://vs-gate.dei.isep.ipp.pt:31362)
         stage('Smoke Tests') {
             steps {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                                sh 'ping 127.0.0.1 -n 16 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
-
+                            sh 'ping 127.0.0.1 -n 30 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         } else {
-                                bat 'ping 127.0.0.1 -n 16 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
-
+                            bat 'ping 127.0.0.1 -n 30 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         }
                     }
                 }
