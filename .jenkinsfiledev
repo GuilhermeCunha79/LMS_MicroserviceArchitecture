@@ -125,15 +125,13 @@ pipeline {
         stage('SonarQube Quality Gate, Checkstyle and JaCoCo Reports') {
             steps {
                 script {
-                    timeout(time: 10, unit: 'MINUTES') {
-                        def qualityGateResult = waitForQualityGate abortPipeline: true
-                        if (qualityGateResult.status == 'OK') {
-                            echo 'Quality gate passed. Proceeding with the pipeline.'
-                        } else {
-                            error "Pipeline aborted due to Quality Gate failure: ${qualityGateResult.status}"
-                        }
-                    }
-                }
+                                            timeout(time: 3, unit: 'MINUTES') {
+                                                def qualityGateResult = waitForQualityGate abortPipeline: true
+                                                if (qualityGateResult.status == 'OK') {
+                                                    echo 'Quality gate passed. Proceeding with the pipeline.'
+                                                }
+                                            }
+                                        }
 
                 script {
                     publishChecks checks: [checkStyle(reportPattern: '**/target/reports/checkstyle-result.xml')]
