@@ -122,9 +122,9 @@ pipeline {
             }
         }
 
-        stage('Quality Gate, Checkstyle & Jacoco Reports') {
+        stage('SonarQube Quality Gate and Checkstyle') {
             parallel {
-                stage('Quality Gate Check') {
+                stage(' SonarQube Quality Gate Check') {
                     steps {
                         script {
                             timeout(time: 1, unit: 'HOURS') {
@@ -146,18 +146,17 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
 
-                stage('Jacoco Report') {
+        stage('Jacoco Report') {
                     steps {
                         jacoco execPattern: '**/target/jacoco.exec',
                                classPattern: '**/target/classes',
                                sourcePattern: '**/src/main/java',
                                inclusionPattern: '**/*.class'
-                    }
-                }
-            }
+                   }
         }
-
 
         stage('Install') {
             steps {
