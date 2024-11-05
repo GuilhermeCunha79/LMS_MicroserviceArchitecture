@@ -203,9 +203,6 @@ stage('Smoke Tests') {
                     }
                 }
 
-                // Esperando 30 segundos após a porta estar aberta
-                sleep(time: 30, unit: 'SECONDS')
-
                 // Executando os testes
                 dir(POM_LOC) {
                     sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
