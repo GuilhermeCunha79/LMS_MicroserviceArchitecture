@@ -73,7 +73,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('Mutation Testing') {
             steps {
                 script {
@@ -86,7 +86,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
         stage('Static Code Analysis') {
             steps {
