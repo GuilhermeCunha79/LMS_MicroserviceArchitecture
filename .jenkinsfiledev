@@ -88,8 +88,21 @@ pipeline {
             }
         }
 
+        stage('Checkstyle') {
+                            steps {
+                                script {
+                                    dir(POM_LOC) {
+                                        if (isUnix()) {
+                                            sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                        } else {
+                                            bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
         stage('SonarQube Scan & Checkstyle') {
-            parallel {
                 stage('Static Code Analysis') {
                     steps {
                         script {
@@ -103,46 +116,38 @@ pipeline {
                                 }
                             }
                         }
-                    }
-                }
 
-                stage('Checkstyle') {
-                    steps {
-                        script {
-                            dir(POM_LOC) {
-                                if (isUnix()) {
-                                    sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
-                                } else {
-                                    bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
 
-        stage('SonarQube Quality Gate, Checkstyle and JaCoCo Reports') {
-            steps {
-                script {
-                                            timeout(time: 3, unit: 'MINUTES') {
-                                                def qualityGateResult = waitForQualityGate abortPipeline: true
-                                                if (qualityGateResult.status == 'OK') {
-                                                    echo 'Quality gate passed. Proceeding with the pipeline.'
-                                                }
-                                            }
-                                        }
-
-                script {
-                    publishChecks checks: [checkStyle(reportPattern: '**/target/reports/checkstyle-result.xml')]
+stage('SonarQube Quality Gate, Checkstyle and JaCoCo Reports') {
+    steps {
+        script {
+            timeout(time: 3, unit: 'MINUTES') {
+                def qualityGateResult = waitForQualityGate abortPipeline: true
+                if (qualityGateResult.status == 'OK') {
+                    echo 'Quality gate passed. Proceeding with the pipeline.'
+                } else {
+                    error "Pipeline aborted due to Quality Gate failure: ${qualityGateResult.status}"
                 }
-
-                jacoco execPattern: '**/target/jacoco.exec',
-                       classPattern: '**/target/classes',
-                       sourcePattern: '**/src/main/java',
-                       inclusionPattern: '**/*.class'
             }
         }
+    }
+
+    steps {
+        script {
+            publishChecks checks: [checkStyle(reportPattern: '**/target/reports/checkstyle-result.xml')]
+        }
+    }
+
+    steps {
+        jacoco execPattern: '**/target/jacoco.exec',
+               classPattern: '**/target/classes',
+               sourcePattern: '**/src/main/java',
+               inclusionPattern: '**/*.class'
+    }
+}
 
         stage('Install') {
             steps {
