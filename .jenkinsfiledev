@@ -109,10 +109,12 @@ pipeline {
                 stage('Checkstyle') {
                     steps {
                         script {
-                            if (isUnix()) {
-                                sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
-                            } else {
-                                bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                } else {
+                                    bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                }
                             }
                         }
                     }
