@@ -114,17 +114,6 @@ chosen based on their importance in the design and refactoring of the applicatio
 | Response         | The system must filter lendings that reflect individual user specifications and preferences.                                               |
 | Response Measure | The system can recommend lendings according to the specifications.                                                                         |
 
-## Architectural concerns
-
-| ID               | Concern                                                                                                                                    |
-|------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| Stimulus         | The recommendation engine for Lendings is unable to provide personalized suggestions based on user preferences and varying specifications. |
-| Stimulus Source  | Users are receiving generic recommendations that are not filtered.                                                                         |
-| Environment      | The system operates in a dynamic environment, each with unique preferences and criteria with lendings.                                     |
-| Artifact         | Clients and LMS.                                                                                                                           |
-| Response         | The system must filter lendings that reflect individual user specifications and preferences.                                               |
-| Response Measure | The system can recommend lendings according to the specifications.                                                                         |
-
 ## Iteration 3
 
 ### Step 2
@@ -248,11 +237,6 @@ Elements to refine:
 |               |                     | CON-3                | No relevant decisions made.                                                                                 |
 |               |                     | CON-4                | Implement runtime configuration to allow dynamic updates to settings.                                       |
 |               |                     | CON-5                | No relevant decisions made.                                                                                 |
-
-
-
-
-
 
 # References
 

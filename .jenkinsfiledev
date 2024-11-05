@@ -88,15 +88,31 @@ pipeline {
             }
         }
 
-        stage('Static Code Analysis') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        withSonarQubeEnv('sonarqube') {
+        stage('SonarQube Scan & Checkstyle') {
+            parallel {
+                stage('Static Code Analysis') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                withSonarQubeEnv('sonarqube') {
+                                    if (isUnix()) {
+                                        sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
+                                    } else {
+                                        bat 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Checkstyle') {
+                    steps {
+                        script {
                             if (isUnix()) {
-                                sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
+                                sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
                             } else {
-                                bat 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
+                                bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
                             }
                         }
                     }
