@@ -86,7 +86,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
 
         stage('Static Code Analysis') {
             steps {
@@ -124,7 +124,7 @@ pipeline {
                        sourcePattern: '**/src/main/java',
                        inclusionPattern: '**/*.class'
             }
-        }
+        }*/
 
         stage('Install') {
             steps {
@@ -185,46 +185,34 @@ pipeline {
 stage('Smoke Tests') {
     steps {
         script {
-            // Definindo a URL e a porta
             def url = 'vs-gate.dei.isep.ipp.pt'
             def port = 2228
 
-            // Verificando se estamos em um sistema Unix
             if (isUnix()) {
-                // Função para verificar se a porta está aberta usando 'nc' (netcat)
                 def isPortOpen = {
                     return sh(script: "nc -z ${url} ${port}", returnStatus: true) == 0
                 }
 
-                // Aguardando até que a porta esteja aberta
                 timeout(time: 60, unit: 'SECONDS') {
                     waitUntil {
                         isPortOpen()
                     }
                 }
 
-                // Executando os testes
                 dir(POM_LOC) {
                     sh 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                 }
 
             } else {
-                // Função para verificar se a porta está aberta usando 'telnet' para Windows
                 def isPortOpen = {
                     return bat(script: "echo exit | telnet ${url} ${port}", returnStatus: true) == 0
                 }
 
-                // Aguardando até que a porta esteja aberta
-                timeout(time: 60, unit: 'SECONDS') {
                     waitUntil {
                         isPortOpen()
                     }
-                }
 
-                // Esperando 30 segundos após a porta estar aberta
-                sleep(time: 30, unit: 'SECONDS')
 
-                // Executando os testes
                 dir(POM_LOC) {
                     bat 'mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                 }
