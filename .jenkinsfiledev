@@ -119,40 +119,37 @@ pipeline {
 
         }
 
-stage('SonarQube Quality Gate, Checkstyle and JaCoCo Reports') {
-    steps {
-        script {
-            timeout(time: 3, unit: 'MINUTES') {
-                def qualityGateResult = waitForQualityGate abortPipeline: true
-                if (qualityGateResult.status == 'OK') {
-                    echo 'Quality gate passed. Proceeding with the pipeline.'
-                } else {
-                    error "Pipeline aborted due to Quality Gate failure: ${qualityGateResult.status}"
-                }
-            }
-        }
-    }
+sstage('SonarQube Quality Gate, Checkstyle and JaCoCo Reports') {
+     steps {
+         script {
+             // Primeiro, verifica o Quality Gate
+             timeout(time: 3, unit: 'MINUTES') {
+                 def qualityGateResult = waitForQualityGate abortPipeline: true
+                 if (qualityGateResult.status == 'OK') {
+                     echo 'Quality gate passed. Proceeding with the pipeline.'
+                 } else {
+                     error "Pipeline aborted due to Quality Gate failure: ${qualityGateResult.status}"
+                 }
+             }
+         }
 
-    // Executa Checkstyle e JaCoCo em paralelo
-    parallel {
-        stage('Checkstyle') {
-            steps {
-                script {
-                    publishChecks checks: [checkStyle(reportPattern: '**/target/reports/checkstyle-result.xml')]
-                }
-            }
-        }
+         // Executa Checkstyle e JaCoCo em paralelo
+         parallel(
+             'Checkstyle': {
+                 script {
+                     publishChecks checks: [checkStyle(reportPattern: '**/target/reports/checkstyle-result.xml')]
+                 }
+             },
+             'JaCoCo': {
+                 jacoco execPattern: '**/target/jacoco.exec',
+                        classPattern: '**/target/classes',
+                        sourcePattern: '**/src/main/java',
+                        inclusionPattern: '**/*.class'
+             }
+         )
+     }
+ }
 
-        stage('JaCoCo') {
-            steps {
-                jacoco execPattern: '**/target/jacoco.exec',
-                       classPattern: '**/target/classes',
-                       sourcePattern: '**/src/main/java',
-                       inclusionPattern: '**/*.class'
-            }
-        }
-    }
-}
 
 
         stage('Install') {
