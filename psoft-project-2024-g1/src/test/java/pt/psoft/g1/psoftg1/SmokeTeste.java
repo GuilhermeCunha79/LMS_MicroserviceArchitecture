@@ -113,5 +113,6 @@ public class SmokeTeste {
         // Assert
         assertThat(authorView).isNotNull();
         assertThat(authorView.getName()).isEqualTo("Manuel Antonio Pina");
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

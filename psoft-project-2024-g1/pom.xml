@@ -398,7 +398,7 @@
                         <param>HTML</param>
                     </outputFormats>
                     <timestampedReports>false</timestampedReports>
-                    <threads>4</threads>
+                    <threads>2</threads>
                 </configuration>
             </plugin>
 
