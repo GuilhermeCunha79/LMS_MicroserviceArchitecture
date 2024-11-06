@@ -133,19 +133,27 @@ stage('SonarQube Quality Gate, Checkstyle and JaCoCo Reports') {
         }
     }
 
-    steps {
-        script {
-            publishChecks checks: [checkStyle(reportPattern: '**/target/reports/checkstyle-result.xml')]
+    // Executa Checkstyle e JaCoCo em paralelo
+    parallel {
+        stage('Checkstyle') {
+            steps {
+                script {
+                    publishChecks checks: [checkStyle(reportPattern: '**/target/reports/checkstyle-result.xml')]
+                }
+            }
+        }
+
+        stage('JaCoCo') {
+            steps {
+                jacoco execPattern: '**/target/jacoco.exec',
+                       classPattern: '**/target/classes',
+                       sourcePattern: '**/src/main/java',
+                       inclusionPattern: '**/*.class'
+            }
         }
     }
-
-    steps {
-        jacoco execPattern: '**/target/jacoco.exec',
-               classPattern: '**/target/classes',
-               sourcePattern: '**/src/main/java',
-               inclusionPattern: '**/*.class'
-    }
 }
+
 
         stage('Install') {
             steps {
