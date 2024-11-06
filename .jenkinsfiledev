@@ -119,7 +119,7 @@ pipeline {
 
         }
 
-sstage('SonarQube Quality Gate, Checkstyle and JaCoCo Reports') {
+stage('SonarQube Quality Gate, Checkstyle and JaCoCo Reports') {
      steps {
          script {
              // Primeiro, verifica o Quality Gate
