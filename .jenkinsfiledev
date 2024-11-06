@@ -101,9 +101,7 @@ pipeline {
                                 }
                             }
                         }
-
-        stage('SonarQube Scan & Checkstyle') {
-                stage('Static Code Analysis') {
+                stage('SonarQube Static Code Analysis') {
                     steps {
                         script {
                             dir(POM_LOC) {
@@ -118,7 +116,7 @@ pipeline {
                         }
 
                 }
-            }
+
         }
 
 stage('SonarQube Quality Gate, Checkstyle and JaCoCo Reports') {
