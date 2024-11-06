@@ -16,19 +16,7 @@ pipeline {
             }
         }
 
-        stage('Clean') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'rm -rf target/'
-                    } else {
-                        bat 'if exist target rd /s /q target'
-                    }
-                }
-            }
-        }
-
-        stage('Build') {
+        stage('Clean + Build') {
             steps {
                 script {
                     dir(POM_LOC) {
@@ -122,7 +110,7 @@ pipeline {
         stage('SonarQube Quality Gate') {
             steps {
                 script {
-                    timeout(time: 1, unit: 'HOURS') {
+                    timeout(time: 3, unit: 'MINUTES') {
                         def qualityGateResult = waitForQualityGate abortPipeline: true
                         if (qualityGateResult.status == 'OK') {
                             echo 'Quality gate passed. Proceeding with the pipeline.'
@@ -133,6 +121,7 @@ pipeline {
         }
 
         // Stage para Checkstyle e JaCoCo em paralelo
+
         stage('Checkstyle and JaCoCo Reports') {
             parallel {
                 stage('Checkstyle') {
