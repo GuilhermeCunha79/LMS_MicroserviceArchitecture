@@ -361,9 +361,9 @@ Given the iteration goal selected drivers in Step 2, it is necessary to define w
 
 **Sequence Diagram**
 
-![VP-N3-CreateReader](Imagens/VP-N3-CreateReader.svg)
+![VP-N3-CreateReader](Diagrams/VP-N3-CreateReader.svg/VP-N3-CreateReader.svg)
 
-![VP-N3-UpdatePersonal Data](Imagens/VP-N3-UpdatePersonalData.svg)
+![VP-N3-UpdatePersonal Data](Diagrams/VP-N3-UpdatePersonalData.svg/VP-N3-UpdatePersonalData.svg)
 
 **Use Case Diagram**
 

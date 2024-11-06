@@ -111,6 +111,43 @@ Connections between LMS REST API and Management System:
 - Repository communicates with Infrastructure.Repositories.Impl and Repositories.
 - Model components support data entity management across both systems.
 
+----------
+
+## Distributed System Architecture for CI/CD with Jenkins and Bitbucket
+
+## Overview of Components and Communication
+The first diagram provides an overview of the architecture of a distributed system involving various components and integration tools. It includes the following elements:
+
+- **local**: This is an environment where a Git Client and an LMS (Learning Management System) are present. The Git Client enables the system to interact with Git repositories, while the LMS might use this Git integration to access or store project information.
+
+- **vs1132 (Jenkins)**: This is a specific machine or server identified as "vs1132," where Jenkins is configured. Jenkins is a continuous integration and continuous delivery (CI/CD) automation tool. This setup allows Jenkins to automate development processes, such as code integration and deployment. Communication between "vs1132" and the "local" environment occurs via SSH/SCP, enabling secure file transfer.
+
+- **xpto (LMS)**: Another environment containing an LMS, possibly for communication or integration with other system components, although its specific function isn't detailed here. It could be a separate LMS instance or a complementary platform to the "local" environment.
+
+- **VSC (Bitbucket)**: This component represents the version control system (VCS), in this case, Bitbucket, which stores Git repositories. The connection between the "local" environment and Bitbucket is done via HTTP (Git over HTTP), allowing the Git Client in the local environment to interact with the repositories remotely, performing operations like clone, pull, and push securely.
+
+![Jenkins-VCS-Git-LMS-Physical.svg](../Diagrams/Jenkins-VCS-Git-LMS-Physical.svg)
+
+## Detailed Jenkins-Git Integration
+The second diagram provides a detailed view of the interaction between the Git Client, Jenkins, and the VCS (Bitbucket), highlighting the APIs involved in this process:
+
+- **Git Client**: Responsible for executing Git operations, such as clone, pull, and push on Bitbucket repositories. This client is essential for the system to interact with Bitbucket.
+
+- **VCS (Bitbucket)**: Stores Git repositories and responds to requests from the Git Client. It acts as the central repository for system data and enables efficient source code and version management.
+
+- **Jenkins**: Jenkins interacts with Bitbucket using two specific APIs:
+    - **Git API**: Allows Jenkins to access the Git repository on Bitbucket to perform read operations, such as pulling updates.
+    - **Git Push API**: Used for push operations, enabling Jenkins to send code to Bitbucket, typically after successful integration or testing processes.
+
+This interaction between the Git Client, Jenkins, and Bitbucket ensures a continuous integration flow in system development.
+
+![VCS-Git-Jenkins.svg](../Diagrams/VCS-Git-Jenkins.svg)
+
+Together, these two diagrams provide a complete view of how the components interact within the system. The first diagram represents the general distribution of components across different machines and their connections, while the second diagram details the integration between the Git Client, Jenkins, and Bitbucket using specific APIs for Git operations. This architecture enables automation, version control, and efficient continuous integration, essential for a robust and scalable system.
 ## Conclusion
 
 This document has outlined the system architecture design, presenting an organized, modular, and scalable structure that is responsive to the project’s evolving needs. The proposed architecture integrates a backend, external LMS API, external Database API, and an Auth API, facilitated by an API Gateway for streamlined communication. The design prioritizes modularity and maintainability, positioning the project for successful long-term development.
+
+--------
+
+
