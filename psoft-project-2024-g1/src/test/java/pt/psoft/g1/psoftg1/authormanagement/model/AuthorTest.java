@@ -133,4 +133,30 @@ class AuthorTest {
         assertNull(author.getPhoto());
     }
 
+    //Testes de Mutação
+
+    @Test
+    void whenVersionIsStale_applyPatchThrowsStaleObjectStateExceptionMutation() {
+        assertThrows(StaleObjectStateException.class, () -> author.applyPatch(999, request));
+    }
+
+    @Test
+    void testRemovePhotoWithStaleVersionThrowsExceptionMutation() {
+        assertThrows(ConflictException.class, () -> author.removePhoto(999));
+    }
+
+    @Test
+    void whenVersionIsStale_removePhotoThrowsConflictException() {
+        long incorrectVersion = author.getVersion() + 1;
+
+        assertThrows(ConflictException.class, () -> author.removePhoto(incorrectVersion));
+    }
+
+    @Test
+    void whenSetName_withNullName_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> author.setName(null));
+    }
+
+
+
 }
