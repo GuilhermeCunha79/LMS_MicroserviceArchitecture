@@ -106,7 +106,6 @@ pipeline {
             }
         }
 
-        // Stage para verificar o SonarQube Quality Gate
         stage('SonarQube Quality Gate') {
             steps {
                 script {
@@ -119,8 +118,6 @@ pipeline {
                 }
             }
         }
-
-        // Stage para Checkstyle e JaCoCo em paralelo
 
         stage('Checkstyle and JaCoCo Reports') {
             parallel {
