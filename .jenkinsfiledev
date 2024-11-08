@@ -160,7 +160,7 @@ pipeline {
                         if (isUnix()) {
                             sh 'nohup java -jar ./target/psoft-g1-0.0.1-SNAPSHOT.jar --server.port=2228 > output.log 2>&1 &'
                         } else {
-                            bat 'start /B java -jar .\target\psoft-g1-0.0.1-SNAPSHOT.jar --server.port=2228 > output.log 2>&1'
+                            bat 'start /B java -jar .\\target\\psoft-g1-0.0.1-SNAPSHOT.jar --server.port=2228 > output.log 2>&1'
                         }
                     }
                 }
