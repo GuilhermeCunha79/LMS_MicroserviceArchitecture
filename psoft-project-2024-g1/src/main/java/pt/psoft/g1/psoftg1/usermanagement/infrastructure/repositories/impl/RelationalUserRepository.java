@@ -33,7 +33,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Lazy;import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -47,6 +47,7 @@ import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
 /**
  * Based on https://github.com/Yoh0xFF/java-spring-security-example
  */
+@Lazy
 @Component("userJpa")
 @CacheConfig(cacheNames = "users")
 @Primary

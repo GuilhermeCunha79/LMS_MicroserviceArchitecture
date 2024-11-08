@@ -2,7 +2,7 @@ package pt.psoft.g1.psoftg1.lendingmanagement.model.recommendation;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Lazy;import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingView;
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component("alg2")
+@Lazy
 public class LendingRecommendation2Impl implements LendingRecommendation {
 
     @Value("${fineValuePerDayInCents}")

@@ -57,7 +57,6 @@ public class User implements UserDetails {
 
 	// database primary key
 	@Id
-	@GeneratedValue
 	@Getter
 	@Column(name="USER_ID")
 	private Long id;
@@ -128,6 +127,7 @@ public class User implements UserDetails {
 	 * @param password
 	 */
 	public User(final String username, final String password) {
+		this.id=Generator.generateLongID();
 		this.username = username;
 		setPassword(password);
 	}

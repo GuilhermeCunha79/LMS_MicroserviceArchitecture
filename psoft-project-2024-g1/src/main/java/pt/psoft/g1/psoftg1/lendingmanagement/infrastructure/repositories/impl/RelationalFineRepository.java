@@ -2,7 +2,7 @@ package pt.psoft.g1.psoftg1.lendingmanagement.infrastructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.context.annotation.Lazy;import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
@@ -10,6 +10,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 
 import java.util.Optional;
 
+@Lazy
 @Component("fineJpa")
 public class RelationalFineRepository implements FineRepository {
 

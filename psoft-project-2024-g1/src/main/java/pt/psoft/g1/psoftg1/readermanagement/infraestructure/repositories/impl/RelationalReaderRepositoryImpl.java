@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.data.domain.Page;
+import org.springframework.context.annotation.Lazy;import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component("readerJpa")
+@Lazy
 public class RelationalReaderRepositoryImpl implements ReaderRepository {
 
     private final EntityManager entityManager;

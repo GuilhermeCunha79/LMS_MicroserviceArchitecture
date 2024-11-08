@@ -80,6 +80,7 @@ A implementação `NoSQLAuthorRepository` trata da persistência de dados no Mon
 ### EXcerto de Código: Implementação do Repositório Mongo
 
 ```java
+@Lazy
 @Component("authorMongo")
 @Primary
 public class NoSQLAuthorRepository implements AuthorRepository {
@@ -123,6 +124,9 @@ A utilização do `MongoTemplate` permite que o repositório seja flexível e ex
 
 #### 3.3. **Componentização e @Primary**
 A anotação `@Primary` indica que esta implementação de repositório deve ser a preferida quando o Spring precisa resolver uma dependência de `AuthorRepository`. A anotação `@Component("authorMongo")` permite que o Spring identifique a implementação correta para o tipo de repositório configurado no arquivo `application.properties`.
+
+#### 3.4 **Anotação @Lazy**
+A anotação @Lazy é aplicada com @Component, como no caso do NoSQLAuthorRepository, pra que o Spring não crie o bean imediatamente quando a aplicação inicia. Em vez disso, o bean será criado apenas quando ele for referenciado ou iniciado pela primeira vez, em uma injeção de dependência ou quando o método que o utiliza for chamado.
 
 ---
 

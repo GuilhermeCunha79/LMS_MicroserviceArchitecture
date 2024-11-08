@@ -3,7 +3,7 @@ package pt.psoft.g1.psoftg1.usermanagement.infrastructure.repositories.impl;
 import jakarta.persistence.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Lazy;import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,13 +14,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.shared.services.Page;
-import pt.psoft.g1.psoftg1.usermanagement.model.User;
+import pt.psoft.g1.psoftg1.usermanagement.model.Librarian;import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 
 @Component("userMongo")
 @Primary
@@ -65,7 +66,12 @@ public class NoSQLUserRepository implements UserRepository {
     @Override
     public Optional<User> findByUsername(String username) {
         Query query = new Query(Criteria.where("username").is(username));
-        User user = mongoTemplate.findOne(query, User.class);
+        Librarian librarian = mongoTemplate.findOne(query, Librarian.class);
+        User user = null;
+        if(librarian !=null) {
+             user= new User(librarian.getUsername(),librarian.getPassword());
+
+        }
         return Optional.ofNullable(user);
     }
 

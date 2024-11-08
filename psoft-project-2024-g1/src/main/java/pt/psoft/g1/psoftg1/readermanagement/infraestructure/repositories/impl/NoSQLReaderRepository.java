@@ -1,7 +1,7 @@
 package pt.psoft.g1.psoftg1.readermanagement.infraestructure.repositories.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Lazy;import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +23,7 @@ import java.util.*;
 
 @Component("readerMongo")
 @Primary
+@Lazy
 public class NoSQLReaderRepository implements ReaderRepository {
 
     private final MongoTemplate mongoTemplate;
