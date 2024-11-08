@@ -151,3 +151,8 @@ Configura os tipos de repositórios para diferentes entidades no sistema, com o 
 A configuração dos repositórios em Spring, especialmente ao lidar com múltiplas fontes de dados, segue boas práticas de design e padrões como Inversão de Controlo, Padrão Factory e Mapper, e Substituição de Liskov. A flexibilidade proporcionada pela injeção de dependências e pela configuração externa permite que o sistema evolua de forma modular e sem acoplamento excessivo, facilitando a manutenção e a integração de novas tecnologias, como o MongoDB no caso apresentado.
 
 As boas práticas discutidas ajudam a manter o código limpo, testável e fácil de escalar.
+
+
+# Next
+
+[Lending Recommendation Analysis Implementation](LendingRecommendation.md)

@@ -14,6 +14,9 @@ The system must be designed to accommodate growth in both **user volume** and **
 ## 4. Maintainability
 The system's codebase must be structured to facilitate easy maintenance and future upgrades. **Static code analysis** tools like **CheckStyle** are employed to ensure that the code adheres to industry-standard **styling guidelines**, improving readability and comprehension for developers. This includes a focus on **modularity**, which allows for targeted updates and changes with minimal disruption to other parts of the system, thus ensuring smooth and cost-effective maintenance over time.
 
+## 5. Modifiability
+The system must be designed to be easily modifiable, allowing the introduce of changes or enhancements with minimal effort and risk. The architecture should support a clear separation of concerns, where different components of the system can be modified independently. Using well-defined interfaces and design patterns, the system must accommodate evolving requirements without significant architectural changes, thereby making it easier to adapt to future needs and reduce the cost of modifications.
+
 # Documenting and Validating ASRs
 
 To ensure that the ASRs are consistently met throughout the development lifecycle, the system integrates automated validation tools into the **CI/CD pipeline**. These tools include:
