@@ -153,7 +153,7 @@ pipeline {
             }
         }
 
-        stage('Local Deploy') {
+        stage('Deploy') {
             steps {
                 script {
                     dir(POM_LOC) {
@@ -174,7 +174,7 @@ pipeline {
                         if (isUnix()) {
                             sh 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@vsgate-ssh.dei.isep.ipp.pt:~/app/ && ssh root@vsgate-ssh.dei.isep.ipp.pt -p 11362 -i ~/.ssh/id_rsa_vs1362.txt "nohup java -jar -Dserver.port=2228 ~/app/psoft-g1-0.0.1-SNAPSHOT.jar > ~/app/app.log 2>&1 &"'
                         } else {
-                            bat 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@vsgate-ssh.dei.isep.ipp.pt:~/app/ && ssh root@vsgate-ssh.dei.isep.ipp.pt -p 11362 -i ~/.ssh/id_rsa_vs1362.txt "nohup java -jar -Dserver.port=2228 ~/app/psoft-g1-0.0.1-SNAPSHOT.jar > ~/app/app.log 2>&1 &"'
+                            bat 'scp -o StrictHostKeyChecking=no -P 11362 -i ~/.ssh/id_rsa_vs1362.txt target/psoft-g1-0.0.1-SNAPSHOT.jar root@vsgate-ssh.dei.isep.ipp.pt:~/target/ && ssh root@vsgate-ssh.dei.isep.ipp.pt -p 11362 -i ~/.ssh/id_rsa_vs1362.txt "nohup java -jar -Dserver.port=2228 ~/target/psoft-g1-0.0.1-SNAPSHOT.jar > ~/app/app.log 2>&1 &"'
                         }
                     }
                 }

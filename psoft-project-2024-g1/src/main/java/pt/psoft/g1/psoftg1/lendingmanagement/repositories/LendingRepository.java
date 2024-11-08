@@ -14,11 +14,8 @@ public interface LendingRepository {
     List<Lending> listOutstandingByReaderNumber(String readerNumber);
     Double getAverageDuration();
     Double getAvgLendingDurationByIsbn(String isbn);
-
-
     List<Lending> getOverdue(Page page);
     List<Lending> searchLendings(Page page, String readerNumber, String isbn, Boolean returned, LocalDate startDate, LocalDate endDate);
-
     Lending save(Lending lending);
 
     void delete(Lending lending);
