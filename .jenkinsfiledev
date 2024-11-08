@@ -124,7 +124,7 @@ pipeline {
                 stage('Checkstyle') {
                     steps {
                         script {
-                            publishChecks checks: [checkStyle(reportPattern: '**/target/reports/checkstyle-result.xml')]
+                            recordIssues(tools: [checkStyle(pattern: '**/target/checkstyle-result.xml')])
                         }
                     }
                 }
@@ -200,7 +200,7 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'ping 127.0.0.1 -n 35 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
+                            sh 'sleep 35 && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         } else {
                             bat 'ping 127.0.0.1 -n 35 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         }
