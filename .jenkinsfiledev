@@ -153,34 +153,21 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
-                        } else {
-                            bat 'docker build -t pt.psoft.g1.psoft -f Dockerfile .'
-                        }
-                    }
-                }
-            }
-        }
-
         stage('Local Deploy') {
             steps {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8081 pt.psoft.g1.psoft'
+                            sh 'nohup java -jar -Dserver.port=2228 .\\target\\psoft-g1-0.0.1-SNAPSHOT.jar > output.log 2>&1 & '
+'
                         } else {
-                            bat 'docker stop psoft-container && docker rm psoft-container || true && docker run -d --name psoft-container -p 8081:8081 pt.psoft.g1.psoft'
+                            bat 'nohup java -jar -Dserver.port=2228 .\\target\\psoft-g1-0.0.1-SNAPSHOT.jar > output.log 2>&1 & '
                         }
                     }
                 }
             }
         }
-
+/*
         stage('Deploy to VM') {
             steps {
                 script {
@@ -194,7 +181,7 @@ pipeline {
                 }
             }
         }
-
+*/
         stage('Smoke Tests') {
             steps {
                 script {
