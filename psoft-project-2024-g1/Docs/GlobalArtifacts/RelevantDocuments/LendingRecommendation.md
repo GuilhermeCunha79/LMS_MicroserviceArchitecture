@@ -6,7 +6,7 @@ Copiar código
 # Serviço de Recomendação de Empréstimos
 
 Este serviço é responsável pela recomendação de livros para os leitores com base em critérios configuráveis. A lógica de
-recomendação é aplicada de acordo com a disponibilidade de livros e a popularidade de gêneros, além de outros
+recomendação é aplicada de acordo com a disponibilidade de livros e a popularidade de géneros, além de outros
 parâmetros, como a idade mínima e a faixa etária adulta, configurados externamente.
 
 O uso de boas práticas de design no desenvolvimento deste serviço permite flexibilidade e facilidade de manutenção, além
@@ -118,15 +118,15 @@ O algoritmo de recomendação é selecionado dinamicamente através da configura
 #### 2.2. Princípio da Injeção de Dependência
 A dependência do LendingRecommendation é resolvida automaticamente pelo Spring, com base nas configurações externas. Isso permite que o sistema seja facilmente configurado para utilizar diferentes estratégias de recomendação conforme as necessidades do negócio.
 
-#### 2.3. Consulta Dinâmica de Livros com Base em Gênero
-A consulta aos livros é realizada de maneira dinâmica, considerando a popularidade dos gêneros e a quantidade de livros a serem recomendados. Isso é feito utilizando o método findXBooksByYGenre, que executa uma consulta SQL para obter livros de gêneros mais populares, com base no número de livros por gênero. Esse tipo de consulta oferece flexibilidade na recomendação de livros e pode ser facilmente ajustado conforme novos requisitos.
+#### 2.3. Consulta Dinâmica de Livros com Base em géneros
+A consulta aos livros é realizada de maneira dinâmica, considerando a popularidade dos géneros e a quantidade de livros a serem recomendados. Isso é feito utilizando o método findXBooksByYGenre, que executa uma consulta SQL para obter livros de géneros mais populares, com base no número de livros por género. Esse tipo de consulta oferece flexibilidade na recomendação de livros e pode ser facilmente ajustado conforme novos requisitos.
 
 ---
 
-## 3. Implementação da Consulta de Livros por Gênero findXBooksByYGenre
-   O método findXBooksByYGenre realiza uma consulta ao banco de dados para retornar uma lista de livros de gêneros populares, com base nas quantidades configuradas em universal.lendingRecommendation.x e universal.lendingRecommendation.y. A consulta é otimizada para retornar os livros mais relevantes de forma eficiente.
+## 3. Implementação da Consulta de Livros por géneros findXBooksByYGenre
+   O método findXBooksByYGenre realiza uma consulta ao banco de dados para retornar uma lista de livros de géneros populares, com base nas quantidades configuradas em universal.lendingRecommendation.x e universal.lendingRecommendation.y. A consulta é otimizada para retornar os livros mais relevantes de forma eficiente.
 
-Trecho de Código: Consulta de Livros por Gênero
+### Excerto de Código: Consulta de Livros por géneros
 
 ```java
 @Override
@@ -159,7 +159,7 @@ public List<Book> findXBooksByYGenre(@Param("x") int x, @Param("y") int y) {
 ### Boas Práticas e Padrões Utilizados
 
 #### 3.1. Uso de SQL Nativo para Consultas Complexas
-A consulta SQL nativa é utilizada para retornar livros de gêneros populares com base nas quantidades configuradas. A utilização de SQL nativo permite otimizar consultas complexas, como o uso de ROW_NUMBER() para particionar os livros por gênero e obter os mais relevantes. Essa abordagem proporciona maior controle sobre as consultas e melhora a performance ao lidar com grandes volumes de dados.
+A consulta SQL nativa é utilizada para retornar livros de géneros populares com base nas quantidades configuradas. A utilização de SQL nativo permite otimizar consultas complexas, como o uso de ROW_NUMBER() para particionar os livros por géneros e obter os mais relevantes. Essa abordagem proporciona maior controle sobre as consultas e melhora a performance ao lidar com grandes volumes de dados.
 
 #### 3.2. Uso de Parâmetros Dinâmicos na Consulta
 Os parâmetros x e y são passados dinamicamente para a consulta, permitindo a personalização da quantidade de livros a serem retornados com base nas configurações. Isso proporciona flexibilidade no comportamento da consulta e facilita a manutenção do código à medida que novos parâmetros ou requisitos são adicionados.
