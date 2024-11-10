@@ -31,7 +31,7 @@ pipeline {
         }
 
         stage('Unit + Integration Testing') {
- parallel {
+            parallel {
                 stage('Unit Testing') {
                     steps {
                         script {
@@ -59,9 +59,9 @@ pipeline {
                         }
                     }
                 }
-}
+            }
         }
-/*
+
         stage('Mutation Testing') {
             steps {
                 script {
@@ -74,7 +74,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
 
         stage('Checkstyle') {
             steps {
@@ -89,7 +89,7 @@ pipeline {
                 }
             }
         }
-/*
+
         stage('SonarQube Static Code Analysis') {
             steps {
                 script {
@@ -117,7 +117,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
 
         stage('Checkstyle and JaCoCo Reports') {
             parallel {
@@ -158,7 +158,7 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'nohup java -jar ./target/psoft-g1-0.0.1-SNAPSHOT.jar --server.port=2228 > output.log 2>&1 &'
+                            sh 'nohup java -jar /var/lib/jenkins/workspace/pipeline-odsoft/psoft-project-2024-g1/target/psoft-g1-0.0.1-SNAPSHOT.jar --server.port=2228 > output.log 2>&1 &'
                         } else {
                             bat 'start /B java -jar .\\target\\psoft-g1-0.0.1-SNAPSHOT.jar --server.port=2228 > output.log 2>&1'
                         }
@@ -166,7 +166,8 @@ pipeline {
                 }
             }
         }
-/*
+
+        /*
         stage('Deploy to VM') {
             steps {
                 script {
@@ -180,6 +181,7 @@ pipeline {
                 }
             }
         }
+        */
 
         stage('Smoke Tests') {
             steps {
@@ -193,7 +195,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
     }
 
     post {

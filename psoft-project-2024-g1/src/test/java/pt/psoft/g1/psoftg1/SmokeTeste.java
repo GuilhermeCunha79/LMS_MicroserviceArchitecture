@@ -31,7 +31,7 @@ import javax.net.ssl.SSLContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/*
+
 @SpringBootTest
 public class SmokeTeste {
 
@@ -41,7 +41,7 @@ public class SmokeTeste {
     private RestTemplate restTemplate;
     private UserView userView;
 
-    private final String BASE_URL = "https://vs-gate.dei.isep.ipp.pt:30575/api/";
+    private final String BASE_URL = "https://vs-gate.dei.isep.ipp.pt:31337/api/";
     private String authToken;
 
     @BeforeEach
@@ -115,4 +115,4 @@ public class SmokeTeste {
         assertThat(authorView.getName()).isEqualTo("Manuel Antonio Pina");
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
-}*/
+}
