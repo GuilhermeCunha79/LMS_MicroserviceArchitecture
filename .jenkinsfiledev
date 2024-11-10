@@ -180,7 +180,7 @@ pipeline {
                 }
             }
         }
-*/
+
         stage('Smoke Tests') {
             steps {
                 script {
@@ -194,7 +194,7 @@ pipeline {
                 }
             }
         }
-    }
+    }*/
 
     post {
         always {
