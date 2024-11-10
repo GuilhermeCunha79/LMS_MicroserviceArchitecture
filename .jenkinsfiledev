@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven 3.9.9'
+    }
+
     environment {
         POM_LOC = "psoft-project-2024-g1"
     }
