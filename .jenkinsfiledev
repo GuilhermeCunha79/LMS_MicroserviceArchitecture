@@ -21,9 +21,9 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'mvn clean compile -DskipTests'
+                            sh 'mvn clean compile test-compile'
                         } else {
-                            bat 'mvn clean compile -DskipTests'
+                            bat 'mvn clean compile test-compile'
                         }
                     }
                 }
@@ -31,7 +31,7 @@ pipeline {
         }
 
         stage('Unit + Integration Testing') {
-            parallel {
+
                 stage('Unit Testing') {
                     steps {
                         script {
@@ -59,7 +59,7 @@ pipeline {
                         }
                     }
                 }
-            }
+
         }
 /*
         stage('Mutation Testing') {
