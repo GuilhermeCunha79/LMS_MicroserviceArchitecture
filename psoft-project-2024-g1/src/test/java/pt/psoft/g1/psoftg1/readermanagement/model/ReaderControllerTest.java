@@ -61,7 +61,7 @@ class ReaderControllerTest {
         ResponseEntity<?> response = readerController.getData(authentication);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         verify(readerService, times(1)).findByUsername(user.getUsername());
     }
 
@@ -76,7 +76,7 @@ class ReaderControllerTest {
         ResponseEntity<?> response = readerController.getData(authentication);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         verify(readerService, times(1)).findAll();
     }
 
@@ -106,7 +106,7 @@ class ReaderControllerTest {
         ResponseEntity<ReaderQuoteView> response = readerController.findByReaderNumber(year, seq);
 
         // Assert
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         verify(readerService, times(1)).findByReaderNumber(readerNumber);
         verify(apiNinjasService, times(1)).getRandomEventFromYearMonth(1990, 5);
     }
