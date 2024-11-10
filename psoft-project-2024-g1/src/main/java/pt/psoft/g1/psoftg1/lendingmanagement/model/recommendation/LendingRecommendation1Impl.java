@@ -23,7 +23,6 @@ import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-@Lazy
 @Component("alg1")
 @Primary
 public class LendingRecommendation1Impl implements LendingRecommendation {

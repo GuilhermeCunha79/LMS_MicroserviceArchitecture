@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @Component("fineMongo")
 @Primary
-@Lazy
 public class NoSQLFineRepository implements FineRepository {
 
     private final MongoTemplate mongoTemplate;

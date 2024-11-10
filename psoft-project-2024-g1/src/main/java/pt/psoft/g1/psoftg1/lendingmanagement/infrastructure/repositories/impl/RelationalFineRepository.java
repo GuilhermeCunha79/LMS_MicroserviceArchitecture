@@ -10,7 +10,6 @@ import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 
 import java.util.Optional;
 
-@Lazy
 @Component("fineJpa")
 public class RelationalFineRepository implements FineRepository {
 

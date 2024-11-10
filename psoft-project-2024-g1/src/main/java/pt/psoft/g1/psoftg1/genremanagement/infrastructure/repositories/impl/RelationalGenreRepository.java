@@ -22,7 +22,6 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import java.time.LocalDate;
 import java.util.*;
 
-@Lazy
 @Component("genreJpa")
 @Primary
 public class RelationalGenreRepository implements GenreRepository {

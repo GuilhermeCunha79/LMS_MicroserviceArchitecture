@@ -47,7 +47,6 @@ import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
 /**
  * Based on https://github.com/Yoh0xFF/java-spring-security-example
  */
-@Lazy
 @Component("userJpa")
 @CacheConfig(cacheNames = "users")
 @Primary
@@ -98,7 +97,6 @@ public class RelationalUserRepository implements UserRepository {
 
     @Override
     @Cacheable
-    @Transactional
     public Optional<User> findByUsername(String username) {
         TypedQuery<User> query = entityManager.createQuery(
                 "SELECT u FROM User u WHERE u.username = :username", User.class);

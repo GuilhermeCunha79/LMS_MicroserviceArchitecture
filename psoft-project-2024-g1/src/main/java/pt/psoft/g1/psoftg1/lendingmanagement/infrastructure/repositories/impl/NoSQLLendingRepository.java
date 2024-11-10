@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Component("lendingMongo")
 @Primary
-@Lazy
 public class NoSQLLendingRepository implements LendingRepository {
 
     private final MongoTemplate mongoTemplate;

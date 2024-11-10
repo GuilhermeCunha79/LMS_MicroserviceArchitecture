@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.readermanagement.infraestructure.repositories.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.context.annotation.Lazy;import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,10 +22,10 @@ import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component("readerJpa")
-@Lazy
 public class RelationalReaderRepositoryImpl implements ReaderRepository {
 
     private final EntityManager entityManager;
@@ -87,9 +88,16 @@ public class RelationalReaderRepositoryImpl implements ReaderRepository {
 
     @Override
     public ReaderDetails save(ReaderDetails readerDetails) {
-        entityManager.persist(readerDetails);
+        if (Objects.equals(readerDetails.getReaderNumber(), readerDetails.getReaderNumber())) {
+            // Se a entidade não existe (id nulo ou não encontrada), usa persist
+            entityManager.merge(readerDetails);
+        } else {
+            // Caso contrário, usa merge
+            entityManager.persist(readerDetails);
+        }
         return readerDetails;
     }
+
 
     @Override
     public Iterable<ReaderDetails> findAll() {

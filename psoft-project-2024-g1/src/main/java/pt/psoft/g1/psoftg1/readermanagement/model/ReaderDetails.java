@@ -22,7 +22,7 @@ public class ReaderDetails extends EntityWithPhoto {
 
     @Getter
     @Setter
-    @OneToOne
+    @OneToOne(cascade=CascadeType.ALL)
     private Reader reader;
 
 

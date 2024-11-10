@@ -23,7 +23,6 @@ import java.util.*;
 
 @Component("readerMongo")
 @Primary
-@Lazy
 public class NoSQLReaderRepository implements ReaderRepository {
 
     private final MongoTemplate mongoTemplate;

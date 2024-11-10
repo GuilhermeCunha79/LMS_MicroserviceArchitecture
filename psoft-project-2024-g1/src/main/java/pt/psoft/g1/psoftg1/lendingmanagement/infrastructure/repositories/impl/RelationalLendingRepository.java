@@ -15,7 +15,6 @@ import pt.psoft.g1.psoftg1.shared.services.Page;
 import java.time.LocalDate;
 import java.util.*;
 
-@Lazy
 @Component("lendingJpa")
 public class RelationalLendingRepository implements LendingRepository {
 

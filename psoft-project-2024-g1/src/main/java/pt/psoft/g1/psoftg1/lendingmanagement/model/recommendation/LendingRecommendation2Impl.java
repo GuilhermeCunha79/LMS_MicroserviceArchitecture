@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component("alg2")
-@Lazy
 public class LendingRecommendation2Impl implements LendingRecommendation {
 
     @Value("${fineValuePerDayInCents}")

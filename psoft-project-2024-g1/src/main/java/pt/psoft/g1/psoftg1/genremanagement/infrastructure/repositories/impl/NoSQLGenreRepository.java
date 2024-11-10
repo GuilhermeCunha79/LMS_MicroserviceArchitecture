@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
-@Lazy
 @Component("genreMongo")
 public class NoSQLGenreRepository implements GenreRepository {
 

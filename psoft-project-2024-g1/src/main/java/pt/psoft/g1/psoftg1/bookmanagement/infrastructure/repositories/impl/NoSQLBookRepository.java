@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Lazy
 @Component("bookMongo")
 @Primary
 public class NoSQLBookRepository implements BookRepository {
