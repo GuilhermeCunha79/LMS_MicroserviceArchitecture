@@ -193,8 +193,8 @@ pipeline {
                     }
                 }
             }
-        }
-    }*/
+        }*/
+    }
 
     post {
         always {
