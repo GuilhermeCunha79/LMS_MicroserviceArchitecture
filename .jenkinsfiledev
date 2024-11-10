@@ -199,7 +199,6 @@ pipeline {
     post {
         always {
             echo 'Pipeline completed. Workspace cleaned.'
-            cleanWs()
         }
         success {
             echo 'Pipeline succeeded.'
