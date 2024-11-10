@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Lazy;import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
@@ -15,6 +15,7 @@ import pt.psoft.g1.psoftg1.shared.services.Page;
 import java.time.LocalDate;
 import java.util.*;
 
+@Lazy
 @Component("lendingJpa")
 public class RelationalLendingRepository implements LendingRepository {
 

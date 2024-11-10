@@ -2,7 +2,7 @@ package pt.psoft.g1.psoftg1.lendingmanagement.model.recommendation;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Lazy;import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
@@ -23,6 +23,7 @@ import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+@Lazy
 @Component("alg1")
 @Primary
 public class LendingRecommendation1Impl implements LendingRecommendation {

@@ -1,8 +1,3 @@
-Claro! Aqui está o texto em formato Markdown para você copiar:
-
-markdown
-Copiar código
-
 # Serviço de Recomendação de Empréstimos
 
 Este serviço é responsável pela recomendação de livros para os leitores com base em critérios configuráveis. A lógica de

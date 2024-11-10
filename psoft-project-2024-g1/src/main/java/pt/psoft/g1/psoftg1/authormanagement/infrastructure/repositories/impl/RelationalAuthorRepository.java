@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Lazy;import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +18,7 @@ import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import java.util.List;
 import java.util.Optional;
 
+@Lazy
 @Component("authorJpa")
 public class RelationalAuthorRepository implements AuthorRepository {
 

@@ -2,7 +2,7 @@ package pt.psoft.g1.psoftg1.genremanagement.infrastructure.repositories.impl;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
+import org.springframework.context.annotation.Lazy;import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+@Lazy
 @Component("genreMongo")
 public class NoSQLGenreRepository implements GenreRepository {
 

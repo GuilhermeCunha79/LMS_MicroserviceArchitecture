@@ -6,7 +6,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Lazy;import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +22,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import java.time.LocalDate;
 import java.util.*;
 
+@Lazy
 @Component("genreJpa")
 @Primary
 public class RelationalGenreRepository implements GenreRepository {

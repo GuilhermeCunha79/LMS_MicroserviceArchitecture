@@ -1,7 +1,7 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.infrastructure.repositories.impl;
 
 import jakarta.transaction.Transactional;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Lazy;import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Component("lendingMongo")
 @Primary
+@Lazy
 public class NoSQLLendingRepository implements LendingRepository {
 
     private final MongoTemplate mongoTemplate;
@@ -34,7 +35,7 @@ public class NoSQLLendingRepository implements LendingRepository {
 
     @Override
     public Optional<Lending> findByLendingNumber(String lendingNumber) {
-        Query query = new Query(Criteria.where("lendingNumber").is(lendingNumber));
+        Query query = new Query(Criteria.where("lendingNumber.lendingNumber").is(lendingNumber));
 
         Lending lending = lendingMapper.toLending(mongoTemplate.findOne(query, LendingMongo.class));
 

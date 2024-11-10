@@ -1,6 +1,6 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.infrastructure.repositories.impl;
 
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Lazy;import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Component("fineMongo")
 @Primary
+@Lazy
 public class NoSQLFineRepository implements FineRepository {
 
     private final MongoTemplate mongoTemplate;

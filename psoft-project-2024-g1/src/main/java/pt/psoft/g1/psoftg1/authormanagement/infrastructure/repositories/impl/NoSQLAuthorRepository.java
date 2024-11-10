@@ -2,7 +2,7 @@ package pt.psoft.g1.psoftg1.authormanagement.infrastructure.repositories.impl;
 
 import jakarta.persistence.LockModeType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Lazy;import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Lazy
 @Component("authorMongo")
 @Primary
 public class NoSQLAuthorRepository implements AuthorRepository {
