@@ -41,7 +41,7 @@ public class SmokeTeste {
     private RestTemplate restTemplate;
     private UserView userView;
 
-    private final String BASE_URL = "https://vs-gate.dei.isep.ipp.pt:31362/api/";
+    private final String BASE_URL = "https://vs-gate.dei.isep.ipp.pt:30575/api/";
     private String authToken;
 
     @BeforeEach
