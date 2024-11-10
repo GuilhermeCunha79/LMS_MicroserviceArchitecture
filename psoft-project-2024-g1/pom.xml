@@ -410,7 +410,6 @@
                         <param>HTML</param>
                     </outputFormats>
                     <timestampedReports>false</timestampedReports>
-                    <threads>2</threads>
                 </configuration>
             </plugin>
 
