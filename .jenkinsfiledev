@@ -21,9 +21,9 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'mvn clean package -DskipTests'
+                            sh 'mvn clean compile -DskipTests'
                         } else {
-                            bat 'mvn clean package -DskipTests'
+                            bat 'mvn clean compile -DskipTests'
                         }
                     }
                 }
