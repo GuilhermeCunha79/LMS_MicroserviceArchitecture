@@ -263,7 +263,7 @@
                 </executions>
                 <configuration>
                     <includes>
-                        <include>**/*IT.java</include> <!-- Padrão para testes de integração -->
+                            <include>**/*IT.java</include> <!-- Padrão para testes de integração -->
                     </includes>
                 </configuration>
             </plugin>

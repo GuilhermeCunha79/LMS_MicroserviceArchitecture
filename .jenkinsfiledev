@@ -12,7 +12,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git', credentialsId: 'jenkins_1201506', branch: 'main'
+                git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git',
+                credentialsId: 'jenkins_1201506', branch: 'main'
             }
         }
 
@@ -37,9 +38,9 @@ pipeline {
                         script {
                             dir(POM_LOC) {
                                 if (isUnix()) {
-                                    sh 'mvn test'
+                                    sh 'mvn surefire:test'
                                 } else {
-                                    bat 'mvn test'
+                                    bat 'mvn surefire:test'
                                 }
                             }
                         }
@@ -51,9 +52,9 @@ pipeline {
                         script {
                             dir(POM_LOC) {
                                 if (isUnix()) {
-                                    sh 'mvn verify -DskipTests'
+                                    sh 'mvn failsafe:integration-test failsafe-verify'
                                 } else {
-                                    bat 'mvn verify -DskipTests'
+                                    bat 'mvn failsafe:integration-test failsafe-verify'
                                 }
                             }
                         }
