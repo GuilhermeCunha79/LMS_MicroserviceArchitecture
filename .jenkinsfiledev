@@ -52,9 +52,9 @@ pipeline {
                         script {
                             dir(POM_LOC) {
                                 if (isUnix()) {
-                                    sh 'mvn failsafe:integration-test failsafe-verify'
+                                    sh 'mvn failsafe:integration-test failsafe:verify'
                                 } else {
-                                    bat 'mvn failsafe:integration-test failsafe-verify'
+                                    bat 'mvn failsafe:integration-test failsafe:verify'
                                 }
                             }
                         }
