@@ -48,15 +48,11 @@ company’s strategic goals for modular and connected services.
 
 ### Functional Requirements
 
-- As a librarian, I want to create a Book, Author and Genre in the same process.
-- As a reader, I want to suggest the acquisition of a new Book.
 - As a reader, upon returning a Book, I want to recommend it (positively or negatively).
 
-| Use Case                              | Description                                                                       |
-|---------------------------------------|-----------------------------------------------------------------------------------|
-| UC1 - Create Book, Author, and Genre. | A librarian must be able to create a book, author, and genre in a single process. |
-| UC2 - Suggest new Book acquisition.   | A reader can suggest the acquisition of a new book for the library.               |
-| UC3 - Recommend Book                  | A reader can recommend a book (positively or negatively) upon returning it.       |
+| Use Case             | Description                                                                 |
+|----------------------|-----------------------------------------------------------------------------|
+| UC1 - Recommend Book | A reader can recommend a book (positively or negatively) upon returning it. |
 
 ### Constraints
 
@@ -190,8 +186,6 @@ This structure promotes flexibility, scalability, and ease of maintenance in the
 | Not Addressed | Partially Addressed | Completely Addressed | Design Decisions made during the Iteration                                       |
 |---------------|---------------------|----------------------|----------------------------------------------------------------------------------|
 | UC-1          |                     |                      | No significant decisions have been made at this stage.                           |
-| UC-2          |                     |                      | No significant decisions have been made at this stage.                           |
-| UC-3          |                     |                      | No significant decisions have been made at this stage.                           |
 | QA-1          |                     |                      | No significant decisions have been made at this stage.                           |
 | QA-2          |                     |                      | No significant decisions have been made at this stage.                           |
 | QA-3          |                     |                      | No significant decisions have been made at this stage.                           |
@@ -226,34 +220,47 @@ This structure promotes flexibility, scalability, and ease of maintenance in the
 
 # System Architecture Overview
 
-The system architecture is designed around **Bounded Contexts**, with each context corresponding to a dedicated microservice. This approach ensures that each service is modular, with clear responsibilities, minimizing the impact of changes on other components.
+The system architecture is designed around **Bounded Contexts**, with each context corresponding to a dedicated
+microservice. This approach ensures that each service is modular, with clear responsibilities, minimizing the impact of
+changes on other components.
 
-Each microservice is intentionally designed to be sufficiently self-contained, ensuring that modifications within one service do not necessitate changes in others. However, we must avoid excessively small microservices that handle trivial operations, as this could lead to performance degradation and negatively affect the system's overall quality.
+Each microservice is intentionally designed to be sufficiently self-contained, ensuring that modifications within one
+service do not necessitate changes in others. However, we must avoid excessively small microservices that handle trivial
+operations, as this could lead to performance degradation and negatively affect the system's overall quality.
 
-A critical design requirement is the **consistent management of data** across the entire system. To achieve this, we will employ **eventual consistency**, ensuring that data remains consistent across services without compromising system performance or responsiveness.
+A critical design requirement is the **consistent management of data** across the entire system. To achieve this, we
+will employ **eventual consistency**, ensuring that data remains consistent across services without compromising system
+performance or responsiveness.
 
-To further enhance system decoupling, each microservice will have its own dedicated database. This architecture isolates each service's database from others, preventing a failure or change in one database from impacting the others.
+To further enhance system decoupling, each microservice will have its own dedicated database. This architecture isolates
+each service's database from others, preventing a failure or change in one database from impacting the others.
 
-The **API Gateway** will serve as the entry point to the system, acting as a reverse proxy that communicates with one or more microservices on behalf of the client. Additionally, it will support **API Composition**, aggregating data from multiple services when necessary, which ensures that clients can access comprehensive information through a single API call.
+The **API Gateway** will serve as the entry point to the system, acting as a reverse proxy that communicates with one or
+more microservices on behalf of the client. Additionally, it will support **API Composition**, aggregating data from
+multiple services when necessary, which ensures that clients can access comprehensive information through a single API
+call.
 
-Based on the previously defined Bounded Contexts and architectural decisions, the following microservices have been identified:
+Based on the previously defined Bounded Contexts and architectural decisions, the following microservices have been
+identified:
 
-* **BooksManagementService:** Handles all book-related operations, including the management of authors, genres, and book metadata.
-* **UserManagementService:** Manages authentication, user profiles, and access control for various roles.        
-* **LendingsManagement:** Service Responsible for tracking book loans, due dates, returns, and overdue statuses.     
-* **ReaderManagementService:** Manages reader profiles, borrowing history, preferences, and related data.          
-* **RecommendationService:** Provides personalized book recommendations based on reader behavior and preferences. 
-* **API Gateway / Load Balancer:** Facilitates load balancing and API aggregation, routing client requests to appropriate microservices. 
+* **BooksManagementService:** Handles all book-related operations, including the management of authors, genres, and book
+  metadata.
+* **UserManagementService:** Manages authentication, user profiles, and access control for various roles.
+* **LendingsManagement:** Service Responsible for tracking book loans, due dates, returns, and overdue statuses.
+* **ReaderManagementService:** Manages reader profiles, borrowing history, preferences, and related data.
+* **RecommendationService:** Provides personalized book recommendations based on reader behavior and preferences.
+* **API Gateway / Load Balancer:** Facilitates load balancing and API aggregation, routing client requests to
+  appropriate microservices.
 
-This architecture promotes clear separation of concerns and enhances the system's scalability, flexibility, and resilience. By adhering to these principles, we ensure that each microservice operates independently, supporting a modular approach to system evolution while maintaining overall consistency and performance.
+This architecture promotes clear separation of concerns and enhances the system's scalability, flexibility, and
+resilience. By adhering to these principles, we ensure that each microservice operates independently, supporting a
+modular approach to system evolution while maintaining overall consistency and performance.
 
 ### Step 7
 
 | Not Addressed | Partially Addressed | Completely Addressed | Design Decisions made during the Iteration                                       |
 |---------------|---------------------|----------------------|----------------------------------------------------------------------------------|
 | UC-1          |                     |                      | No significant decisions have been made at this stage.                           |
-| UC-2          |                     |                      | No significant decisions have been made at this stage.                           |
-| UC-3          |                     |                      | No significant decisions have been made at this stage.                           |
 | QA-1          |                     |                      | No significant decisions have been made at this stage.                           |
 | QA-2          |                     |                      | No significant decisions have been made at this stage.                           |
 | QA-3          |                     |                      | No significant decisions have been made at this stage.                           |
@@ -270,6 +277,152 @@ This architecture promotes clear separation of concerns and enhances the system'
 | CON-9         |                     |                      | No significant decisions have been made at this stage.                           |
 |               | CON-10              |                      | The system must adhere to the company’s SOA strategy, with API-led connectivity. |
 
+## Iteration 5
+
+### Step 2
+
+#### Goal:
+
+- Determine the migration patterns to be implemented.
+
+### Step 3
+
+#### Elements to refine:
+
+- Actual monolith system architeture
+
+### Step 4
+
+#### Microservices Migration Strategy
+
+The application will be divided into microservices, as outlined in the project statement and described in **Technical
+Memo 1.1**. This transition to a microservices architecture brings several key advantages:
+
+- **Smaller and Faster Deployment**: With a smaller, more focused codebase, deployments can be executed faster, enabling
+  quicker iterations and releases. This benefit aligns with the goal of **independent deployment and scaling** for each
+  microservice as mentioned in **Technical Memo 1.1**, ensuring flexibility in managing resources according to
+  individual service demands.
+- **Improved Fault Isolation**: The decentralized nature of microservices means that a failure in one service is
+  unlikely to affect others. This improves the **availability** and **reliability** of the system, ensuring that
+  services can fail gracefully without compromising the overall system, which was a critical consideration in *
+  *Technical Memo 1.1**.
+- **Lowered Coupling**: As highlighted in the technical memo, the **loose coupling** between services facilitates easier
+  updates and modifications. Changes to one service (e.g., adding new functionality) can be made independently without
+  affecting other services, which reduces the risk of errors and ensures more manageable codebases.
+- **Scalability**: Microservices provide better scalability by allowing specific services to scale according to their
+  individual needs. For example, during high-demand periods, services like the **Recommendation service** may require
+  more resources, while others such as **Lending** may remain unaffected. This decoupling aligns with the system’s *
+  *independent scaling** strategy discussed in **Technical Memo 1.1**, which enables efficient resource allocation.
+
+To migrate from the monolithic legacy system to a microservices architecture, we considered two migration patterns:
+
+- **Strangler Fig Pattern**: As proposed in **Technical Memo 1.1**, the Strangler Fig pattern involves **incrementally
+  replacing the monolithic system** with microservices, allowing for gradual migration over time. The steps for
+  implementing this pattern are as follows:
+    1. **Identification of the application's bounded contexts**: Determine the different business domains in the
+       monolithic system.
+    2. **Choosing the least costly bounded context to refactor**: Identify which domain to start with based on its
+       complexity and integration challenges.
+    3. **Designing the microservice**: Develop a microservice that encapsulates the chosen domain and adheres to *
+       *Domain-Driven Design (DDD)** principles.
+    4. **Implementing the microservice**: Build and deploy the new service, ensuring that it can operate alongside the
+       monolithic system.
+
+- **Parallel Full Redesign**: This pattern would involve creating the microservice architecture from scratch while
+  leaving the existing monolithic system intact. The new system would be developed independently, following microservice
+  principles. However, this pattern has significant drawbacks, as it leads to **waterfall development**, where the
+  legacy system is untouched until the new system is fully built. This would increase development time and introduce
+  significant integration challenges later in the process.
+
+**Strangler Fig pattern** presents the challenge of running both the legacy and new systems simultaneously, it allows
+for an incremental, less risky migration process. This approach minimizes disruptions to the users and ensures that the
+legacy system can be fully replaced step-by-step, in line with the **loose coupling** and **independent deployment**
+strategies outlined in **Technical Memo 1.1**.
+
+By following the Strangler Fig pattern, we ensure that the system will evolve gradually, with minimal disruption, while
+maintaining a clear separation of concerns between different business domains, as highlighted in the **Solution
+Breakdown** of **Technical Memo 1.1**. This strategy will allow for **scalability**, **maintainability**, and *
+*flexibility**, ensuring the system can grow with the project needs.
+
+### Step 5 and 6
+
+#### Decisions for Microservices Division
+
+Based on the analysis of the system architecture and dependencies shown in the above Bounded Context diagram, we have
+outlined the following decisions for dividing the system into microservices using the **Strangler Fig Pattern**:
+
+##### 1. Start with Loosely Coupled Contexts
+
+The **Recommendation Context** will be the first candidate for extraction. This context interacts primarily with the *
+*Book Context** and has minimal inbound dependencies. Its loose coupling makes it easier to isolate as a standalone
+service with minimal disruption to the rest of the system.
+
+##### 2. Extract Foundational Services Early
+
+The **AuthN/User Context**, which includes `User` and `Reader`, will be prioritized after the **Recommendation Context
+**. This context is foundational, as it provides authentication and authorization functionalities for other parts of the
+system. While this context has multiple downstream dependencies, it is critical to establish its independence early to
+ensure secure and seamless communication for the rest of the system.
+
+##### 3. Handle Moderately Coupled Contexts Next
+
+The **Reader Context** will follow, as it is moderately coupled and depends on **AuthN/User Context**. Extracting this
+context after the foundational services will streamline its migration by leveraging the independent authentication and
+user functionality.
+
+##### 4. Address Tightly Coupled Contexts Gradually
+
+The **Lending Context** will be extracted after the **Reader Context** and **Book Context**. This context is tightly
+coupled with both, requiring well-defined APIs or service calls to manage interactions effectively. Its migration will
+involve ensuring data consistency and inter-service communication between lending, books, and readers.
+
+##### 5. Extract the Central Book Context Last
+
+The **Book Context**, which contains entities like `Book`, `Genre`, and `Author`, will be one of the last contexts to
+migrate. Although it is central to the system and has multiple downstream dependencies (e.g., **Recommendation Context**
+and **Lending Context**), it has fewer inbound dependencies, which simplifies its extraction once the associated
+contexts have been migrated.
+
+---
+
+##### Rationale for the Approach:
+
+- **Dependency Management**: By starting with contexts that have fewer inbound dependencies (e.g., **Recommendation
+  Context**), we can reduce the complexity of changes required in the monolith early in the migration process.
+- **Risk Mitigation**: Extracting foundational services like authentication early ensures a solid base for securely
+  integrating other services.
+- **Incremental Progress**: Gradually addressing more tightly coupled contexts (e.g., **Lending Context**) after loosely
+  coupled ones minimizes the risk of breaking functionality during migration.
+- **Smooth Transition**: By using proxy layers and APIs, existing calls to the monolith will be redirected seamlessly to
+  the new microservices, ensuring uninterrupted system operations during the migration.
+
+---
+
+With this the process involved five gradual iterations that led the decomposition of the monolith into five distinct
+services aligned with the bounded context defined in the steps above.
+
+![Strangler Fig process.svg](Images/Strangler Fig process.svg)
+
+### Step 7
+
+| Not Addressed | Partially Addressed | Completely Addressed | Design Decisions made during the Iteration                  |
+|---------------|---------------------|----------------------|-------------------------------------------------------------|
+|               | UC-1                |                      | Recommendation microservice added to the context.           |
+| QA-1          |                     |                      | No significant decisions have been made at this stage.      |
+| QA-2          |                     |                      | No significant decisions have been made at this stage.      |
+| QA-3          |                     |                      | No significant decisions have been made at this stage.      |
+|               | QA-4                |                      | No significant decisions have been made at this stage.      |
+| QA-5          |                     |                      | No significant decisions have been made at this stage.      |
+|               |                     | CON-1                | No significant decisions have been made at this stage.      |
+|               |                     | CON-2                | No significant decisions have been made at this stage.      |
+|               | CON-3               |                      | No significant decisions have been made at this stage.      |
+|               | CON-4               |                      | No significant decisions have been made at this stage.      |
+|               | CON-5               |                      | No significant decisions have been made at this stage.      |
+| CON-6         |                     |                      | No significant decisions have been made at this stage.      |
+| CON-7         |                     |                      | No significant decisions have been made at this stage.      |
+| CON-8         |                     |                      | No significant decisions have been made at this stage.      |
+|               | CON-9               |                      | No significant decisions have been made at this stage.      |
+|               |                     | CON-10               | API Gateway will provide a central point for managing APIs. |
 
 
 

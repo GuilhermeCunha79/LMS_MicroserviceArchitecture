@@ -10,6 +10,7 @@ To address these challenges, we propose a microservices architecture based on Do
 - **Loose Coupling**: Ensure that services communicate through well-defined APIs and avoid direct dependencies, allowing for easier maintenance and independent evolution.
 - **Independent Deployment and Scaling**: Allow each service to be deployed, updated, and scaled independently to better manage the load and ensure service continuity.
 - **Inter-Service Communication**: Use asynchronous messaging or REST APIs for communication between services to decouple them while still enabling necessary collaboration.
+- **Strangler Fig Pattern**: Gradually migrate from the monolithic system to the microservices architecture using the Strangler Fig Pattern. This pattern ensures a smooth transition by replacing monolithic components incrementally with microservices, allowing for continuous functionality throughout the migration process.
 
 ## Factors
 The solution needs to accommodate varying business requirements and scale according to demand. As each microservice is independent, its configuration, deployment, and scaling can be customized to meet the specific needs of each domain, ensuring a more responsive system. Additionally, isolating the domains reduces the risk of errors and makes it easier to enforce clear separation of concerns.
@@ -17,11 +18,11 @@ The solution needs to accommodate varying business requirements and scale accord
 ## Solution Breakdown
 
 1. **Domain Cohesion**: Based on DDD principles, the system is divided into clear bounded contexts:
-    - **Books Context**: Manages book-related entities (Book, Author, Genre) and logic related to cataloging and classifying books. This grouping follows the principles of **Domain-Driven Design (DDD)**, ensuring that all related operations and data management for books are handled within the same context. By keeping **Author** and **Genre** within the **Books Context**, we maintain **domain coherence**, ensuring that operations like book creation, genre classification, and author information are tightly coupled and encapsulated.
-    - **Users Context**: Responsible for user management, including authentication and authorization for different roles (e.g., reader, librarian).
-    - **Lendings Context**: Handles book borrowing, tracking due dates, returns, and overdue penalties.
-    - **Recommendation Context**: Provides personalized book recommendations based on reader preferences.
-    - **Reader Context**: Manages reader-specific data.
+   - **Books Context**: Manages book-related entities (Book, Author, Genre) and logic related to cataloging and classifying books. This grouping follows the principles of **Domain-Driven Design (DDD)**, ensuring that all related operations and data management for books are handled within the same context. By keeping **Author** and **Genre** within the **Books Context**, we maintain **domain coherence**, ensuring that operations like book creation, genre classification, and author information are tightly coupled and encapsulated.
+   - **Users Context**: Responsible for user management, including authentication and authorization for different roles (e.g., reader, librarian).
+   - **Lendings Context**: Handles book borrowing, tracking due dates, returns, and overdue penalties.
+   - **Recommendation Context**: Provides personalized book recommendations based on reader preferences.
+   - **Reader Context**: Manages reader-specific data.
 
 2. **Loose Coupling**: Each microservice is designed to interact with other services through APIs or event-driven communication mechanisms, ensuring they are decoupled and can evolve independently. For instance, the Lending microservice interacts with the Book and Reader services but does not directly depend on them.
 
@@ -44,7 +45,3 @@ The proposed microservices separation ensures that the system can handle growing
 ## Pending Issues
 1. **Impact Analysis**: A detailed analysis of how existing functionalities will be impacted by the separation of microservices is needed. This includes reviewing the interaction patterns between services and potential changes required for API development.
 2. **Service Boundaries Refinement**: Additional work is required to refine the boundaries of each service to ensure they align with the business needs while avoiding unnecessary overlap or fragmentation.
-3. **Configuration and Communication**: Determining the best communication strategy (REST vs. messaging queues) and ensuring appropriate configuration management for each service will require additional planning.
-4. **Service Dependencies**: Identifying shared resources or data models between services and determining how these dependencies will be managed (e.g., data consistency across services).
-
-By separating the system into microservices with well-defined domains, we aim to provide a more flexible, scalable, and maintainable solution that can grow with the organization’s needs.
