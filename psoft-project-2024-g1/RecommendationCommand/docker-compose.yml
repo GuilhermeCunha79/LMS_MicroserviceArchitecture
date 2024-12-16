@@ -1,0 +1,44 @@
+
+services:
+  users:
+    image: lmsrecommendation:latest
+    container_name: recommendation_in_lms_network
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8080"
+    #        depends_on:    # adopting database per-service, this might not be a common service
+    #            postgres_in_lms_network:
+    #                condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: bootstrap, relational
+    networks:
+      - lms_network
+
+#    postgres_in_lms_network:   # if the database is not a common service, this would be necessary
+#        container_name: postgres_in_lms_network
+#        image: postgres:latest
+#        restart: always
+#        ports:
+#            - "5432:5432"
+#        environment:
+#            POSTGRES_DB: users_1
+#            POSTGRES_USER: postgres
+#            POSTGRES_PASSWORD: password
+#        volumes:
+#            - "postgres_volume:/var/lib/postgresql/data"
+#        networks:
+#            - lms_network
+#        healthcheck:
+#            test: [ "CMD", "pg_isready", "-U", "postgres" ]
+#            interval: 10s
+#            retries: 5
+#            timeout: 5s
+
+networks:
+  lms_network:
+    external: true
+
+volumes:
+  postgres_volume:

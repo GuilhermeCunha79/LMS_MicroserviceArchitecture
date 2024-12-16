@@ -18,7 +18,7 @@ The solution needs to accommodate varying business requirements and scale accord
 ## Solution Breakdown
 
 1. **Domain Cohesion**: Based on DDD principles, the system is divided into clear bounded contexts:
-   - **Books Context**: Manages book-related entities (Book, Author, Genre) and logic related to cataloging and classifying books. This grouping follows the principles of **Domain-Driven Design (DDD)**, ensuring that all related operations and data management for books are handled within the same context. By keeping **Author** and **Genre** within the **Books Context**, we maintain **domain coherence**, ensuring that operations like book creation, genre classification, and author information are tightly coupled and encapsulated.
+   - **Books Context**: Manages book-related entities (Book, Author, Genre). This grouping follows the principles of **Domain-Driven Design (DDD)**, ensuring that all related operations and data management for books are handled within the same context. By keeping **Author** and **Genre** within the **Books Context**, we maintain **domain coherence**, ensuring that operations like book creation, genre classification, and author information are tightly coupled and encapsulated.
    - **Users Context**: Responsible for user management, including authentication and authorization for different roles (e.g., reader, librarian).
    - **Lendings Context**: Handles book borrowing, tracking due dates, returns, and overdue penalties.
    - **Recommendation Context**: Provides personalized book recommendations based on reader preferences.

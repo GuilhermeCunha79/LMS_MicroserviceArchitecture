@@ -12,7 +12,21 @@
     <artifactId>psoft-g1</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>psoft-g1</name>
+    <packaging>pom</packaging>
     <description>Demo project for Spring Boot</description>
+
+    <modules>
+        <module>AuthNUserCommand</module>
+        <module>AuthNUserQuery</module>
+        <module>BookCommand</module>
+        <module>BookQuery</module>
+        <module>ReaderCommand</module>
+        <module>LendingCommand</module>
+        <module>ReaderQuery</module>
+        <module>LendingQuery</module>
+        <module>RecommendationCommand</module>
+        <module>amqp-rabbitmq</module>
+    </modules>
 
     <repositories>
         <repository>
@@ -22,10 +36,10 @@
     </repositories>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.release>17</maven.compiler.release>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
         <spring.boot.dependencies.version>2.5.7</spring.boot.dependencies.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.organization>1201506</sonar.organization>
@@ -40,9 +54,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
-
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -181,6 +192,13 @@
             <artifactId>firebase-admin</artifactId>
             <version>9.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Dependência para o Spring Cloud Config se você usar a configuração centralizada -->
+
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
@@ -323,9 +341,8 @@
                     <excludedClasses>
                         <excludedClass>pt.psoft.g1.psoftg1.SmokeTeste</excludedClass>
                     </excludedClasses>
-                    <!-- Pacote principal para incluir no teste de mutação -->
                     <targetClasses>
-                        <param>pt.psoft.g1.psoftg1.*</param>
+                        <param>pt.psoft.g1.psoftg1.model.*</param>
                     </targetClasses>
                     <!-- Pacote de testes -->
                     <targetTests>
@@ -338,6 +355,7 @@
                     <timestampedReports>false</timestampedReports>
                 </configuration>
             </plugin>
+
 
 
             <plugin>

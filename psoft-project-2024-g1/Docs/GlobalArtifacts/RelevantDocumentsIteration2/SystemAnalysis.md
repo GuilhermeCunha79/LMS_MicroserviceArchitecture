@@ -134,7 +134,7 @@ The following bounded contexts have been identified:
 * The **Recommendation context** focuses on recommending books based on reader behavior and preferences. It is consumed
   by the Books and Reader contexts but does not consume any other context.
 
-![Contexts.svg](Images/Contexts.svg)
+![BoundedContext.svg](Images/BoundedContext.svg)
 
 ### Rationale for Microservices Separation
 

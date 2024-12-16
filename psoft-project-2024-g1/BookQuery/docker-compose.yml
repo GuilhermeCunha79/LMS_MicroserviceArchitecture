@@ -1,0 +1,39 @@
+
+services:
+    lmsbooks_1:
+        image: lmsbooks:latest
+        container_name: books1_in_lms_network
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8087:8080"
+        environment:
+            SPRING_PROFILES_ACTIVE: bootstrap, relational, IDService1
+        networks:
+            - lms_network
+        volumes:
+            - "uploaded_files_volume_1:/tmp"
+
+    lmsbooks_2:
+        image: lmsbooks:latest
+        container_name: books2_in_lms_network
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8088:8080"
+        environment:
+            SPRING_PROFILES_ACTIVE: bootstrap, relational, IDService1
+        networks:
+            - lms_network
+        volumes:
+            - "uploaded_files_volume_2:/tmp"
+
+networks:
+    lms_network:
+        external: true
+
+volumes:
+    uploaded_files_volume_1:
+    uploaded_files_volume_2:
