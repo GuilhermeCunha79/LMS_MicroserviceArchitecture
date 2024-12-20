@@ -4,11 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingNumber;
-import pt.psoft.g1.psoftg1.shared.model.Name;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Getter
 @Data

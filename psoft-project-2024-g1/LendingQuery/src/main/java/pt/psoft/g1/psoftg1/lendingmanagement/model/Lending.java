@@ -47,6 +47,7 @@ public class Lending {
      * Composed of {@code int year}, {@code int sequencial} and {@code String lendingNumber}. The string is
      * constructed based on the values of {@code year} and {@code sequencial}.
      */
+    @Setter
     private LendingNumber lendingNumber;
 
 
@@ -55,6 +56,7 @@ public class Lending {
      **/
     @NotNull
     @Getter
+    @Setter
     private String readerDetailsId;
 
     /**
@@ -62,6 +64,7 @@ public class Lending {
      */
     @NotNull
     @Getter
+    @Setter
     private String isbn;
 
     /**
@@ -71,6 +74,7 @@ public class Lending {
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.DATE)
     @Getter
+    @Setter
     private LocalDate startDate;
 
     /**
@@ -80,6 +84,7 @@ public class Lending {
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
     @Getter
+    @Setter
     private LocalDate limitDate;
 
     /**
@@ -89,6 +94,7 @@ public class Lending {
      */
     @Temporal(TemporalType.DATE)
     @Getter
+    @Setter
     private LocalDate returnedDate;
 
     // optimistic-lock
@@ -106,17 +112,23 @@ public class Lending {
     private String commentary = null;
 
     @Transient
+    @Setter
+    @Getter
     private Integer daysUntilReturn;
 
     @Transient
+    @Setter
+    @Getter
     private Integer daysOverdue;
 
     @Getter
+    @Setter
     private int fineValuePerDayInCents;
 
     /**
      * 0 - NOT VALID (e.g. waiting for other microservice validation)
-     * 1 - VALIDATED (e.g. by other microservice)
+     * 1 - VALIDATED BY BOOKS (e.g. by other microservice)
+     * 2 - VALIDATED BY BOOKS (e.g. by other microservice)
      */
     @Getter
     @Setter
@@ -297,6 +309,7 @@ public class Lending {
         lending.limitDate = startDate.plusDays(lendingDuration);
         lending.fineValuePerDayInCents = fineValuePerDayInCents;
         lending.returnedDate = returnedDate;
+        lending.status=2;
         return lending;
 
     }

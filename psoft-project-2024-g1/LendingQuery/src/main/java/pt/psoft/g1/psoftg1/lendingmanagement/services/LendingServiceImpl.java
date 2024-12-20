@@ -4,10 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
-import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
+import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQP;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingFactory;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingStatus;
+import pt.psoft.g1.psoftg1.lendingmanagement.publishers.LendingEventsPublisher;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.shared.model.generateID.GenerateIDService;
@@ -26,6 +30,7 @@ public class LendingServiceImpl implements LendingService {
     private final LendingRepository lendingRepository;
     private final FineRepository fineRepository;
     private final LendingFactory lendingFactory;
+    private final LendingEventsPublisher lendingEventsPublisher;
 
     @Value("${lendingDurationInDays}")
     private int lendingDurationInDays;
@@ -34,6 +39,96 @@ public class LendingServiceImpl implements LendingService {
 
     private final GenerateIDService generateIDService;
 
+    //AMQP
+    @Override
+    public Lending create(LendingViewAMQP lendingViewAMQP) {
+        return createLending(lendingViewAMQP, "Book");
+    }
+
+    @Override
+    public Lending createReader(LendingViewAMQP lendingViewAMQP) {
+        return createLending(lendingViewAMQP, "Reader");
+    }
+
+    private Lending createLending(LendingViewAMQP lendingViewAMQP, String entityType) {
+        final String lendingNumber = lendingViewAMQP.getLendingNumber();
+        final String isbn = lendingViewAMQP.getIsbn();
+        final String readerNumber = lendingViewAMQP.getReaderDetailsId();
+        final int status = lendingViewAMQP.getStatus();
+
+        // Retorna imediatamente se o status for LENDING_INVALIDATED
+        if (status == LendingStatus.LENDING_INVALIDATED) {
+            lendingRepository.findByLendingNumber(lendingNumber)
+                    .ifPresent(lending -> {
+                        lendingRepository.delete(lending);
+                        System.out.println("Lending with LendingNumber " + lendingNumber +
+                                " has been deleted, due to an invalid " + entityType +
+                                " provided upon Lending validation. (Lending)");
+                    });
+            System.out.println("No operation performed because the " + entityType + " is invalid.");
+            return null;
+        }
+
+        // Processa caso o status seja válido
+        return lendingRepository.findByLendingNumber(lendingNumber)
+                .map(lending -> {
+                    lending.setValidated(status);
+                    System.out.println("Lending with LendingNumber " + lendingNumber + " already exists");
+                    return lendingRepository.save(lending);
+                })
+                .orElseGet(() -> {
+                    Lending newLending = LendingFactory.create(
+                            lendingNumber, isbn, readerNumber,
+                            lendingDurationInDays, fineValuePerDayInCents, status);
+                    if ("Book".equals(entityType)) {
+                        System.out.println("Publishing event for new Lending with LendingNumber " + lendingNumber);
+                        lendingEventsPublisher.sendLendingCreatedToReader(newLending);
+                    }
+                    return lendingRepository.save(newLending);
+                });
+    }
+
+    @Override
+    public Lending setReturned(LendingViewAMQP lendingViewAMQP) {
+
+        final String lendingNumber = lendingViewAMQP.getLendingNumber();
+        final String commentary = lendingViewAMQP.getCommentary();
+
+        return setReturned(lendingNumber, commentary);
+    }
+
+    private Lending setReturned(String lendingNumber,
+                                String commentary) {
+
+        var lending = lendingRepository.findByLendingNumber(lendingNumber)
+                .orElseThrow(() -> new NotFoundException("Cannot update lending with this lending number"));
+
+        lending.setReturned(commentary);
+
+        if (lending.getDaysDelayed() > 0) {
+            final var fine = new Fine(lending);
+            fineRepository.save(fine);
+        }
+
+        return lendingRepository.save(lending);
+    }
+
+    @Override
+    public Optional<Lending> update(LendingViewAMQP lendingViewAMQP) {
+        Lending lending = lendingRepository.findByLendingNumber(lendingViewAMQP.getLendingNumber())
+                .orElseThrow(() -> new NotFoundException("Lending not found with number: " + lendingViewAMQP.getLendingNumber()));
+
+        if (lendingViewAMQP.getStatus() == LendingStatus.LENDING_INVALIDATED) {
+            lendingRepository.delete(lending);
+            return Optional.empty();
+        }
+
+        lending.setValidated(LendingStatus.LENDING_VALIDATED_BOOKS);
+
+        return Optional.of(lendingRepository.save(lending));
+    }
+
+    //HTTP
     @Override
     public Optional<Lending> findByLendingNumber(String lendingNumber) {
         return lendingRepository.findByLendingNumber(lendingNumber);
@@ -58,28 +153,6 @@ public class LendingServiceImpl implements LendingService {
     public Double getAverageDuration() {
         Double avg = lendingRepository.getAverageDuration();
         return Double.valueOf(String.format(Locale.US, "%.1f", avg));
-    }
-
-    @Override
-    public Lending create(LendingViewAMQP lendingViewAMQP) {
-
-        final String lendingNumber = lendingViewAMQP.getLendingNumber();
-        final String isbn = lendingViewAMQP.getIsbn();
-        final String readerNumber = lendingViewAMQP.getReaderDetailsId();
-
-        return create(lendingNumber, isbn, readerNumber);
-    }
-
-    private Lending create(String lendingNumber,
-                           String isbn, String readerNumber) {
-
-        if (lendingRepository.findByLendingNumber(lendingNumber).isPresent()) {
-            throw new ConflictException("Lending with LendingNumber " + lendingNumber + " already exists");
-        }
-
-        Lending newBook = LendingFactory.create(isbn, readerNumber, lendingRepository.getCountFromCurrentYear() + 1, lendingDurationInDays, fineValuePerDayInCents);
-
-        return lendingRepository.save(newBook);
     }
 
     @Override

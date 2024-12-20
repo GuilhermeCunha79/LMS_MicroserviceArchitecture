@@ -14,7 +14,6 @@ public abstract class LendingViewAMQPMapper extends MapperInterface {
     @Mapping(target = "isbn", source = "isbn")
     @Mapping(target = "status", source = "status", qualifiedByName = "mapToInt")
     @Mapping(target = "returnedDate", source = "returnedDate")
-    @Mapping(target = "_links.self", source = ".", qualifiedByName = "lendingLink")
     @Mapping(target = "commentary", source = "commentary")
     public abstract LendingViewAMQP toLendingViewAMQP(Lending lending);
 

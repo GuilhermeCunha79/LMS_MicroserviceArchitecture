@@ -13,7 +13,9 @@ import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Profile("relational")
@@ -22,14 +24,48 @@ public class RelationalLendingRepository implements LendingRepository {
 
     private final EntityManager entityManager;
 
+    @Override
+    @Transactional
+    public Lending save(Lending lending) {
+        return entityManager.merge(lending);
+    }
+
+
+    @Override
+    @Transactional
+    public void delete(Lending lending) {
+        Lending managedLending = entityManager.contains(lending)
+                ? lending
+                : entityManager.merge(lending);
+
+        entityManager.remove(managedLending);
+    }
+
+
+    @Override
+    public List<Lending> listOutstandingByReaderDetailsId(String readerNumber) {
+        TypedQuery<Lending> query = entityManager.createQuery(
+                "SELECT l FROM Lending l " +
+                        "WHERE l.readerDetailsId = :readerNumber " +
+                        "AND l.returnedDate IS NULL", Lending.class);
+        query.setParameter("readerNumber", readerNumber);
+        return query.getResultList();
+    }
 
     @Override
     @Transactional
     public Optional<Lending> findByLendingNumber(String lendingNumber) {
         TypedQuery<Lending> query = entityManager.createQuery(
-                "SELECT l FROM Lending l WHERE l.lendingNumber.lendingNumber = :lendingNumber", Lending.class);
+                "SELECT l FROM Lending l WHERE l.lendingNumber.lendingNumber = :lendingNumber AND l.status = 2", Lending.class);
         query.setParameter("lendingNumber", lendingNumber);
         return query.getResultStream().findFirst();
+    }
+
+    @Override
+    public int getCountFromCurrentYear() {
+        return ((Number) entityManager.createQuery(
+                        "SELECT COUNT(l) FROM Lending l WHERE YEAR(l.startDate) = YEAR(CURRENT_DATE)")
+                .getSingleResult()).intValue();
     }
 
     @Override
@@ -41,13 +77,6 @@ public class RelationalLendingRepository implements LendingRepository {
         query.setParameter("isbn", isbn);
         query.setParameter("readerNumber", readerNumber);
         return query.getResultList();
-    }
-
-    @Override
-    public int getCountFromCurrentYear() {
-        return ((Number) entityManager.createQuery(
-                        "SELECT COUNT(l) FROM Lending l WHERE YEAR(l.startDate) = YEAR(CURRENT_DATE)")
-                .getSingleResult()).intValue();
     }
 
     @Override
@@ -83,16 +112,6 @@ public class RelationalLendingRepository implements LendingRepository {
         query.setFirstResult((page.getNumber() - 1) * page.getLimit());
         query.setMaxResults(page.getLimit());
 
-        return query.getResultList();
-    }
-
-    @Override
-    public List<Lending> listOutstandingByReaderDetailsId(String readerNumber) {
-        TypedQuery<Lending> query = entityManager.createQuery(
-                "SELECT l FROM Lending l " +
-                        "WHERE l.readerDetailsId = :readerNumber " +
-                        "AND l.returnedDate IS NULL", Lending.class);
-        query.setParameter("readerNumber", readerNumber);
         return query.getResultList();
     }
 
@@ -133,19 +152,4 @@ public class RelationalLendingRepository implements LendingRepository {
         return query.getResultList();
     }
 
-    @Override
-    @Transactional
-    public Lending save(Lending lending) {
-        return entityManager.merge(lending);
-    }
-
-    @Override
-    @Transactional
-    public void delete(Lending lending) {
-        if (entityManager.contains(lending)) {
-            entityManager.remove(lending);
-        } else {
-            entityManager.remove(entityManager.merge(lending));
-        }
-    }
 }

@@ -78,9 +78,8 @@ public class Bootstrapper implements CommandLineRunner {
         for (i = 0; i < 3; i++) {
             ++seq;
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
-                startDate = LocalDate.of(2024, 1, 31 - i);
-                returnedDate = LocalDate.of(2025, 2, 15 + i);
-                lending = Lending.newBootstrappingLending(books.get(i), readerNumbers.get(i * 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
+                startDate = LocalDate.of(2024, 6, (2 + i / 4));
+                lending = Lending.newBootstrappingLending(books.get(i), readerNumbers.get(i * 2), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }

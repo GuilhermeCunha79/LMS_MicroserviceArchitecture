@@ -19,7 +19,6 @@ import pt.psoft.g1.psoftg1.shared.services.Page;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-
 @Repository
 @Profile("mongo")
 @RequiredArgsConstructor
@@ -29,17 +28,21 @@ public class NoSQLLendingRepository implements LendingRepository {
     private final LendingMapper lendingMapper;
 
     @Override
-    public Optional<Lending> findByLendingNumber(String lendingNumber) {
-        Query query = new Query(Criteria.where("lendingNumber.lendingNumber").is(lendingNumber));
+    @Transactional
+    public Lending save(Lending lending) {
+        mongoTemplate.save(lendingMapper.toLendingMongo(lending));
+        return lending;
+    }
 
-        Lending lending = lendingMapper.toLending(mongoTemplate.findOne(query, LendingMongo.class));
-
-        return Optional.ofNullable(lending);
+    @Override
+    @Transactional
+    public void delete(Lending lending) {
+        mongoTemplate.remove(lendingMapper.toLendingMongo(lending));
     }
 
     @Override
     public List<Lending> listByReaderNumberAndIsbn(String readerNumber, String isbn) {
-        Query query = new Query(Criteria.where("isbn").is(isbn)
+        Query query = new Query(Criteria.where("book.isbn").is(isbn)
                 .and("readerDetails.readerNumber").is(readerNumber));
 
         List<LendingMongo> list = mongoTemplate.find(query, LendingMongo.class);
@@ -50,8 +53,22 @@ public class NoSQLLendingRepository implements LendingRepository {
     }
 
     @Override
+    public Optional<Lending> findByLendingNumber(String lendingNumber) {
+        Query query = new Query(Criteria.where("lendingNumber.lendingNumber").is(lendingNumber));
+
+        Lending lending = lendingMapper.toLending(mongoTemplate.findOne(query, LendingMongo.class));
+
+        return Optional.ofNullable(lending);
+    }
+    @Override
+    public int getCountFromCurrentYear() {
+        Query query = new Query(Criteria.where("startDate").gte(getStartOfYear()).lte(getEndOfYear()));
+        return (int) mongoTemplate.count(query, LendingMongo.class);
+    }
+
+    @Override
     public List<Lending> listOutstandingByReaderDetailsId(String readerNumber) {
-        Query query = new Query(Criteria.where("readerDetailsId").is(readerNumber)
+        Query query = new Query(Criteria.where("readerDetails.readerNumber").is(readerNumber)
                 .and("returnedDate").is(null));
 
         List<LendingMongo> lendingMongo = mongoTemplate.find(query, LendingMongo.class);
@@ -59,12 +76,18 @@ public class NoSQLLendingRepository implements LendingRepository {
                 .map(lendingMapper::toLending)
                 .collect(Collectors.toList());
     }
+    private Date getStartOfYear() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH, Calendar.JANUARY);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        return calendar.getTime();
+    }
 
-
-    @Override
-    public int getCountFromCurrentYear() {
-        Query query = new Query(Criteria.where("startDate").gte(getStartOfYear()).lte(getEndOfYear()));
-        return (int) mongoTemplate.count(query, LendingMongo.class);
+    private Date getEndOfYear() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+        calendar.set(Calendar.DAY_OF_MONTH, 31);
+        return calendar.getTime();
     }
 
     @Override
@@ -90,20 +113,6 @@ public class NoSQLLendingRepository implements LendingRepository {
                         lending.getReturnedDate().toEpochDay() - lending.getStartDate().toEpochDay())
                 .average()
                 .orElse(0.0);
-    }
-
-    private Date getStartOfYear() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MONTH, Calendar.JANUARY);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        return calendar.getTime();
-    }
-
-    private Date getEndOfYear() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-        calendar.set(Calendar.DAY_OF_MONTH, 31);
-        return calendar.getTime();
     }
 
     @Override
@@ -161,16 +170,5 @@ public class NoSQLLendingRepository implements LendingRepository {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    @Transactional
-    public Lending save(Lending lending) {
-        mongoTemplate.save(lendingMapper.toLendingMongo(lending));
-        return lending;
-    }
 
-    @Override
-    @Transactional
-    public void delete(Lending lending) {
-        mongoTemplate.remove(lendingMapper.toLendingMongo(lending));
-    }
 }

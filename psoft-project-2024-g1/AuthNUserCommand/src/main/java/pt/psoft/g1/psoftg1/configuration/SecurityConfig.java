@@ -116,6 +116,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/authors/{authorNumber}/photo").hasAnyRole(Role.READER, Role.LIBRARIAN)
                 .requestMatchers(HttpMethod.DELETE, "/api/authors/{authorNumber}/photo").hasRole(Role.LIBRARIAN)
                 .requestMatchers(HttpMethod.GET, "/api/authors/{authorNumber}/coauthors").hasRole(Role.READER)
+                .requestMatchers("/actuator/prometheus").permitAll()  // Permitir acesso público ao Prometheus
+                .requestMatchers("/actuator/**").permitAll()
+                .requestMatchers("/metrics").permitAll()
                 // End Authors
                 // Books
                 .requestMatchers(HttpMethod.PUT, "/api/books/{isbn}").hasRole(Role.LIBRARIAN)

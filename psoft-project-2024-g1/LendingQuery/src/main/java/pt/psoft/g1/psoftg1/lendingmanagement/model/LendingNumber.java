@@ -76,6 +76,9 @@ public class LendingNumber implements Serializable {
             throw new IllegalArgumentException("Sequencial component cannot be negative");
         this.lendingNumber = LocalDate.now().getYear() + "/" + sequential;
     }
+    public String getValue() {
+        return this.lendingNumber;
+    }
 
     /**Protected empty constructor for ORM only.*/
     public LendingNumber() {}

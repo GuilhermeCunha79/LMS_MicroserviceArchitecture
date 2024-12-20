@@ -5,9 +5,11 @@ import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import pt.psoft.g1.psoftg1.shared.model.Generator;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -19,33 +21,39 @@ public class LendingMongo {
 
     @Id
     @Getter
-    private String id;
+    private String pk;
 
     @Field("lending_number")
+    @Setter
     private LendingNumber lendingNumber;
 
     @NotNull
     @Getter
-    @Field("book")
-    private Long bookId;
+    @Setter
+    @Field("isbn")
+    private String isbn;
 
     @NotNull
     @Getter
+    @Setter
     @Field("reader_details")
-    private Long readerDetailsId;
+    private String readerDetailsId;
 
     @NotNull
     @Getter
+    @Setter
     @Field("start_date")
     private LocalDate startDate;
 
     @NotNull
     @Getter
     @Field("limit_date")
+    @Setter
     private LocalDate limitDate;
 
     @Getter
     @Field("returned_date")
+    @Setter
     private LocalDate returnedDate;
 
     @Version
@@ -54,20 +62,33 @@ public class LendingMongo {
 
     @Size(min = 0, max = 1024)
     @Field("commentary")
+    @Getter
     private String commentary = null;
 
     @Field("days_until_return")
+    @Setter
     private Integer daysUntilReturn;
 
     @Field("days_overdue")
+    @Setter
     private Integer daysOverdue;
 
     @Getter
+    @Setter
     private int fineValuePerDayInCents;
 
-    public LendingMongo(Long bookId, Long readerDetailsId, int seq, int lendingDuration, int fineValuePerDayInCents) {
-        this.bookId = Objects.requireNonNull(bookId);
-        this.readerDetailsId = Objects.requireNonNull(readerDetailsId);
+    @Getter
+    @Setter
+    private int status = LendingStatus.LENDING_WAITING_VALIDATION;
+
+    public LendingMongo(String isbn, String readerDetails, int seq, int lendingDuration, int fineValuePerDayInCents) {
+        this.pk = String.valueOf(Generator.generateLongID());
+        try {
+            this.isbn = Objects.requireNonNull(isbn);
+            this.readerDetailsId = Objects.requireNonNull(readerDetails);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("Null objects passed to lending");
+        }
         this.lendingNumber = new LendingNumber(seq);
         this.startDate = LocalDate.now();
         this.limitDate = LocalDate.now().plusDays(lendingDuration);
@@ -75,8 +96,28 @@ public class LendingMongo {
         this.fineValuePerDayInCents = fineValuePerDayInCents;
         setDaysUntilReturn();
         setDaysOverdue();
+        this.status = LendingStatus.LENDING_WAITING_VALIDATION;
     }
-    protected LendingMongo() {}
+
+    public LendingMongo(String lendingNumber, String isbn, String readerDetails, int lendingDuration, int fineValuePerDayInCents, int status) {
+        this.pk = String.valueOf(Generator.generateLongID());
+        try {
+            this.isbn = Objects.requireNonNull(isbn);
+            this.readerDetailsId = Objects.requireNonNull(readerDetails);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("Null objects passed to lending");
+        }
+        this.lendingNumber = new LendingNumber(lendingNumber);
+        this.startDate = LocalDate.now();
+        this.limitDate = LocalDate.now().plusDays(lendingDuration);
+        this.returnedDate = null;
+        this.fineValuePerDayInCents = fineValuePerDayInCents;
+        setDaysUntilReturn();
+        setDaysOverdue();
+        this.status = status;
+    }
+
+
 
 
     public void setReturned(final Long desiredVersion, final String commentary) {
@@ -85,7 +126,7 @@ public class LendingMongo {
 
         // check current version
         if (!this.version.equals(desiredVersion))
-            throw new StaleObjectStateException("Object was already modified by another user", this.id);
+            throw new StaleObjectStateException("Object was already modified by another user", this.pk);
 
         if (commentary != null)
             this.commentary = commentary;
@@ -105,6 +146,11 @@ public class LendingMongo {
             return Math.max((int) ChronoUnit.DAYS.between(this.limitDate, LocalDate.now()), 0);
         }
     }
+
+    public void setValidated(int status) {
+        this.status = status;
+    }
+
 
     public Optional<Integer> getDaysUntilReturn() {
         setDaysUntilReturn();
@@ -150,8 +196,8 @@ public class LendingMongo {
     }
 
     /** Factory method for creating new Lending objects for bootstrapping. */
-    public static LendingMongo newBootstrappingLending(Long book,
-                                                       Long readerDetails,
+    public static LendingMongo newBootstrappingLending(String book,
+                                                       String readerDetails,
                                                   int year,
                                                   int seq,
                                                   LocalDate startDate,
@@ -159,7 +205,7 @@ public class LendingMongo {
                                                   int lendingDuration,
                                                   int fineValuePerDayInCents) {
         LendingMongo lending = new LendingMongo();
-        lending.bookId = Objects.requireNonNull(book);
+        lending.isbn = Objects.requireNonNull(book);
         lending.readerDetailsId = Objects.requireNonNull(readerDetails);
         lending.lendingNumber = new LendingNumber(year, seq);
         lending.startDate = startDate;
@@ -168,4 +214,6 @@ public class LendingMongo {
         lending.returnedDate = returnedDate;
         return lending;
     }
+
+    public LendingMongo() {}
 }

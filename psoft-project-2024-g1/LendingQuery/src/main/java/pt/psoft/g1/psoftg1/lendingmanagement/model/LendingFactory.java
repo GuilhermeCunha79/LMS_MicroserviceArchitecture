@@ -13,4 +13,12 @@ public class LendingFactory {
         return new Lending(lendingNumber, isbn, readerDetailsId, lendingDuration,fineValuePerDayInCents ,status);
     }
 
+    public static LendingMongo createMongo(String isbn, String readerDetailsId, int seq, int lendingDuration, int fineValuePerDayInCents){
+        return new LendingMongo(isbn, readerDetailsId,seq, lendingDuration,fineValuePerDayInCents);
+    }
+
+    public static LendingMongo createMongo(String lendingNumber,String isbn, String readerDetailsId, int lendingDuration, int fineValuePerDayInCents, int status){
+        return new LendingMongo(lendingNumber, isbn, readerDetailsId, lendingDuration,fineValuePerDayInCents,status);
+    }
+
 }

@@ -1,27 +1,25 @@
 services:
-  h2:
-    image: oscarfonts/h2
+  lmslendingsQuery:
+    image: lmslendingsquery:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8082:8082"  # Porta para acessar o console H2
-      - "9092:9092"  # Porta para conexão TCP com o banco de dados
+      - "${HOSTNAME}:8080"
     environment:
-      H2_OPTIONS: "-tcp -tcpAllowOthers -ifNotExists"  # Permite conexões TCP de outros hosts
+      SPRING_PROFILES_ACTIVE: bootstrap, mongo, IDService1, alg1
+      SPRING_DATA_MONGODB_URI: mongodb://mongo_in_lms_network:27017/?directConnection=true
+      SPRING_DATA_MONGODB_DATABASE: lendingQuery_${HOSTNAME:-default}
+    networks:
+      - lms_network
     volumes:
-      - h2_data:/data  # Persistência dos dados
-    networks:
-      - psoft-net
-
-  app:
-    image: pt.psoft.g1.psoft  # Altere para a imagem do seu aplicativo Spring Boot
-    ports:
-      - "8083:8081"  # Porta onde seu aplicativo estará exposto
-    depends_on:
-      - h2
-    networks:
-      - psoft-net
-
-volumes:
-  h2_data:  # Volume para persistir os dados do H2
+      - "uploaded_files_volume:/tmp"
+    deploy:
+      replicas: 2
 
 networks:
-  psoft-net:  # Rede para comunicação entre os serviços
+  lms_network:
+    external: true
+
+volumes:
+  uploaded_files_volume:

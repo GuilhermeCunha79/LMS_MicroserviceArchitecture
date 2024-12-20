@@ -16,19 +16,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @AllArgsConstructor
-@EnableAutoConfiguration
 public class RabbitMQConfig {
+
 
     private final ConnectionFactory connectionFactory;
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        // Registra o JavaTimeModule para suportar tipos como LocalDate
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false); // Escreve datas como strings ISO-8601
-        return mapper;
-    }
+    private ObjectMapper objectMapper;
 
     @Bean
     public AmqpTemplate amqpTemplate() {
@@ -48,10 +41,7 @@ public class RabbitMQConfig {
 
     @Bean
     public MessageConverter jacksonConverter() {
-        // Registra o JavaTimeModule para suportar tipos como LocalDate
-        objectMapper().registerModule(new JavaTimeModule());
-        objectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
-        return new Jackson2JsonMessageConverter(objectMapper());
+        return new Jackson2JsonMessageConverter(objectMapper);
     }
+
 }

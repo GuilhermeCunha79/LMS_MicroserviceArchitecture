@@ -1,11 +1,6 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.api;
 
-import org.mapstruct.*;
-import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
-import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
-import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingNumber;
-
-import java.util.Optional;
+import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public abstract class FineViewMapper{

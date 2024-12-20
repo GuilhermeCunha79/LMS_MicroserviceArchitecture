@@ -3,8 +3,6 @@ package pt.psoft.g1.psoftg1.lendingmanagement.api;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -34,9 +32,6 @@ public class LendingView {
 
     private Integer fineValueInCents;
 
-    @Setter
-    @Getter
-    private LendingLinksView _links;
 }
 
 /*>

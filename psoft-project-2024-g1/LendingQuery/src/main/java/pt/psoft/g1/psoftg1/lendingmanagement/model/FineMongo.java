@@ -45,7 +45,7 @@ public class FineMongo {
         }
         this.fineValuePerDayInCents = lending.getFineValuePerDayInCents();
         this.centsValue = fineValuePerDayInCents * lending.getDaysDelayed();
-        this.lendingId = Objects.requireNonNull(lending.getId());
+        this.lendingId = Objects.requireNonNull(lending.getPk());
     }
 
     /** Protected empty constructor for ORM only. */
