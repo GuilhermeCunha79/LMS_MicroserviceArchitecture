@@ -2,11 +2,10 @@ package pt.psoft.g1.psoftg1.shared.api;
 
 import org.mapstruct.Named;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import pt.psoft.g1.psoftg1.recommendationmanagement.model.Recommendation;
+
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public abstract class MapperInterface {
 
@@ -23,18 +22,5 @@ public abstract class MapperInterface {
         if(value instanceof Long)
             return value.longValue();
         else throw new NumberFormatException("Invalid number format");
-    }
-
-    public <T> T mapOpt(final Optional<T> i) {return i.orElse(null);}
-
-    @Named(value = "recommendationLink")
-    protected Map<String, String> mapReaderLink(Recommendation readerDetails){
-        Map<String, String> readerLink = new HashMap<>();
-        String readerUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/recommendation/")
-                .path(String.valueOf(readerDetails.getRecommendationNumber()))
-                .toUriString();
-        readerLink.put("href", readerUri);
-        return readerLink;
     }
 }

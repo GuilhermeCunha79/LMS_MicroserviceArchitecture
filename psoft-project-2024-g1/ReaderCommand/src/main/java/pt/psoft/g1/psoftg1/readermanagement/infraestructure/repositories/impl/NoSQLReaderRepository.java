@@ -12,14 +12,12 @@ import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.readermanagement.services.SearchReadersQuery;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Repository
 @Profile("mongo")
 @RequiredArgsConstructor
 public class NoSQLReaderRepository implements ReaderRepository {
-
 
     private final MongoTemplate mongoTemplate;
 

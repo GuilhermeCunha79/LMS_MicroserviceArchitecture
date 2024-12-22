@@ -7,7 +7,6 @@ import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public abstract class MapperInterface {
 

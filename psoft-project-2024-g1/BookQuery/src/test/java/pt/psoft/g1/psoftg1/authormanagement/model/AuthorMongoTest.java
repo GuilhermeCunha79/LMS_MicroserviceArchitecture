@@ -4,25 +4,19 @@ import org.hibernate.StaleObjectStateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
-import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AuthorMongoTest {
     private AuthorMongo author;
     private final String validName = "João Alberto";
     private final String validBio = "O João Alberto nasceu em Chaves e foi pedreiro a maior parte da sua vida.";
-    @Mock
-    private final UpdateAuthorRequest request = new UpdateAuthorRequest(validName, validBio, null, null);
 
     private static class EntityWithPhotoImpl extends EntityWithPhoto { }
 
@@ -38,36 +32,6 @@ class AuthorMongoTest {
         assertEquals("John Doe", author.getName());
         assertEquals("Biography of John", author.getBio());
         assertEquals("photoURI", author.getPhoto().getPhotoFile());
-    }
-
-    @Test
-    void applyPatchGetNameNull() {
-        // Teste de caixa branca: verifica a lógica do método applyPatch ao passar nome nulo.
-        final var subject = new Author("Valid Name", validBio, null);
-        UpdateAuthorRequest request = new UpdateAuthorRequest();
-        request.setName(null);
-
-        assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
-    }
-
-    @Test
-    void applyPatchGetBioNull() {
-        // Teste de caixa branca: verifica a lógica do método applyPatch ao passar bio nula.
-        final var subject = new Author("Valid Name", validBio, null);
-        UpdateAuthorRequest request = new UpdateAuthorRequest();
-        request.setBio(null);
-
-        assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
-    }
-
-    @Test
-    void applyPatchGetPhotoUriNull() {
-        // Teste de caixa branca: assegura que uma exceção é lançada se photoURI for nulo.
-        final var subject = new Author("Valid Name", validBio, null);
-        UpdateAuthorRequest request = new UpdateAuthorRequest();
-        request.setPhotoURI(null);
-
-        assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
     }
 
     @Test
@@ -93,36 +57,10 @@ class AuthorMongoTest {
         // Teste de caixa preta: assegura que uma biografia nula gera uma exceção no construtor.
         assertThrows(IllegalArgumentException.class, () -> new Author(validName, null, null));
     }
-
-    @Test
-    void whenVersionIsStaleItIsNotPossibleToPatch() {
-        // Teste de caixa branca: assegura que uma versão desatualizada gera uma exceção ao tentar aplicar um patch.
-        final var subject = new Author(validName, validBio, null);
-        assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
-    }
-
     @Test
     void testCreateAuthorWithoutPhoto() {
         // Teste de caixa preta: verifica a criação de um autor sem foto.
         Author author = new Author(validName, validBio, null);
-        assertNotNull(author);
-        assertNull(author.getPhoto());
-    }
-
-    @Test
-    void testCreateAuthorRequestWithPhoto() {
-        // Teste de caixa preta: verifica a criação de um autor a partir de um CreateAuthorRequest com foto.
-        CreateAuthorRequest request = new CreateAuthorRequest(validName, validBio, null, "photoTest.jpg");
-        Author author = new Author(request.getName(), request.getBio(), "photoTest.jpg");
-        assertNotNull(author);
-        assertEquals(request.getPhotoURI(), author.getPhoto().getPhotoFile());
-    }
-
-    @Test
-    void testCreateAuthorRequestWithoutPhoto() {
-        // Teste de caixa preta: verifica a criação de um autor a partir de um CreateAuthorRequest sem foto.
-        CreateAuthorRequest request = new CreateAuthorRequest(validName, validBio, null, null);
-        Author author = new Author(request.getName(), request.getBio(), null);
         assertNotNull(author);
         assertNull(author.getPhoto());
     }

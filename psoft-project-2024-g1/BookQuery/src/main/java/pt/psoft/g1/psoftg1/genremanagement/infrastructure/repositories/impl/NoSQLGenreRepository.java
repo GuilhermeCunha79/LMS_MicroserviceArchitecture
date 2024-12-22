@@ -12,8 +12,6 @@ import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.model.GenreMongo;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

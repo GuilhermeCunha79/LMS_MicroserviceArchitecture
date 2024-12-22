@@ -4,7 +4,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
-import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
+import pt.psoft.g1.psoftg1.shared.MapperInterface;
+import pt.psoft.g1.psoftg1.shared.api.ReaderDetailsViewAMQP;
 
 import java.util.List;
 

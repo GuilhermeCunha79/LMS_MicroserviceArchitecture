@@ -2,9 +2,10 @@ package pt.psoft.g1.psoftg1.bookmanagement.api;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import pt.psoft.g1.psoftg1.shared.api.BookViewAMQP;
+import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
 
 import java.util.List;
 import java.util.stream.Collectors;

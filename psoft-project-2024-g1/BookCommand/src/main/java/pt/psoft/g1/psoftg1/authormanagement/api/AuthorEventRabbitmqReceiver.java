@@ -6,6 +6,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.authormanagement.services.AuthorService;
+import pt.psoft.g1.psoftg1.shared.api.AuthorViewAMQP;
 
 import java.nio.charset.StandardCharsets;
 
@@ -23,7 +24,6 @@ public class AuthorEventRabbitmqReceiver {
 
             String jsonReceived = new String(msg.getBody(), StandardCharsets.UTF_8);
             AuthorViewAMQP authorViewAMQP = objectMapper.readValue(jsonReceived, AuthorViewAMQP.class);
-            System.out.println("LOOOOOL" + authorViewAMQP.getAuthorNumber());
             System.out.println(" [x] Received Author Created by AMQP: " + msg + ".");
             try {
                 authorService.create(authorViewAMQP);

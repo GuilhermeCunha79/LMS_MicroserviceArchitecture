@@ -9,10 +9,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class AuthorFactoryTest {
 
-    private AuthorFactory authorFactory;
     @BeforeEach
     public void setUp() {
-        authorFactory = new AuthorFactory();
+        AuthorFactory authorFactory = new AuthorFactory();
     }
 
     @Test

@@ -3079,7 +3079,7 @@
 <error line="14" column="5" severity="error" message="Falta o comentário Javadoc." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
 <error line="14" column="17" severity="error" message="&apos;1024&apos; é um número mágico." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
 </file>
-<file name="C:\Users\Guilherme Cunha\IdeaProjects\arqsoft-25-1201506-1211439\psoft-project-2024-g1\src\main\java\pt\psoft\g1\psoftg1\PsoftG1Application.java">
+<file name="C:\Users\Guilherme Cunha\IdeaProjects\arqsoft-25-1201506-1211439\psoft-project-2024-g1\src\main\java\pt\psoft\g1\psoftg1\pt.psoft.g1.psoftg1.PsoftG1Application.java">
 <error line="1" severity="error" message="O arquivo package-info.java está faltando." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
 <error line="4" column="8" severity="error" message="Importação não utilizada - org.springframework.boot.autoconfigure.EnableAutoConfiguration." source="com.puppycrawl.tools.checkstyle.checks.imports.UnusedImportsCheck"/>
 <error line="6" column="8" severity="error" message="Importação não utilizada - org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration." source="com.puppycrawl.tools.checkstyle.checks.imports.UnusedImportsCheck"/>

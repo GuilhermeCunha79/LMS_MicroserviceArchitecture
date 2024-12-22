@@ -11,7 +11,7 @@
     <groupId>lms-reader-command</groupId>
     <artifactId>readerCommand</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>LMSReaderCommand</name>
+    <name>ReaderCommand</name>
     <description>LMS Reader Command</description>
 
     <repositories>
@@ -46,6 +46,13 @@
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
             <version>5.22.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>shared</groupId>
+            <artifactId>shared</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

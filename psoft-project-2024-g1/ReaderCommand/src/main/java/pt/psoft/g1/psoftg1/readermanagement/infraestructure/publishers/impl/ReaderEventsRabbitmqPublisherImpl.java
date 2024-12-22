@@ -6,12 +6,12 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pt.psoft.g1.psoftg1.readermanagement.api.LendingViewAMQP;
-import pt.psoft.g1.psoftg1.readermanagement.api.ReaderDetailsViewAMQP;
 import pt.psoft.g1.psoftg1.readermanagement.api.ReaderViewAMQPMapper;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
+import pt.psoft.g1.psoftg1.shared.api.LendingViewAMQP;
+import pt.psoft.g1.psoftg1.shared.api.ReaderDetailsViewAMQP;
 import pt.psoft.g1.psoftg1.shared.model.ReaderEvents;
-import publishers.ReaderEventsPublisher;
+import pt.psoft.g1.psoftg1.readermanagement.publishers.ReaderEventsPublisher;
 
 @Service
 @RequiredArgsConstructor

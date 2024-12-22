@@ -4,11 +4,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
+import pt.psoft.g1.psoftg1.shared.api.LendingViewAMQP;
 import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
-import pt.psoft.g1.psoftg1.shared.model.Commentary;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public abstract class LendingViewAMQPMapper extends MapperInterface {

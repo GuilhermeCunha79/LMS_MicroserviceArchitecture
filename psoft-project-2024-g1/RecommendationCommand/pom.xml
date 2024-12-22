@@ -11,7 +11,7 @@
     <groupId>lms-recommendation-command</groupId>
     <artifactId>recommendationCommand</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>LMSRecommendationCommand</name>
+    <name>RecommendationCommand</name>
     <description>LMS Recommendation Command</description>
 
     <repositories>

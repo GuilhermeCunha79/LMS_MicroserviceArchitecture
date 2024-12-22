@@ -6,7 +6,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
-import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQP;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingFactory;
@@ -14,6 +13,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingStatus;
 import pt.psoft.g1.psoftg1.lendingmanagement.publishers.LendingEventsPublisher;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
+import pt.psoft.g1.psoftg1.shared.api.LendingViewAMQP;
 import pt.psoft.g1.psoftg1.shared.model.generateID.GenerateIDService;
 
 import java.util.Optional;
@@ -24,7 +24,6 @@ import java.util.Optional;
 public class LendingServiceImpl implements LendingService {
     private final LendingRepository lendingRepository;
     private final FineRepository fineRepository;
-    private final LendingFactory lendingFactory;
     private final LendingEventsPublisher lendingEventsPublisher;
 
     @Value("${lendingDurationInDays}")

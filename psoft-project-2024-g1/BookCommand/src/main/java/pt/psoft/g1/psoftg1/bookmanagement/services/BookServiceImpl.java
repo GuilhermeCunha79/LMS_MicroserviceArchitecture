@@ -1,12 +1,10 @@
 package pt.psoft.g1.psoftg1.bookmanagement.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
-import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewAMQP;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.publishers.BookEventsPublisher;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
@@ -14,8 +12,9 @@ import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
-import pt.psoft.g1.psoftg1.shared.model.LendingStatus;
+import pt.psoft.g1.psoftg1.shared.api.BookViewAMQP;
 import pt.psoft.g1.psoftg1.shared.api.LendingViewAMQP;
+import pt.psoft.g1.psoftg1.shared.model.LendingStatus;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 
 import java.util.ArrayList;
@@ -32,9 +31,6 @@ public class BookServiceImpl implements BookService {
     private final PhotoRepository photoRepository;
     private final BookEventsPublisher bookEventsPublisher;
 
-
-    @Value("${suggestionsLimitPerGenre}")
-    private long suggestionsLimitPerGenre;
 
     @Override
     public Book create(CreateBookRequest request, String isbn) {

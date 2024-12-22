@@ -4,13 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
-import pt.psoft.g1.psoftg1.readermanagement.services.UpdateReaderRequest;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Generator;
 import pt.psoft.g1.psoftg1.usermanagement.Reader;
 
-
-import java.nio.file.InvalidPathException;
 import java.util.List;
 
 @Entity
@@ -96,54 +93,6 @@ public class ReaderDetails extends EntityWithPhoto {
     private void setBirthDate(BirthDate date) {
         if(date != null) {
             this.birthDate = date;
-        }
-    }
-
-    public void applyPatch(final long currentVersion, final UpdateReaderRequest request, String photoURI, List<Long> interestList) {
-        if(currentVersion != this.version) {
-            throw new ConflictException("Provided version does not match latest version of this object");
-        }
-
-        String birthDate = request.getBirthDate();
-        String phoneNumber = request.getPhoneNumber();
-        boolean marketing = request.getMarketing();
-        boolean thirdParty = request.getThirdParty();
-        String fullName = request.getFullName();
-        String username = request.getUsername();
-        String password = request.getPassword();
-
-        if(username != null) {
-            this.reader.setUsername(username);
-        }
-
-        if(fullName != null) {
-            this.reader.setName(fullName);
-        }
-
-        if(birthDate != null) {
-            setBirthDate(new BirthDate(birthDate));
-        }
-
-        if(phoneNumber != null) {
-            setPhoneNumber(new PhoneNumber(phoneNumber));
-        }
-
-        if(marketing != this.marketingConsent) {
-            setMarketingConsent(marketing);
-        }
-
-        if(thirdParty != this.thirdPartySharingConsent) {
-            setThirdPartySharingConsent(thirdParty);
-        }
-
-        if(photoURI != null) {
-            try {
-                setPhotoInternal(photoURI);
-            } catch(InvalidPathException ignored) {}
-        }
-
-        if(interestList != null) {
-            this.interestList = interestList;
         }
     }
 

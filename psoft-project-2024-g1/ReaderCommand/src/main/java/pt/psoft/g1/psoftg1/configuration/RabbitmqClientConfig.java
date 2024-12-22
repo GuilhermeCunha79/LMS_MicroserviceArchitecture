@@ -53,7 +53,7 @@ public  class RabbitmqClientConfig {
                                 @Qualifier("autoDeleteQueue_Lending_Validation_Reader") Queue autoDeleteQueue_Lending_Validation_Reader) {
             return BindingBuilder.bind(autoDeleteQueue_Lending_Validation_Reader)
                     .to(direct1)
-                    .with(LendingEvents.LENDING_CREATED_READER);
+                    .with(LendingEvents.LENDING_CREATED_READER_FINAL);
         }
 
         @Bean

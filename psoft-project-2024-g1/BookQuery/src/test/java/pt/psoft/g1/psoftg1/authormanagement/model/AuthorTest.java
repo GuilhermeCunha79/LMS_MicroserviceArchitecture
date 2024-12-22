@@ -4,25 +4,17 @@ import org.hibernate.StaleObjectStateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
-import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
-import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AuthorTest {
     private Author author;
     private final String validName = "João Alberto";
     private final String validBio = "O João Alberto nasceu em Chaves e foi pedreiro a maior parte da sua vida.";
-
-    @Mock
-    private final UpdateAuthorRequest request = new UpdateAuthorRequest(validName, validBio, null, null);
 
     @BeforeEach
     void setup() {
@@ -48,12 +40,6 @@ class AuthorTest {
     }
 
     @Test
-    void whenVersionIsStale_applyPatchThrowsStaleObjectStateException() {
-        assertThrows(StaleObjectStateException.class, () -> author.applyPatch(999, request));
-    }
-
-
-    @Test
     void testRemovePhotoWithValidVersion() {
         long currentVersion = author.getVersion();
         author.removePhoto(currentVersion);
@@ -70,33 +56,11 @@ class AuthorTest {
         assertEquals(Long.valueOf(0), author.getVersion());
     }
 
-    @Test
-    public void testApplyPatch_VersionMismatch_ThrowsException() {
-        long desiredVersion = 2L; // Mismatched version
-        assertThrows(StaleObjectStateException.class, () -> author.applyPatch(desiredVersion, request));
-    }
-
     // Testes de Caixa Preta (Black Box Tests)
 
     @Test
     void testCreateAuthorWithoutPhoto() {
         Author author = AuthorFactory.create(validName, validBio, null);
-        assertNotNull(author);
-        assertNull(author.getPhoto());
-    }
-
-    @Test
-    void testCreateAuthorRequestWithPhoto() {
-        CreateAuthorRequest request = new CreateAuthorRequest(validName, validBio, null, "photoTest.jpg");
-        Author author = AuthorFactory.create(request.getName(), request.getBio(), "photoTest.jpg");
-        assertNotNull(author);
-        assertEquals(request.getPhotoURI(), author.getPhoto().getPhotoFile());
-    }
-
-    @Test
-    void testCreateAuthorRequestWithoutPhoto() {
-        CreateAuthorRequest request = new CreateAuthorRequest(validName, validBio, null, null);
-        Author author = AuthorFactory.create(request.getName(), request.getBio(), null);
         assertNotNull(author);
         assertNull(author.getPhoto());
     }
@@ -134,11 +98,6 @@ class AuthorTest {
     }
 
     //Testes de Mutação
-
-    @Test
-    void whenVersionIsStale_applyPatchThrowsStaleObjectStateExceptionMutation() {
-        assertThrows(StaleObjectStateException.class, () -> author.applyPatch(999, request));
-    }
 
     @Test
     void testRemovePhotoWithStaleVersionThrowsExceptionMutation() {

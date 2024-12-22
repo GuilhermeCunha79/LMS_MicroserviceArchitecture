@@ -15,7 +15,6 @@ import pt.psoft.g1.psoftg1.shared.model.Photo;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AuthorMongoTest {

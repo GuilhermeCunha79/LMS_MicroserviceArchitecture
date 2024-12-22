@@ -1,7 +1,6 @@
 package pt.psoft.g1.psoftg1.shared.model;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
-import org.springframework.util.StringUtils;
 
 import java.util.regex.Pattern;
 

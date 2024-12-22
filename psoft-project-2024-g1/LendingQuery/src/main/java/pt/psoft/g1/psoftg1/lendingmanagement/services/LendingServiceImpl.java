@@ -29,15 +29,12 @@ import java.util.Optional;
 public class LendingServiceImpl implements LendingService {
     private final LendingRepository lendingRepository;
     private final FineRepository fineRepository;
-    private final LendingFactory lendingFactory;
     private final LendingEventsPublisher lendingEventsPublisher;
 
     @Value("${lendingDurationInDays}")
     private int lendingDurationInDays;
     @Value("${fineValuePerDayInCents}")
     private int fineValuePerDayInCents;
-
-    private final GenerateIDService generateIDService;
 
     //AMQP
     @Override

@@ -11,8 +11,8 @@
     <groupId>lms-authnusers-command</groupId>
     <artifactId>authNUserCommand</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>LMSUsersCommand</name>
-    <description>LMS Users Command Microservice</description>
+    <name>UserCommand</name>
+    <description>LMS Users Command</description>
 
     <properties>
         <java.version>21</java.version>

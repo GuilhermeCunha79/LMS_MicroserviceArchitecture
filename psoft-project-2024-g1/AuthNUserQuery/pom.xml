@@ -11,7 +11,7 @@
     <groupId>lms-authnusers-query</groupId>
     <artifactId>authNUserQuery</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>LMSUsersQuery</name>
+    <name>UserQuery</name>
     <description>LMS Users Query</description>
 
     <properties>

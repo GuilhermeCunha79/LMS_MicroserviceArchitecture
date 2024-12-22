@@ -14,8 +14,6 @@ import pt.psoft.g1.psoftg1.bookmanagement.api.BookController;
 import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
-import pt.psoft.g1.psoftg1.shared.services.ConcurrencyService;
-import pt.psoft.g1.psoftg1.shared.services.FileStorageService;
 
 
 @ExtendWith(SpringExtension.class)
@@ -36,12 +34,6 @@ public class BookControllerTest {
     @MockBean
     private BookRepository bookRepository;
 
-
-    @MockBean
-    private ConcurrencyService concurrencyService;
-
-    @MockBean
-    private FileStorageService fileStorageService;
 
     @BeforeEach
     public void setUp() {

@@ -3,11 +3,8 @@ package pt.psoft.g1.psoftg1.shared.api;
 import org.mapstruct.Named;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public abstract class MapperInterface {
 
@@ -25,6 +22,4 @@ public abstract class MapperInterface {
             return value.longValue();
         else throw new NumberFormatException("Invalid number format");
     }
-
-    public <T> T mapOpt(final Optional<T> i) {return i.orElse(null);}
 }

@@ -11,7 +11,7 @@
     <groupId>lms-reader-query</groupId>
     <artifactId>readerQuery</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>LMSReaderQuery</name>
+    <name>ReaderQuery</name>
     <description>LMS Reader Query</description>
 
     <repositories>
@@ -79,6 +79,11 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
             <version>4.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
         <!-- security, authentication & authorization -->

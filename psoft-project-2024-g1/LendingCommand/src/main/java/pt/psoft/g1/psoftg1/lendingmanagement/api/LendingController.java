@@ -69,28 +69,4 @@ public class LendingController {
                 .contentType(MediaType.parseMediaType("application/hal+json"))
                 .body(lendingViewMapper.toLendingView(lending));
     }
-
-    @Operation(summary = "Gets a specific Lending")
-    @GetMapping(value = "/{year}/{seq}")
-    public ResponseEntity<LendingView> findByLendingNumber(
-            Authentication authentication,
-            @PathVariable("year")
-            @Parameter(description = "The year of the Lending to find")
-            final Integer year,
-            @PathVariable("seq")
-            @Parameter(description = "The sequencial of the Lending to find")
-            final Integer seq) {
-
-        String ln = year + "/" + seq;
-        final var lending = lendingService.findByLendingNumber(ln)
-                .orElseThrow(() -> new NotFoundException(Lending.class, ln));
-
-
-        final var lendingUri = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .build().toUri();
-
-        return ResponseEntity.ok().location(lendingUri)
-                .contentType(MediaType.parseMediaType("application/hal+json"))
-                .body(lendingViewMapper.toLendingView(lending));
-    }
 }

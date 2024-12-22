@@ -1,44 +1,26 @@
-
 services:
-  users:
-    image: lmsreaders:latest
-    container_name: readers_in_lms_network
+  lmsreaderquery:
+    image: lmsreaderquery:latest
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8085:8080"
-    #        depends_on:    # adopting database per-service, this might not be a common service
-    #            postgres_in_lms_network:
-    #                condition: service_healthy
     environment:
-      SPRING_PROFILES_ACTIVE: bootstrap, relational
+      SPRING_PROFILES_ACTIVE: bootstrap, mongo
+      SPRING_DATA_MONGODB_URI: mongodb://mongo_in_lms_network:27017/?directConnection=true
+      SPRING_DATA_MONGODB_DATABASE: readingQuery_${HOSTNAME:-default}
     networks:
-      - lms_network
-
-#    postgres_in_lms_network:   # if the database is not a common service, this would be necessary
-#        container_name: postgres_in_lms_network
-#        image: postgres:latest
-#        restart: always
-#        ports:
-#            - "5432:5432"
-#        environment:
-#            POSTGRES_DB: users_1
-#            POSTGRES_USER: postgres
-#            POSTGRES_PASSWORD: password
-#        volumes:
-#            - "postgres_volume:/var/lib/postgresql/data"
-#        networks:
-#            - lms_network
-#        healthcheck:
-#            test: [ "CMD", "pg_isready", "-U", "postgres" ]
-#            interval: 10s
-#            retries: 5
-#            timeout: 5s
+      - lms_network2
+    volumes:
+      - "uploaded_files_volume_readerquery:/tmp"
+    deploy:
+      mode: replicated
+      replicas: 2
 
 networks:
-  lms_network:
+  lms_network2:
     external: true
 
 volumes:
-  postgres_volume:
+  uploaded_files_volume_readerquery:

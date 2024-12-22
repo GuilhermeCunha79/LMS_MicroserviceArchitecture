@@ -20,6 +20,17 @@
  */
 package pt.psoft.g1.psoftg1.shared.services;
 
+import jakarta.validation.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import pt.psoft.g1.psoftg1.exceptions.FileStorageException;
+import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.shared.api.UploadFileResponse;
+import pt.psoft.g1.psoftg1.shared.model.FileUtils;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -29,32 +40,18 @@ import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.UUID;
 
-import jakarta.validation.ValidationException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
-import pt.psoft.g1.psoftg1.exceptions.FileStorageException;
-import pt.psoft.g1.psoftg1.shared.api.UploadFileResponse;
-import pt.psoft.g1.psoftg1.shared.model.FileUtils;
-
 /**
  * <p>
- * code based on
- * https://github.com/callicoder/spring-boot-file-upload-download-rest-api-example
+ * code based on https://github.com/callicoder/spring-boot-file-upload-download-rest-api-example
  *
  *
  */
-@RequiredArgsConstructor
 @Service
 public class FileStorageService {
 
     private final Path fileStorageLocation;
     private long photoMaxSize;
-    private final String[] validImageFormats = {"image/png", "image/jpeg"};
+    private final String[] validImageFormats = { "image/png", "image/jpeg" };
 
     @Autowired
     public FileStorageService(final FileStorageProperties fileStorageProperties) {
@@ -70,8 +67,8 @@ public class FileStorageService {
     }
 
     public String storeFile(final String prefix, final MultipartFile file) {
-        //final String fileName = prefix + "_" + determineFileName(file);
-        //files will contain only the generated uuid passed as prefix
+        // final String fileName = prefix + "_" + determineFileName(file);
+        // files will contain only the generated uuid passed as prefix
         final String fileName = prefix + "." + getExtension(file.getOriginalFilename()).orElse("");
 
         // Copy file to the target location (Replacing existing file with the same name)
@@ -86,7 +83,7 @@ public class FileStorageService {
     }
 
     public void deleteFile(String file) {
-        if(file == null) {
+        if (file == null) {
             throw new IllegalArgumentException("Received null reference to file path");
         }
 
@@ -104,30 +101,31 @@ public class FileStorageService {
         byte[] image = null;
         try {
             image = Files.readAllBytes(photoPath);
-        } catch(IOException e) {
+        } catch (IOException e) {
             return null;
         }
 
         return image;
     }
 
-    //Returns the string of the fileName of the file (UUID.FILE_FORMAT) stored in the uploads folder | null for error or no photo
+    // Returns the string of the fileName of the file (UUID.FILE_FORMAT) stored in the uploads folder | null for error
+    // or no photo
     public String getRequestPhoto(MultipartFile file) {
         UploadFileResponse up = null;
-        if(file != null) {
-            if(file.getSize() > photoMaxSize) {
+        if (file != null) {
+            if (file.getSize() > photoMaxSize) {
                 throw new ValidationException("Attached photo can't be bigger than " + photoMaxSize + " bytes");
             }
 
             int formatIndex = -1;
             String fileContentHeader = file.getContentType();
 
-            if(fileContentHeader == null) {
+            if (fileContentHeader == null) {
                 throw new ValidationException("Unknown file content header");
             }
 
-            for(int i = 0; i < validImageFormats.length; i++) {
-                if(!fileContentHeader.equals(validImageFormats[i])) {
+            for (int i = 0; i < validImageFormats.length; i++) {
+                if (!fileContentHeader.equals(validImageFormats[i])) {
                     continue;
                 }
 
@@ -135,7 +133,7 @@ public class FileStorageService {
                 break;
             }
 
-            if(formatIndex == -1) {
+            if (formatIndex == -1) {
                 throw new ValidationException("Images can only be png or jpeg");
             }
 
@@ -145,26 +143,26 @@ public class FileStorageService {
                 up = FileUtils.doUploadFile(this, photoUUID, file);
             } catch (Exception e) {
                 return null;
-                //throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                // throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            //String fileFormat = validImageFormats[formatIndex].split("/")[1];
+            // String fileFormat = validImageFormats[formatIndex].split("/")[1];
             String originalFileName = file.getOriginalFilename();
-            String fileFormat = originalFileName.substring(originalFileName.lastIndexOf('.')+1);
-            return photoUUID+"."+fileFormat;
+            String fileFormat = originalFileName.substring(originalFileName.lastIndexOf('.') + 1);
+            return photoUUID + "." + fileFormat;
         }
 
         return null;
     }
 
     private String determineFileName(final MultipartFile file) {
-//		// Normalize file name
-//		final String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-//		// Check if the file's name contains invalid characters
-//		if (fileName.contains("..")) {
-//			throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
-//		}
-//		return fileName;
+        // // Normalize file name
+        // final String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        // // Check if the file's name contains invalid characters
+        // if (fileName.contains("..")) {
+        // throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
+        // }
+        // return fileName;
 
         return UUID.randomUUID().toString() + "." + getExtension(file.getOriginalFilename()).orElse("");
     }

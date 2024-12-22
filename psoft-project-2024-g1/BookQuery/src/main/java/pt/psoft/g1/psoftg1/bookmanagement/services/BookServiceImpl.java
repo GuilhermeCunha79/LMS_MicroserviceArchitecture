@@ -1,24 +1,18 @@
 package pt.psoft.g1.psoftg1.bookmanagement.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
-import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewAMQP;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
-import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
+import pt.psoft.g1.psoftg1.shared.api.BookViewAMQP;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,45 +24,6 @@ public class BookServiceImpl implements BookService {
 	private final BookRepository bookRepository;
 	private final GenreRepository genreRepository;
 	private final AuthorRepository authorRepository;
-	private final PhotoRepository photoRepository;
-
-	@Value("${suggestionsLimitPerGenre}")
-	private long suggestionsLimitPerGenre;
-
-    @Override
-    public Book create(CreateBookRequest request, String isbn) {
-
-		if(bookRepository.findByIsbn(isbn).isPresent()){
-			throw new ConflictException("Book with ISBN " + isbn + " already exists");
-		}
-
-		List<Long> authorNumbers = request.getAuthors();
-		List<Author> authors = new ArrayList<>();
-		for (Long authorNumber : authorNumbers) {
-
-			Optional<Author> temp = authorRepository.findByAuthorNumber(String.valueOf(authorNumber));
-			if(temp.isEmpty()) {
-				continue;
-			}
-
-			Author author = temp.get();
-			authors.add(author);
-		}
-
-		MultipartFile photo = request.getPhoto();
-		String photoURI = request.getPhotoURI();
-		if(photo == null && photoURI != null || photo != null && photoURI == null) {
-			request.setPhoto(null);
-			request.setPhotoURI(null);
-		}
-
-		final var genre = genreRepository.findByString(request.getGenre())
-				.orElseThrow(() -> new NotFoundException("Genre not found"));
-
-		Book newBook = new Book(isbn, request.getTitle(), request.getDescription(), genre, authors, photoURI);
-
-        return bookRepository.save(newBook);
-	}
 
 	@Override
 	public Book create(BookViewAMQP bookViewAMQP) {
@@ -80,9 +35,7 @@ public class BookServiceImpl implements BookService {
 		final String genre = bookViewAMQP.getGenre();
 		final List<String> authorIds = bookViewAMQP.getAuthorIds();
 
-		Book bookCreated = create(isbn, title, description, photoURI, genre, authorIds);
-
-		return bookCreated;
+        return create(isbn, title, description, photoURI, genre, authorIds);
 	}
 
 	private Book create( String isbn,
@@ -103,9 +56,7 @@ public class BookServiceImpl implements BookService {
 
 		Book newBook = new Book(isbn, title, description, genre, authors, photoURI);
 
-		Book savedBook = bookRepository.save(newBook);
-
-		return savedBook;
+        return bookRepository.save(newBook);
 	}
 
 	private Book update( Book book,
@@ -160,66 +111,10 @@ public class BookServiceImpl implements BookService {
         return update(book, version, title, description, photoURI, genre, authorIds);
 	}
 
-	@Override
-	public Book update(UpdateBookRequest request, Long currentVersion) {
-
-        var book = findByIsbn(request.getIsbn());
-        if(request.getAuthors()!= null) {
-            List<Long> authorNumbers = request.getAuthors();
-            List<Author> authors = new ArrayList<>();
-            for (Long authorNumber : authorNumbers) {
-                Optional<Author> temp = authorRepository.findByAuthorNumber(String.valueOf(authorNumber));
-                if (temp.isEmpty()) {
-                    continue;
-                }
-                Author author = temp.get();
-                authors.add(author);
-            }
-
-            request.setAuthorObjList(authors);
-        }
-
-		MultipartFile photo = request.getPhoto();
-		String photoURI = request.getPhotoURI();
-		if(photo == null && photoURI != null || photo != null && photoURI == null) {
-			request.setPhoto(null);
-			request.setPhotoURI(null);
-		}
-
-        if (request.getGenre() != null) {
-            Optional<Genre> genre = genreRepository.findByString(request.getGenre());
-            if (genre.isEmpty()) {
-                throw new NotFoundException("Genre not found");
-            }
-            request.setGenreObj(genre.get());
-        }
-
-		book.applyPatch(currentVersion, request.getTitle(), request.getDescription(), photoURI, request.getGenreObj(), request.getAuthorObjList());
-
-		bookRepository.save(book);
-
-
-		return book;
-	}
 
 	@Override
 	public Book save(Book book) {
 		return this.bookRepository.save(book);
-	}
-	@Override
-	public Book removeBookPhoto(String isbn, long desiredVersion) {
-		Book book = this.findByIsbn(isbn);
-		String photoFile;
-		try {
-			photoFile = book.getPhoto().getPhotoFile();
-		}catch (NullPointerException e){
-			throw new NotFoundException("Book did not have a photo assigned to it.");
-		}
-
-		book.removePhoto(desiredVersion);
-		var updatedBook = bookRepository.save(book);
-		photoRepository.deleteByPhotoFile(photoFile);
-		return updatedBook;
 	}
 
 	@Override

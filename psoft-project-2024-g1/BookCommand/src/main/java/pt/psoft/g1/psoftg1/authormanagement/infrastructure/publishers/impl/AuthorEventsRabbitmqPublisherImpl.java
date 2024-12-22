@@ -6,10 +6,10 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pt.psoft.g1.psoftg1.authormanagement.api.AuthorViewAMQP;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorViewAMQPMapper;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.publishers.AuthorEventsPublisher;
+import pt.psoft.g1.psoftg1.shared.api.AuthorViewAMQP;
 import pt.psoft.g1.psoftg1.shared.model.AuthorEvents;
 
 @Service

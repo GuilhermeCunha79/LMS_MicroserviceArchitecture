@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd xmlns="http://pmd.sourceforge.net/report/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd" version="7.0.0" timestamp="2024-11-02T19:22:20.232">
-<file name="C:\Users\Guilherme Cunha\IdeaProjects\arqsoft-25-1201506-1211439\psoft-project-2024-g1\src\main\java\pt\psoft\g1\psoftg1\PsoftG1Application.java">
-<violation beginline="4" endline="4" begincolumn="1" endcolumn="71" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+<file name="C:\Users\Guilherme Cunha\IdeaProjects\arqsoft-25-1201506-1211439\psoft-project-2024-g1\src\main\java\pt\psoft\g1\psoftg1\pt.psoft.g1.psoftg1.PsoftG1Application.java">
+<violation beginline="4" endline="4" begincolumn="1" endcolumn="71" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="pt.psoft.g1.psoftg1.PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
 Unused import 'org.springframework.boot.autoconfigure.EnableAutoConfiguration'
 </violation>
-<violation beginline="6" endline="6" begincolumn="1" endcolumn="85" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+<violation beginline="6" endline="6" begincolumn="1" endcolumn="85" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="pt.psoft.g1.psoftg1.PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
 Unused import 'org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration'
 </violation>
-<violation beginline="7" endline="7" begincolumn="1" endcolumn="76" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+<violation beginline="7" endline="7" begincolumn="1" endcolumn="76" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="pt.psoft.g1.psoftg1.PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
 Unused import 'org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration'
 </violation>
-<violation beginline="8" endline="8" begincolumn="1" endcolumn="61" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+<violation beginline="8" endline="8" begincolumn="1" endcolumn="61" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="pt.psoft.g1.psoftg1.PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
 Unused import 'org.springframework.context.annotation.ComponentScan'
 </violation>
-<violation beginline="9" endline="9" begincolumn="1" endcolumn="61" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+<violation beginline="9" endline="9" begincolumn="1" endcolumn="61" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="pt.psoft.g1.psoftg1.PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
 Unused import 'org.springframework.context.annotation.Configuration'
 </violation>
-<violation beginline="10" endline="10" begincolumn="1" endcolumn="77" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+<violation beginline="10" endline="10" begincolumn="1" endcolumn="77" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="pt.psoft.g1.psoftg1.PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
 Unused import 'org.springframework.data.jpa.repository.config.EnableJpaRepositories'
 </violation>
-<violation beginline="11" endline="11" begincolumn="1" endcolumn="83" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+<violation beginline="11" endline="11" begincolumn="1" endcolumn="83" rule="UnnecessaryImport" ruleset="Code Style" package="pt.psoft.g1.psoftg1" class="pt.psoft.g1.psoftg1.PsoftG1Application" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
 Unused import 'org.springframework.data.mongodb.repository.config.EnableMongoRepositories'
 </violation>
 </file>

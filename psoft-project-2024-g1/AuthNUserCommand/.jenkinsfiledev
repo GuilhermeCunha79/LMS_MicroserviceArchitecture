@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        POM_LOC = "psoft-project-2024-g1"
+        POM_LOC = "psoft-project-2024-g1/AuthNUserCommand"
     }
 
     stages {

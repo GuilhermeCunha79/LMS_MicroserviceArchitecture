@@ -6,6 +6,8 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
+import pt.psoft.g1.psoftg1.shared.api.LendingViewAMQP;
+import pt.psoft.g1.psoftg1.shared.api.ReaderDetailsViewAMQP;
 
 import java.nio.charset.StandardCharsets;
 

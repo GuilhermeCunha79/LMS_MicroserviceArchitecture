@@ -36,7 +36,7 @@ public class LendingEventsRabbitmqPublisherImpl implements LendingEventsPublishe
 
     @Override
     public void sendLendingCreatedToReader(Lending lending) {
-        sendLendingEvent(lending, LendingEvents.LENDING_CREATED_READER);
+        sendLendingEvent(lending, LendingEvents.LENDING_CREATED_READER_FINAL);
     }
 
     public void sendLendingEvent(Lending book, String bookEventType) {

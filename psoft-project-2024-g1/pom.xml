@@ -28,10 +28,16 @@
         <module>amqp-rabbitmq</module>
     </modules>
 
+
     <repositories>
         <repository>
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/GuilhermeCunha79/shared</url>
         </repository>
     </repositories>
 
@@ -196,6 +202,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
 
         <!-- Dependência para o Spring Cloud Config se você usar a configuração centralizada -->
 

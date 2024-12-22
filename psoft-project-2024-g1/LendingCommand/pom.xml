@@ -11,8 +11,8 @@
     <groupId>lms-lendings-command</groupId>
     <artifactId>lendingCommand</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>LMSLendingsCommand</name>
-    <description>LMS Lendings Command</description>
+    <name>LendingCommand</name>
+    <description>LMS Lending Command</description>
 
 
     <repositories>
@@ -52,6 +52,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>shared</groupId>
+            <artifactId>shared</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

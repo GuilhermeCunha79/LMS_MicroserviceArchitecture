@@ -11,7 +11,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import pt.psoft.g1.psoftg1.authormanagement.model.AuthorMongo;
-import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequestMongo;
 import pt.psoft.g1.psoftg1.genremanagement.model.GenreMongo;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Generator;
@@ -66,29 +65,6 @@ public class  BookMongo extends EntityWithPhoto {
             setPhotoInternal(null);
         }
     }
-
-    public void applyPatch(final Long desiredVersion, UpdateBookRequestMongo request) {
-        if (!Objects.equals(this.version, desiredVersion)) {
-            throw new StaleObjectStateException("Object was already modified by another user", this.pk);
-        }
-
-        if (request.getTitle() != null) {
-            setTitle(request.getTitle());
-        }
-        if (request.getDescription() != null) {
-            setDescription(request.getDescription());
-        }
-        if (request.getGenreObj() != null) {
-            setGenre(request.getGenreObj());
-        }
-        if (request.getAuthorObjList() != null) {
-            setAuthors(request.getAuthorObjList());
-        }
-        if (request.getPhotoURI() != null) {
-            setPhotoInternal(request.getPhotoURI());
-        }
-    }
-
 
     private void setIsbn(String title) {
         this.isbn = title;

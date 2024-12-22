@@ -20,6 +20,17 @@
  */
 package pt.psoft.g1.psoftg1.shared.services;
 
+import jakarta.validation.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import pt.psoft.g1.psoftg1.exceptions.FileStorageException;
+import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.shared.api.UploadFileResponse;
+import pt.psoft.g1.psoftg1.shared.model.FileUtils;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -28,18 +39,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.UUID;
-
-import jakarta.validation.ValidationException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
-import pt.psoft.g1.psoftg1.exceptions.FileStorageException;
-import pt.psoft.g1.psoftg1.shared.api.UploadFileResponse;
-import pt.psoft.g1.psoftg1.shared.model.FileUtils;
 
 /**
  * <p>

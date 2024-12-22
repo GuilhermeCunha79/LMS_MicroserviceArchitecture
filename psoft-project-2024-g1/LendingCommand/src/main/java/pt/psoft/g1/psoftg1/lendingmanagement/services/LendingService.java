@@ -1,7 +1,8 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.services;
 
-import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQP;
+
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
+import pt.psoft.g1.psoftg1.shared.api.LendingViewAMQP;
 
 import java.util.Optional;
 

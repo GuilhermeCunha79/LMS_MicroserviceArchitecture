@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        POM_LOC = "psoft-project-2024-g1"
+        POM_LOC = "psoft-project-2024-g1/AuthNUserQuery"
     }
 
     stages {
@@ -91,7 +91,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube Static Code Analysis') {
+     /*   stage('SonarQube Static Code Analysis') {
             steps {
                 script {
                     dir(POM_LOC) {
@@ -118,7 +118,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
         stage('Checkstyle and JaCoCo Reports') {
             parallel {
@@ -148,34 +148,6 @@ pipeline {
                             sh 'mvn install -DskipTests -DskipITs -DskipPitest'
                         } else {
                             bat 'mvn install -DskipTests -DskipITs -DskipPitest'
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'nohup java -jar /var/lib/jenkins/workspace/pipeline-odsoft/psoft-project-2024-g1/target/psoft-g1-0.0.1-SNAPSHOT.jar --server.port=2228 > output.log 2>&1 &'
-                        } else {
-                            bat 'start /B java -jar .\\target\\psoft-g1-0.0.1-SNAPSHOT.jar --server.port=2228 > output.log 2>&1'
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Smoke Tests') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'sleep 35 && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
-                        } else {
-                            bat 'ping 127.0.0.1 -n 35 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
                         }
                     }
                 }

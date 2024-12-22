@@ -11,8 +11,8 @@ import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.readermanagement.services.SearchReadersQuery;
+import pt.psoft.g1.psoftg1.shared.services.Page;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Repository
@@ -94,7 +94,7 @@ public class NoSQLReaderRepository implements ReaderRepository {
     }
 
     @Override
-    public List<ReaderDetails> searchReaderDetails(final pt.psoft.g1.psoftg1.shared.services.Page page, final SearchReadersQuery query) {
+    public List<ReaderDetails> searchReaderDetails(final Page page, final SearchReadersQuery query) {
 
         Query mongoQuery = new Query();
 
@@ -122,7 +122,7 @@ public class NoSQLReaderRepository implements ReaderRepository {
             mongoQuery.addCriteria(new Criteria().orOperator(criteriaList.toArray(new Criteria[0])));
         }
 
-        mongoQuery.skip((page.getNumber() - 1) * page.getLimit()).limit(page.getLimit());
+        mongoQuery.skip((long) (page.getNumber() - 1) * page.getLimit()).limit(page.getLimit());
 
         return mongoTemplate.find(mongoQuery, ReaderDetails.class);
     }

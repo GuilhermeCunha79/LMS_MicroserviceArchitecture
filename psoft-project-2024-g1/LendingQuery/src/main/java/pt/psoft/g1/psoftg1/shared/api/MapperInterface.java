@@ -1,6 +1,10 @@
 package pt.psoft.g1.psoftg1.shared.api;
 
-import java.util.Optional;
+import org.mapstruct.Named;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class MapperInterface {
 
@@ -19,5 +23,4 @@ public abstract class MapperInterface {
         else throw new NumberFormatException("Invalid number format");
     }
 
-    public <T> T mapOpt(final Optional<T> i) {return i.orElse(null);}
 }

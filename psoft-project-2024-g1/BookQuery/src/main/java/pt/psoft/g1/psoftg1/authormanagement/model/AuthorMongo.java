@@ -10,7 +10,6 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
-import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Generator;
@@ -48,28 +47,6 @@ public class AuthorMongo extends EntityWithPhoto {
         setName(name);
         setBio(bio);
         setPhotoInternal(photoURI);
-    }
-
-    public void applyPatch(final long desiredVersion, final UpdateAuthorRequest request) {
-        if (this.version != desiredVersion) {
-            throw new StaleObjectStateException("Object was already modified by another user", this.authorNumber);
-        }
-        if (request.getName() != null) {
-            setName(request.getName());
-        }
-        if (request.getBio() != null) {
-            setBio(request.getBio());
-        }
-        if (request.getPhotoURI() != null) {
-            setPhotoInternal(request.getPhotoURI());
-        }
-    }
-
-    public void removePhoto(long desiredVersion) {
-        if (desiredVersion != this.version) {
-            throw new ConflictException("Provided version does not match latest version of this object");
-        }
-        setPhotoInternal(null);
     }
 
     public String getName() {
