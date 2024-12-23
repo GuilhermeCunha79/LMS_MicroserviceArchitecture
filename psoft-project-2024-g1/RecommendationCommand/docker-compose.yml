@@ -1,44 +1,62 @@
-
 services:
-  users:
-    image: lmsrecommendation:latest
-    container_name: recommendation_in_lms_network
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8085:8080"
-    #        depends_on:    # adopting database per-service, this might not be a common service
-    #            postgres_in_lms_network:
-    #                condition: service_healthy
-    environment:
-      SPRING_PROFILES_ACTIVE: bootstrap, relational
-    networks:
-      - lms_network
+    recommendationcommand:
+      image: recommendationcommand:latest
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - "8093:8080"
+      environment:
+        SPRING_PROFILES_ACTIVE: bootstrap, relational
+      networks:
+        - lms_network2
+      volumes:
+        - "uploaded_files_volume_recommendationcommand:/tmp"
+      deploy:
+        mode: replicated
+        replicas: 2
 
-#    postgres_in_lms_network:   # if the database is not a common service, this would be necessary
-#        container_name: postgres_in_lms_network
-#        image: postgres:latest
-#        restart: always
-#        ports:
-#            - "5432:5432"
-#        environment:
-#            POSTGRES_DB: users_1
-#            POSTGRES_USER: postgres
-#            POSTGRES_PASSWORD: password
-#        volumes:
-#            - "postgres_volume:/var/lib/postgresql/data"
-#        networks:
-#            - lms_network
-#        healthcheck:
-#            test: [ "CMD", "pg_isready", "-U", "postgres" ]
-#            interval: 10s
-#            retries: 5
-#            timeout: 5s
+    postgres_in_lms_network:
+      image: postgres:latest
+      restart: unless-stopped
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: password
+      deploy:
+        replicas: 2
+      ports:
+        - "5449-5457:5432"
+      volumes:
+        - "postgres_volume:/var/lib/postgresql/data"
+      networks:
+        - lms_network2
+      healthcheck:
+        test: [ "CMD", "pg_isready", "-U", "postgres" ]
+        interval: 10s
+        retries: 5
+        timeout: 5s
+
+    rabbitmq_in_lms_network:
+      image: rabbitmq:latest
+      restart: unless-stopped
+      ports:
+        - "5679:5672" # RabbitMQ main port
+        - "15679:15672" # RabbitMQ management UI
+      environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+      networks:
+        - lms_network2
+      healthcheck:
+        test: [ "CMD", "rabbitmqctl", "status" ]
+        interval: 10s
+        retries: 5
+        timeout: 5s
 
 networks:
-  lms_network:
+  lms_network2:
     external: true
 
 volumes:
+  uploaded_files_volume_recommendationcommand:
   postgres_volume:

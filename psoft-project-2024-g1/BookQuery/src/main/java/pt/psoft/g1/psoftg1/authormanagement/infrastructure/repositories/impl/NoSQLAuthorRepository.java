@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Profile("authorMongo")
+@Profile("mongo")
 @Repository
 @RequiredArgsConstructor
 public class NoSQLAuthorRepository implements AuthorRepository {

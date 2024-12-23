@@ -9,6 +9,8 @@ import pt.psoft.g1.psoftg1.recommendationmanagement.repositories.RecommendationR
 import pt.psoft.g1.psoftg1.shared.model.Commentary;
 import pt.psoft.g1.psoftg1.shared.model.CommentaryAnalysis;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class RecommendationServiceImpl implements RecommendationService {
@@ -42,6 +44,12 @@ public class RecommendationServiceImpl implements RecommendationService {
         Recommendation recommendation = new Recommendation(lendingNumber, readerNumber, isbn, commentary);
 
         return recommendationRepository.save(recommendation);
+    }
+
+
+    private List<Recommendation> findAll() {
+
+        return recommendationRepository.findAll();
     }
 
 }

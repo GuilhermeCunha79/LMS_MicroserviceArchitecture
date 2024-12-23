@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import pt.psoft.g1.psoftg1.recommendationmanagement.model.Recommendation;
 import pt.psoft.g1.psoftg1.recommendationmanagement.repositories.RecommendationRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -28,7 +29,6 @@ public class RelationalRecommendationRepositoryImpl implements RecommendationRep
         }
         return recommendation;
     }
-
 
     @Override
     public void delete(Recommendation recommendation) {
@@ -56,5 +56,8 @@ public class RelationalRecommendationRepositoryImpl implements RecommendationRep
         }
     }
 
+    @Override
+    public List<Recommendation> findAll() {
+        return entityManager.createQuery("SELECT r FROM Recommendation r", Recommendation.class).getResultList();
+    }
 }
-

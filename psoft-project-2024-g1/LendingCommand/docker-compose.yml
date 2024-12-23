@@ -1,23 +1,45 @@
 services:
-  lmslendingsQuery:
-    image: lmslendingscommand:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "${HOSTNAME}:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: bootstrap, relational, IDService1, alg1
-    networks:
-      - lms_network
-    volumes:
-      - "uploaded_files_volume:/tmp"
-    deploy:
-      replicas: 2
+    lendingcommand:
+      image: lendingcommand:latest
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - "8082:8080"
+      environment:
+        SPRING_PROFILES_ACTIVE: bootstrap, relational, IDService1, alg1
+      networks:
+        - lms_network2
+      volumes:
+        - "uploaded_files_volume:/tmp"
+      deploy:
+        replicas: 2
+
+    postgres_in_lms_network:
+      image: postgres:latest
+      restart: unless-stopped
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: password
+      deploy:
+        replicas: 2
+      ports:
+        - "5457-5465:5432"
+      volumes:
+        - "postgres_volume:/var/lib/postgresql/data"
+      networks:
+        - lms_network2
+      healthcheck:
+        test: [ "CMD", "pg_isready", "-U", "postgres" ]
+        interval: 10s
+        retries: 5
+        timeout: 5s
+
 
 networks:
-  lms_network:
+  lms_network2:
     external: true
 
 volumes:
   uploaded_files_volume:
+  postgres_volume:

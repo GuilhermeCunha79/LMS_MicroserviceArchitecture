@@ -5,10 +5,7 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Copie o arquivo JAR do seu projeto para o contêiner
-COPY /target/LMSReaders-0.0.1-SNAPSHOT.jar app.jar
-
-# Exponha a porta que o aplicativo irá usar
-EXPOSE 8085
+COPY /target/readerQuery-0.0.1-SNAPSHOT.jar app.jar
 
 # Comando para executar o aplicativo
 CMD ["java", "-jar", "app.jar"]

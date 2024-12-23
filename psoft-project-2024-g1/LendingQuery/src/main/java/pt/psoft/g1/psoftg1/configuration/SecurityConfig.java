@@ -101,7 +101,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PATCH, "/api/lendings/{year}/{seq}").hasAnyRole(Role.READER, Role.LIBRARIAN, Role.ADMIN)
                 .requestMatchers(HttpMethod.POST, "/api/lendings/search").hasAnyRole(Role.LIBRARIAN)
                 .requestMatchers(HttpMethod.POST, "/api/lendings/recommendation").hasAnyRole(Role.LIBRARIAN)
-
+                .requestMatchers("/actuator/prometheus").permitAll()  // Permitir acesso público ao Prometheus
+                .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/**").hasRole(Role.ADMIN).anyRequest().authenticated()
                 // Set up oauth2 resource server
                 .and().httpBasic(Customizer.withDefaults()).oauth2ResourceServer().jwt();

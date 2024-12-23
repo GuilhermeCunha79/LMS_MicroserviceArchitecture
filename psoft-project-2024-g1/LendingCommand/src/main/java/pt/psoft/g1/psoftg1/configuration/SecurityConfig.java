@@ -93,7 +93,6 @@ public class SecurityConfig {
                 .requestMatchers(format("%s/**", swaggerPath)).permitAll()
                 // Our public endpoints
                 .requestMatchers("/api/public/**").permitAll() // public assets & end-points
-                .requestMatchers(HttpMethod.POST, "/api/readers").permitAll() // unregistered should be able to register
                 // Our private endpoints
                 // authors
 
@@ -105,14 +104,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PATCH, "/api/lendings/{year}/{seq}").hasAnyRole(Role.READER, Role.LIBRARIAN, Role.ADMIN)
                 .requestMatchers(HttpMethod.POST, "/api/lendings/search").hasAnyRole(Role.LIBRARIAN)
                 .requestMatchers(HttpMethod.POST, "/api/lendings/recommendation").hasAnyRole(Role.LIBRARIAN)
+                .requestMatchers("/actuator/prometheus").permitAll()  // Permitir acesso público ao Prometheus
+                .requestMatchers("/actuator/**").permitAll()
                 // endBooks
-//                // genres
-//                .requestMatchers(HttpMethod.GET, "/api/genres/top5").hasRole(Role.LIBRARIAN)
-//                .requestMatchers(HttpMethod.GET, "/api/genres/avgLendings").hasRole(Role.LIBRARIAN)
-//                .requestMatchers(HttpMethod.POST, "/api/genres/avgLendingsPerGenre").hasRole(Role.LIBRARIAN)
-//                .requestMatchers(HttpMethod.GET, "/api/genres/lendingsPerMonthLastTwelveMonths").hasRole(Role.LIBRARIAN)
-//                .requestMatchers(HttpMethod.GET, "/api/genres/lendingsAverageDurationPerMonth").hasRole(Role.LIBRARIAN)
-//                // end genres
+
                 // Admin has access to all endpoints
                 .requestMatchers("/**").hasRole(Role.ADMIN).anyRequest().authenticated()
                 // Set up oauth2 resource server

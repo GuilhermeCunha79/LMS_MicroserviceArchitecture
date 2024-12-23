@@ -7,6 +7,7 @@ import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public abstract class MapperInterface {
 
@@ -46,4 +47,6 @@ public abstract class MapperInterface {
         authorLink.put("href", authorUri);
         return authorLink;
     }
+
+    public <T> T mapOpt(final Optional<T> i) {return i.orElse(null);}
 }

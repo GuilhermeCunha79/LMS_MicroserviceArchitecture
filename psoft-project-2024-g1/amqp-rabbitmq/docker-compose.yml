@@ -1,0 +1,103 @@
+
+services:
+
+    prometheus:
+        image: prom/prometheus:latest
+        ports:
+            - "9090:9090"
+        volumes:
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml
+        deploy:
+            mode: replicated
+            replicas: 1
+        networks:
+            - lms_network2
+
+    pact-broker:
+        image: pactfoundation/pact-broker:latest
+        ports:
+            - "9292:9292"
+        environment:
+            PACT_BROKER_DATABASE_ADAPTER: postgres
+            PACT_BROKER_DATABASE_URL: postgresql://postgres:password@postgres_in_lms_network:5432/pactbroker
+        deploy:
+            mode: replicated
+        networks:
+            - lms_network2
+        depends_on:
+            -   postgres_in_lms_network
+
+    rabbitmq_in_lms_network:
+        image: rabbitmq:latest
+        restart: unless-stopped
+        ports:
+            - "5672:5672" # RabbitMQ main port
+            - "15672:15672" # RabbitMQ management UI
+        environment:
+            RABBITMQ_DEFAULT_USER: guest
+            RABBITMQ_DEFAULT_PASS: guest
+        networks:
+            - lms_network2
+        healthcheck:
+            test: [ "CMD", "rabbitmqctl", "status" ]
+            interval: 10s
+            retries: 5
+            timeout: 5s
+
+    grafana:
+        image: grafana/grafana:latest
+        ports:
+            - "3000:3000"
+        deploy:
+            mode: replicated
+            replicas: 1
+        networks:
+            - lms_network2
+
+    cadvisor:
+        image: gcr.io/cadvisor/cadvisor:latest
+        ports:
+            - "8079:8080"
+        volumes:
+            - /var/run:/var/run:ro
+            - /sys:/sys:ro
+            - /var/lib/docker:/var/lib/docker:ro
+        deploy:
+            mode: global
+        networks:
+            - lms_network2
+
+    node-exporter:
+        image: prom/node-exporter:latest
+        deploy:
+            mode: global
+        volumes:
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /:/rootfs:ro
+        command:
+            - '--path.procfs=/host/proc'
+            - '--path.sysfs=/host/sys'
+            - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+        networks:
+            - lms_network2
+
+    nginx:
+        image: nginx:latest
+        deploy:
+            replicas: 1
+        ports:
+            - "80:80"
+            - "443:443"
+        networks:
+            - lms_network2
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf
+
+networks:
+    lms_network2:
+        external: true
+volumes:
+    postgres_volume:
+    uploaded_files_volume:
+    mongo_data:

@@ -28,7 +28,7 @@ public class LendingView {
 
     private int status;
 
-    private Integer daysUntilReturn;
+    private int daysUntilReturn;
 
     private Integer daysOverdue;
 

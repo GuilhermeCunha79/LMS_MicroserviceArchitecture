@@ -424,9 +424,149 @@ services aligned with the bounded context defined in the steps above.
 |               | CON-9               |                      | No significant decisions have been made at this stage.      |
 |               |                     | CON-10               | API Gateway will provide a central point for managing APIs. |
 
+## Iteration 5
 
+### Step 2
 
+#### Goal:
 
+- Define how the system must be designed to achieve high levels of availability, performance, efficiency, modifiability,
+  and interoperability, ensuring seamless operation, scalability, and adaptability in diverse operational contexts.
+  This includes maintaining continuous service availability, optimizing resource usage, scaling horizontally under high
+  demand,
+  supporting seamless updates with backward compatibility
+
+### Step 3
+
+#### Elements to refine:
+
+- Microservices architecture defined in the previous iterations
+
+### Step 4
+
+#### Dividing Responsibilities to Improve Scalability, Maintainability, and System Efficiency
+
+The application will be divided into microservices using a **Command-Query Responsibility Segregation (CQRS)** pattern,
+**Database-per-Service** strategy, and **Polyglot Persistence** approach. This design ensures that the system is
+scalable,
+maintainable, and optimized for specific data handling requirements in each context.
+
+#### Key Advantages
+
+##### Separation of Concerns with CQRS
+
+By splitting the system into Command and Query microservices, we can decouple write and read operations. This leads to:
+
+- **Optimized Performance**: Each service can be tailored to handle its specific workload,
+  such as using a write-optimized database for Command services and a read-optimized database for Query services.
+- **Scalability**: Write-heavy and read-heavy parts of the system can scale independently based on their distinct needs.
+- **Simplified Maintenance**: The separation ensures that updates or optimizations in one side of the system
+  (e.g., Commands) do not disrupt the other (e.g., Queries).
+
+##### Database-per-Service
+
+Each microservice will have its own dedicated database, ensuring strict ownership and isolation of data. Benefits
+include:
+
+- **Improved Fault Isolation**: Failures or performance issues in one database will not propagate to others, enhancing
+  system reliability.
+- **Data Integrity**: Microservices own their data entirely, avoiding cross-service dependencies and reducing the risk
+  of corruption.
+- **Autonomous Evolution**: Each service can independently evolve its schema or switch to a database technology better
+  suited for its specific needs.
+
+##### Polyglot Persistence
+
+Different microservices can use different types of databases (e.g., relational, NoSQL) based on their requirements. This
+approach allows:
+
+- **Flexibility**: Services like **Lending** may use a relational database (e.g., Postgres), while a **Recommendation**
+  service could use a NoSQL database (e.g., MongoDB) to handle large-scale, unstructured data.
+- **Better Performance**: Leveraging the strengths of specific database technologies results in better overall system
+  performance and efficiency.
+
+---
+
+### Step 5 and 6
+
+#### Decisions for Microservices Division
+
+The system will be divided into microservices based on CQRS principles and the **Database-per-Service** strategy.
+Each microservice will have a clear responsibility and ownership of its domain data.
+
+##### Command Microservices
+
+The **Command** microservices will handle all operations that change the state of the system. These include:
+
+- **LendingCommandService**:
+    - Handles operations like creating a lending record, updating lending statuses, and managing overdue fines.
+    - Relies on a relational database (e.g., Postgres) for transaction consistency and data integrity.
+
+- **ReaderCommandService**:
+    - Manages user actions, such as registering a new reader or updating reader profiles.
+    - Uses a relational database for structured data management.
+
+##### Query Microservices
+
+The **Query** microservices will focus on retrieving and presenting data. These include:
+
+- **LendingQueryService**:
+    - Retrieves information about current lendings, overdue lendings, and historical records.
+    - Utilizes a NoSQL database (e.g., MongoDB) to provide faster and more flexible querying capabilities.
+
+- **ReaderQueryService**:
+    - Fetches detailed reader information.
+    - Uses a document-oriented database like MongoDB for optimized data retrieval.
+
+---
+
+#### Rationale for Design Decisions
+
+1. **CQRS for Domain Complexity**:
+
+- Separating Commands and Queries simplifies the system architecture by reducing domain complexity.
+- It ensures that services remain lightweight, focused, and highly specialized.
+
+2. **Database-per-Service for Data Autonomy**:
+
+- By assigning each microservice its own database, we eliminate the need for complex schema-sharing or synchronization
+  across services.
+- This isolation enables the services to scale independently, which is crucial for the **Recommendation** and **Lending
+  ** contexts with varying demands.
+
+3. **Polyglot Persistence for Flexibility**:
+
+- Using different database technologies allows each service to optimize its storage and retrieval mechanisms for its
+  specific use case.
+
+4. **Resilience and Scalability**:
+
+- Decoupling read and write operations allows the system to remain functional even if one part experiences high demand
+  or failure.
+- Each service can scale independently to match its workload, ensuring system stability during peak usage periods.
+
+---
+
+### Step 7
+
+| Not Addressed | Partially Addressed | Completely Addressed | Design Decisions made during the Iteration               |
+|---------------|---------------------|----------------------|----------------------------------------------------------|
+|               | UC-1                |                      | Recommendation microservice added to the context.        |
+|               | QA-1                |                      | No significant decisions have been made at this stage.   |
+|               | QA-2                |                      | No significant decisions have been made at this stage.   |
+|               | QA-3                |                      | No significant decisions have been made at this stage.   |
+|               | QA-4                |                      | No significant decisions have been made at this stage.   |
+| QA-5          |                     |                      | No significant decisions have been made at this stage.   |
+|               |                     | CON-1                | No significant decisions have been made at this stage.   |
+|               |                     | CON-2                | No significant decisions have been made at this stage.   |
+|               | CON-3               |                      | No significant decisions have been made at this stage.   |
+|               |                     | CON-4                | With CQRS, database-per-service and polyglot persistence |
+|               | CON-5               |                      | No significant decisions have been made at this stage.   |
+| CON-6         |                     |                      | No significant decisions have been made at this stage.   |
+| CON-7         |                     |                      | No significant decisions have been made at this stage.   |
+| CON-8         |                     |                      | No significant decisions have been made at this stage.   |
+|               | CON-9               |                      | No significant decisions have been made at this stage.   |
+|               |                     | CON-10               | No significant decisions have been made at this stage.   |
 
 
 

@@ -17,7 +17,6 @@
 
     <modules>
         <module>AuthNUserCommand</module>
-        <module>AuthNUserQuery</module>
         <module>BookCommand</module>
         <module>BookQuery</module>
         <module>ReaderCommand</module>

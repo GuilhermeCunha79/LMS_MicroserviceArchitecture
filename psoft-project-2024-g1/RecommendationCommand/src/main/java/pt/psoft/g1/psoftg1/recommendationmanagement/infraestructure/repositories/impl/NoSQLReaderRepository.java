@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import pt.psoft.g1.psoftg1.recommendationmanagement.model.Recommendation;
 import pt.psoft.g1.psoftg1.recommendationmanagement.repositories.RecommendationRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -36,6 +37,11 @@ public class NoSQLReaderRepository implements RecommendationRepository {
                 Recommendation.class
         );
         return Optional.ofNullable(recommendation);
+    }
+
+    @Override
+    public List<Recommendation> findAll() {
+        return mongoTemplate.findAll(Recommendation.class);
     }
 
 }

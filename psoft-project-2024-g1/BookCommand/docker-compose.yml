@@ -16,9 +16,30 @@ services:
             mode: replicated
             replicas: 2
 
+    postgres_in_lms_network:
+        image: postgres:latest
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+        deploy:
+            replicas: 2
+        ports:
+            - "5432-5440:5432"
+        volumes:
+            - "postgres_volume:/var/lib/postgresql/data"
+        networks:
+            - lms_network2
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-U", "postgres" ]
+            interval: 10s
+            retries: 5
+            timeout: 5s
+
 networks:
     lms_network2:
         external: true
 
 volumes:
     uploaded_files_volume_bookscommand:
+    postgres_volume:
