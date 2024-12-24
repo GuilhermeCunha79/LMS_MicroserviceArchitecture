@@ -62,14 +62,13 @@ company’s strategic goals for modular and connected services.
 | CON-2  | Microservice architecture is needed.                                                                                                                                                                                  |
 | CON-3  | The solution should follow a SOA strategy of API-led connectivity.                                                                                                                                                    |
 | CON-4  | Design microservices with clear responsibilities, effective data handling, reliable communication, scalability, resilience, efficient deployment, robust security, optimized performance, and flexible configuration. |
-| CON-5  | The system must ensure high availability at all times.                                                                                                                                                                |
-| CON-6  | The system must handle high-demand periods efficiently, improving performance by 25% when necessary.                                                                                                                  |
+| CON-5  | The system must ensure high availability at all times.                                                                                                                                                                | |
 | CON-7  | The system must optimize resource usage, scaling hardware only during infrequent demand peaks.                                                                                                                        |
 | CON-8  | The system must maintain or improve its releasability with each update.                                                                                                                                               |
 | CON-9  | Changes to the API must not affect clients, except in extreme cases.                                                                                                                                                  |
 | CON-10 | The system must adhere to the company’s SOA strategy, with API-led connectivity.                                                                                                                                      |
 
-### Quality Attribute Scenarios (Simplified)
+### Quality Attribute Scenarios
 
 | **ID** | **Quality Attribute** | **Scenario**                                                                                                                                                                                                                                 | **Importance** | **Risk** |
 |--------|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|----------|
@@ -196,7 +195,6 @@ This structure promotes flexibility, scalability, and ease of maintenance in the
 |               | CON-3               |                      | The solution should follow a SOA strategy of API-led connectivity.               |
 |               | CON-4               |                      | Microservice segregation visible in the context diagram.                         |
 |               | CON-5               |                      | The system must ensure high availability at all times.                           |
-| CON-6         |                     |                      | No significant decisions have been made at this stage.                           |
 | CON-7         |                     |                      | No significant decisions have been made at this stage.                           |
 | CON-8         |                     |                      | No significant decisions have been made at this stage.                           |
 | CON-9         |                     |                      | No significant decisions have been made at this stage.                           |
@@ -271,7 +269,6 @@ modular approach to system evolution while maintaining overall consistency and p
 |               | CON-3               |                      | The solution should follow a SOA strategy of API-led connectivity.               |
 |               | CON-4               |                      | Microservice segregation visible in the context diagram.                         |
 |               | CON-5               |                      | The system must ensure high availability at all times.                           |
-| CON-6         |                     |                      | No significant decisions have been made at this stage.                           |
 | CON-7         |                     |                      | No significant decisions have been made at this stage.                           |
 | CON-8         |                     |                      | No significant decisions have been made at this stage.                           |
 | CON-9         |                     |                      | No significant decisions have been made at this stage.                           |
@@ -418,7 +415,6 @@ services aligned with the bounded context defined in the steps above.
 |               | CON-3               |                      | No significant decisions have been made at this stage.      |
 |               | CON-4               |                      | No significant decisions have been made at this stage.      |
 |               | CON-5               |                      | No significant decisions have been made at this stage.      |
-| CON-6         |                     |                      | No significant decisions have been made at this stage.      |
 | CON-7         |                     |                      | No significant decisions have been made at this stage.      |
 | CON-8         |                     |                      | No significant decisions have been made at this stage.      |
 |               | CON-9               |                      | No significant decisions have been made at this stage.      |
@@ -433,8 +429,7 @@ services aligned with the bounded context defined in the steps above.
 - Define how the system must be designed to achieve high levels of availability, performance, efficiency, modifiability,
   and interoperability, ensuring seamless operation, scalability, and adaptability in diverse operational contexts.
   This includes maintaining continuous service availability, optimizing resource usage, scaling horizontally under high
-  demand,
-  supporting seamless updates with backward compatibility
+  demand, supporting seamless updates with backward compatibility. More detailed information on Technical Memo 3.1.
 
 ### Step 3
 
@@ -549,34 +544,161 @@ The **Query** microservices will focus on retrieving and presenting data. These 
 
 ### Step 7
 
-| Not Addressed | Partially Addressed | Completely Addressed | Design Decisions made during the Iteration               |
-|---------------|---------------------|----------------------|----------------------------------------------------------|
-|               | UC-1                |                      | Recommendation microservice added to the context.        |
-|               | QA-1                |                      | No significant decisions have been made at this stage.   |
-|               | QA-2                |                      | No significant decisions have been made at this stage.   |
-|               | QA-3                |                      | No significant decisions have been made at this stage.   |
-|               | QA-4                |                      | No significant decisions have been made at this stage.   |
-| QA-5          |                     |                      | No significant decisions have been made at this stage.   |
-|               |                     | CON-1                | No significant decisions have been made at this stage.   |
-|               |                     | CON-2                | No significant decisions have been made at this stage.   |
-|               | CON-3               |                      | No significant decisions have been made at this stage.   |
-|               |                     | CON-4                | With CQRS, database-per-service and polyglot persistence |
-|               | CON-5               |                      | No significant decisions have been made at this stage.   |
-| CON-6         |                     |                      | No significant decisions have been made at this stage.   |
-| CON-7         |                     |                      | No significant decisions have been made at this stage.   |
-| CON-8         |                     |                      | No significant decisions have been made at this stage.   |
-|               | CON-9               |                      | No significant decisions have been made at this stage.   |
-|               |                     | CON-10               | No significant decisions have been made at this stage.   |
+| Not Addressed | Partially Addressed | Completely Addressed | Design Decisions made during the Iteration                 |
+|---------------|---------------------|----------------------|------------------------------------------------------------|
+|               |                     | UC-1                 | Using the CON's defined previously we can achieve this UC. |
+|               | QA-1                |                      | No significant decisions have been made at this stage.     |
+|               | QA-2                |                      | No significant decisions have been made at this stage.     |
+|               | QA-3                |                      | No significant decisions have been made at this stage.     |
+|               | QA-4                |                      | No significant decisions have been made at this stage.     |
+|               |                     | QA-5                 | No significant decisions have been made at this stage.     |
+|               |                     | CON-1                | No significant decisions have been made at this stage.     |
+|               |                     | CON-2                | No significant decisions have been made at this stage.     |
+|               | CON-3               |                      | No significant decisions have been made at this stage.     |
+|               |                     | CON-4                | With CQRS, database-per-service and polyglot persistence   |
+|               | CON-5               |                      | No significant decisions have been made at this stage.     |
+| CON-7         |                     |                      | No significant decisions have been made at this stage.     |
+| CON-8         |                     |                      | No significant decisions have been made at this stage.     |
+|               | CON-9               |                      | No significant decisions have been made at this stage.     |
+|               |                     | CON-10               | No significant decisions have been made at this stage.     |
 
+## Iteration 6
 
+### Step 2
 
+#### Goal:
 
+- Define how can the Quality Attributes were achieved, alongside with the Constraints defined.
 
+### Step 3
 
+#### Elements to refine:
 
+- QA-1, QA-2, QA-3, QA-4, CON-3, CON-5, CON-6, CON-7, CON-8, CON-9
 
+### Step 4
 
+#### Achieving Quality Attributes and Constraints
 
+##### QA-1 and QA-3 Availability and Efficiency - Technical Memo 2.1
 
+Ensuring high availability is critical for microservice-based systems to minimize downtime and maintain operational
+continuity, even under heavy load or during system failures. By implementing Blue/Green Deployments, message queues like
+RabbitMQ,
+load balancing with NGINX, and orchestration with Docker Swarm, the system can achieve fault tolerance, failover
+capabilities, and optimized performance.
 
+###### Blue/Green Deployment
 
+- **Maintain two environments** (Blue and Green) where one is live, and the other is a staging environment. Updates are
+  deployed to the staging environment (Green) without affecting the live environment (Blue).
+- **"Zero" Downtime**: Switch traffic from Blue to Green once testing is complete, ensuring users experience no downtime
+  during deployments.
+- **Rollback Capability**: In case of errors in the new deployment, traffic can be quickly redirected back to the stable
+  environment.
+
+###### Message Queue with RabbitMQ
+
+- **Asynchronous Communication**: RabbitMQ ensures reliable communication between microservices by decoupling them
+  through asynchronous messaging.
+- **Message Persistence**: Persist messages in queues, preventing data loss during service outages or failures.
+- **Load Balancing**: Distribute messages evenly across multiple instances of a microservice, avoiding bottlenecks and
+  improving throughput.
+
+###### Load Balancing with NGINX
+
+- **Traffic Distribution**: NGINX ensures high availability by distributing incoming requests evenly across multiple
+  instances of microservices.
+- **Health Checks**: Continuously monitors the health of microservices, redirecting traffic away from failed or
+  unresponsive instances.
+- **Scalability**: Supports automatic scaling of backend services, optimizing the handling of fluctuating traffic loads.
+
+###### Orchestration with Docker Swarm
+
+- **Service Replication**: Docker Swarm replicates microservices across multiple nodes, ensuring redundancy. If one
+  instance fails, others continue to serve requests.
+- **Failover Mechanism**: Automatically detects and replaces unhealthy instances, maintaining consistent availability.
+- **Dynamic Scaling**: Automatically adjusts the number of replicas based on traffic demands and performance metrics.
+- **Network Overlay**: Provides secure communication between containers, ensuring seamless failover and service
+  discovery.
+
+##### QA-2 Performance - Technical Memo 2.1
+
+The proposed strategies aim to address performance bottlenecks in systems with variable and high traffic periods,
+such as when a considerable number of requests reach a microservice, ensuring that performance and response
+times are not affected during peak times.
+
+By leveraging **Docker Swarm**, **RabbitMQ**, and **Prometheus with Grafana**, the system will dynamically scale,
+balance workloads, and monitor performance, ensuring optimized resource utilization and consistent availability even
+during peak demand.
+
+###### Docker Swarm
+
+- **Dynamic Horizontal Scaling**: Deploy service replicas dynamically based on demand.
+- **Auto-Scaling**: Trigger scaling actions based on real-time performance metrics.
+
+###### RabbitMQ
+
+- **Asynchronous Messaging**: Decouple services and reduce bottlenecks through asynchronous communication based on SAGA
+  and Domain Events
+- **Load Balancing**: Distribute workloads across service instances with:
+    - Message persistence for reliability.
+    - Dead-letter queues for error handling.
+
+###### Prometheus & Grafana
+
+- **Real-Time Metrics Collection**: Monitor CPU, memory, and response times via Prometheus.
+- **Intuitive Dashboards**: Use Grafana to visualize metrics for proactive scaling and bottleneck identification.
+
+###### Resource Optimization
+
+- **Container Resource Limits**: Prevent over-provisioning by setting limits on CPU and memory usage.
+- **Elastic Scaling**: Optimize hardware usage by scaling resources dynamically during traffic spikes.
+
+##### QA-4 Performance - Technical Memo 2.1
+
+Ensuring seamless updates and maintaining backward compatibility is critical for microservice-based systems to sustain
+continuous delivery and avoid disruptions. By implementing API versioning, Blue/Green Deployments, feature toggles, and
+contract testing, the system can ensure smooth upgrades, minimize downtime, and maintain client functionality.
+
+###### API Versioning
+
+- **Backward Compatibility**: Maintain multiple API versions to ensure existing clients continue functioning while new
+  features are introduced.
+- **Deprecation Policy**: Gradually phase out older API versions with clear communication to users, giving them time to
+  migrate.
+
+###### Blue/Green Deployment
+
+- **Seamless Upgrades**: Use two environments (Blue and Green), where one remains live while the other is updated and
+  tested.
+- **Zero Downtime**: Shift user traffic to the updated environment (Green) only after ensuring it is stable.
+- **Rollback Mechanism**: Quickly switch back to the previous environment (Blue) in case of issues, minimizing
+  disruptions.
+
+###### Contract Testing
+
+- **Consumer-Driven Contracts**: Ensure that changes to microservices do not break client interactions by validating
+  expectations between providers and consumers.
+- **Automation**: Integrate contract tests into the CI/CD pipeline to catch breaking changes early in the development
+  cycle.
+- **Cross-Team Collaboration**: Foster collaboration between teams to align on API expectations and reduce
+  misunderstandings.
+
+| Not Addressed | Partially Addressed | Completely Addressed | Design Decisions made during the Iteration                                                                            |
+|---------------|---------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------|
+|               |                     | UC-1                 | Using the CON's defined previously we can achieve this UC.                                                            |
+|               |                     | QA-1                 | Ensure high availability with Blue/Green deployments, RabbitMQ, NGINX load balancing, and Docker Swarm orchestration. |
+|               |                     | QA-2                 | Optimize performance with Docker Swarm, RabbitMQ, Prometheus, Grafana, and elastic scaling during peak traffic.       |
+|               |                     | QA-3                 | No significant decisions have been made at this stage.                                                                |
+|               |                     | QA-4                 | No significant decisions have been made at this stage.                                                                |
+|               |                     | QA-5                 | No significant decisions have been made at this stage.                                                                |
+|               |                     | CON-1                | No significant decisions have been made at this stage.                                                                |
+|               |                     | CON-2                | No significant decisions have been made at this stage.                                                                |
+|               |                     | CON-3                | No significant decisions have been made at this stage.                                                                |
+|               |                     | CON-4                | With CQRS, database-per-service and polyglot persistence                                                              |
+|               |                     | CON-5                | No significant decisions have been made at this stage.                                                                |
+|               |                     | CON-7                | No significant decisions have been made at this stage.                                                                |
+|               |                     | CON-8                | No significant decisions have been made at this stage.                                                                |
+|               |                     | CON-9                | No significant decisions have been made at this stage.                                                                |
+|               |                     | CON-10               | No significant decisions have been made at this stage.                                                                |
