@@ -19,7 +19,14 @@
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/GuilhermeCunha79/shared</url>
+        </repository>
     </repositories>
+
+
     <properties>
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
@@ -32,6 +39,8 @@
         <sonar.projectKey>1201506_arqsoft-25-1201506-1211439</sonar.projectKey>
         <!-- automatically run annotation processors within the incremental compilation -->
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
+        <PACT_FOLDER>./target/pacts</PACT_FOLDER>
+        <spring-cloud-contract.version>4.1.4</spring-cloud-contract.version>
     </properties>
 
     <dependencies>
@@ -40,24 +49,31 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
+
+        <dependency>
+            <groupId>au.com.dius.pact.provider</groupId>
+            <artifactId>junit5</artifactId>
+            <version>4.6.15</version> <!-- Use the latest version -->
+        </dependency>
+
+        <dependency>
+            <groupId>au.com.dius.pact.consumer</groupId>
+            <artifactId>junit5</artifactId>
+            <version>4.6.15</version> <!-- Use the latest version -->
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
 
         <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
             <version>5.22.0</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.7.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
         <dependency>
@@ -161,6 +177,26 @@
             <version>20220608.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>2.6.0</version> <!-- Use a versão mais recente disponível -->
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>au.com.dius</groupId>
+            <artifactId>pact-jvm-provider-maven_2.12</artifactId>
+            <version>3.6.15</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Testing framework-->
         <dependency>
             <groupId>junit</groupId>
@@ -177,6 +213,11 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
             <version>4.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -208,6 +249,16 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock -->
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>3.0.1</version>
+            <type>pom</type>
+            <scope>test</scope>
+        </dependency>
+
+
         <!-- Dependência para o Spring Cloud Config se você usar a configuração centralizada -->
 
         <dependency>
@@ -225,8 +276,12 @@
             <artifactId>httpcore5</artifactId>
             <version>5.1.3</version> <!-- Ou a versão mais recente -->
         </dependency>
-
-
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.10.2</version>
+            <scope>test</scope>
+        </dependency>
 
 
     </dependencies>
@@ -300,6 +355,19 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.2.0</version> <!-- ou a versão mais recente -->
+                <executions>
+                    <execution>
+                        <id>analyze</id>
+                        <goals>
+                            <goal>analyze</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -332,6 +400,18 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>au.com.dius</groupId>
+                <artifactId>pact-jvm-provider-maven_2.12</artifactId>
+                <version>3.6.15</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>verify</goal>  <!-- Verificação do contrato -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <!-- Plugin do PITest -->
             <plugin>
@@ -356,8 +436,6 @@
                     <timestampedReports>false</timestampedReports>
                 </configuration>
             </plugin>
-
-
 
             <plugin>
                 <groupId>org.jacoco</groupId>
