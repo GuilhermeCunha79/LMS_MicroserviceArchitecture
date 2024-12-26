@@ -20,6 +20,11 @@
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/GuilhermeCunha79/shared</url>
+        </repository>
     </repositories>
 
     <properties>
