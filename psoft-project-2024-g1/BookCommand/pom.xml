@@ -8,7 +8,7 @@
         <version>3.2.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>lms-books-query</groupId>
+    <groupId>lms-books-command</groupId>
     <artifactId>bookCommand</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>BookCommand</name>
