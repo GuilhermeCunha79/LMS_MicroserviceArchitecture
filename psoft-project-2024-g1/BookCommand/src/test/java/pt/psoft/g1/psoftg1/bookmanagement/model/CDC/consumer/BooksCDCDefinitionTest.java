@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.bookmanagement.model;
+package pt.psoft.g1.psoftg1.bookmanagement.model.CDC.consumer;
 
 import au.com.dius.pact.consumer.MessagePactBuilder;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
@@ -111,7 +111,7 @@ public class BooksCDCDefinitionTest {
 
     @Test
     @PactTestFor(pactMethod = "createBookUpdatedPact")
-    public void testBookUpdated(List<V4Interaction.AsynchronousMessage> messages) throws Exception {
+    public void testBookUpdated(List<V4Interaction.AsynchronousMessage> messages) {
         // Convert the Pact message to a String (JSON payload)
         String jsonReceived = messages.get(0).contentsAsString();
 

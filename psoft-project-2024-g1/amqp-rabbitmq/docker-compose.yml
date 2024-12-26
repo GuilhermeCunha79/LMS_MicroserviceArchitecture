@@ -94,6 +94,26 @@ services:
         volumes:
             - ./nginx.conf:/etc/nginx/nginx.conf
 
+    postgres_in_lms_network:
+        image: postgres:latest
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+        deploy:
+            replicas: 1
+        ports:
+            - "5431:5432"
+        volumes:
+            - "postgres_volume:/var/lib/postgresql/data"
+        networks:
+            - lms_network2
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-U", "postgres" ]
+            interval: 10s
+            retries: 5
+            timeout: 5s
+
 networks:
     lms_network2:
         external: true

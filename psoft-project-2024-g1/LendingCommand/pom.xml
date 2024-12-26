@@ -34,9 +34,19 @@
         <sonar.projectKey>1201506_arqsoft-25-1201506-1211439</sonar.projectKey>
         <!-- automatically run annotation processors within the incremental compilation -->
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
+        <PACT_FOLDER>./target/pacts</PACT_FOLDER>
+        <spring-cloud-contract.version>4.1.4</spring-cloud-contract.version>
     </properties>
 
     <dependencies>
+
+
+        <!-- https://mvnrepository.com/artifact/au.com.dius/pact-jvm-provider-spring -->
+        <dependency>
+            <groupId>au.com.dius</groupId>
+            <artifactId>pact-jvm-provider-spring_2.12</artifactId>
+            <version>3.6.2</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
 
@@ -206,13 +216,6 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/au.com.dius.pact/pact-publish -->
-        <dependency>
-            <groupId>au.com.dius.pact</groupId>
-            <artifactId>pact-publish</artifactId>
-            <version>4.1.38</version>
-        </dependency>
-
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -263,14 +266,6 @@
             <artifactId>spring-rabbit</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/au.com.dius/pact-jvm-consumer -->
-        <dependency>
-            <groupId>au.com.dius</groupId>
-            <artifactId>pact-jvm-consumer-junit5_2.12</artifactId>
-            <version>3.6.3</version>
-            <scope>test</scope>
-        </dependency>
-
 
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
@@ -301,6 +296,10 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
+                    <systemPropertyVariables>
+                        <pact.rootDir>pact</pact.rootDir>
+                        <buildDirectory>${project.build.directory}</buildDirectory>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 
@@ -397,7 +396,19 @@
                 </configuration>
             </plugin>
 
-
+            <plugin>
+                <groupId>au.com.dius</groupId>
+                <artifactId>pact-jvm-provider-maven_2.12</artifactId> <!-- Versão do Scala -->
+                <version>3.6.15</version> <!-- A versão do pact-jvm-provider -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <!-- Verificar o contrato Pact -->
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Plugin do PITest -->
             <plugin>
                 <groupId>org.pitest</groupId>
@@ -421,8 +432,6 @@
                     <timestampedReports>false</timestampedReports>
                 </configuration>
             </plugin>
-
-
 
             <plugin>
                 <groupId>org.jacoco</groupId>

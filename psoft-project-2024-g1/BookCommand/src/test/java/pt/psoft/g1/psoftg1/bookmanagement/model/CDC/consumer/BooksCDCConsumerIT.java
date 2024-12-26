@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.bookmanagement.model;
+package pt.psoft.g1.psoftg1.bookmanagement.model.CDC.consumer;
 
 import au.com.dius.pact.core.model.*;
 

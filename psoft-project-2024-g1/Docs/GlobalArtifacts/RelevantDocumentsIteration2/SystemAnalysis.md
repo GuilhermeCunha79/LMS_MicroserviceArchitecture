@@ -78,6 +78,8 @@ company’s strategic goals for modular and connected services.
 | QA-4   | Modifiability         | The system should maintain or improve its releasability by ensuring that updates, patches, and upgrades are seamless. Any changes in the API should not break client functionality except in extreme cases, ensuring backward compatibility. | H              | M        |
 | QA-5   | Interoperability      | The system must adhere to the company’s SOA strategy of API-led connectivity, ensuring that all components communicate effectively and can integrate seamlessly with each other and with external systems.                                   | H              | M        |
 
+---
+
 ## Iteration 3
 
 ### Step 2
@@ -200,6 +202,8 @@ This structure promotes flexibility, scalability, and ease of maintenance in the
 | CON-9         |                     |                      | No significant decisions have been made at this stage.                           |
 |               | CON-10              |                      | The system must adhere to the company’s SOA strategy, with API-led connectivity. |
 
+---
+
 ## Iteration 4
 
 ### Step 2
@@ -273,6 +277,8 @@ modular approach to system evolution while maintaining overall consistency and p
 | CON-8         |                     |                      | No significant decisions have been made at this stage.                           |
 | CON-9         |                     |                      | No significant decisions have been made at this stage.                           |
 |               | CON-10              |                      | The system must adhere to the company’s SOA strategy, with API-led connectivity. |
+
+---
 
 ## Iteration 5
 
@@ -420,7 +426,9 @@ services aligned with the bounded context defined in the steps above.
 |               | CON-9               |                      | No significant decisions have been made at this stage.      |
 |               |                     | CON-10               | API Gateway will provide a central point for managing APIs. |
 
-## Iteration 5
+---
+
+## Iteration 6
 
 ### Step 2
 
@@ -443,10 +451,7 @@ services aligned with the bounded context defined in the steps above.
 
 The application will be divided into microservices using a **Command-Query Responsibility Segregation (CQRS)** pattern,
 **Database-per-Service** strategy, and **Polyglot Persistence** approach. This design ensures that the system is
-scalable,
-maintainable, and optimized for specific data handling requirements in each context.
-
-#### Key Advantages
+scalable, maintainable, and optimized for specific data handling requirements in each context.
 
 ##### Separation of Concerns with CQRS
 
@@ -562,7 +567,9 @@ The **Query** microservices will focus on retrieving and presenting data. These 
 |               | CON-9               |                      | No significant decisions have been made at this stage.     |
 |               |                     | CON-10               | No significant decisions have been made at this stage.     |
 
-## Iteration 6
+---
+
+## Iteration 7
 
 ### Step 2
 
@@ -655,7 +662,7 @@ during peak demand.
 - **Container Resource Limits**: Prevent over-provisioning by setting limits on CPU and memory usage.
 - **Elastic Scaling**: Optimize hardware usage by scaling resources dynamically during traffic spikes.
 
-##### QA-4 Performance - Technical Memo 2.1
+##### QA-4 Modifiability
 
 Ensuring seamless updates and maintaining backward compatibility is critical for microservice-based systems to sustain
 continuous delivery and avoid disruptions. By implementing API versioning, Blue/Green Deployments, feature toggles, and
@@ -702,3 +709,5 @@ contract testing, the system can ensure smooth upgrades, minimize downtime, and 
 |               |                     | CON-8                | No significant decisions have been made at this stage.                                                                |
 |               |                     | CON-9                | No significant decisions have been made at this stage.                                                                |
 |               |                     | CON-10               | No significant decisions have been made at this stage.                                                                |
+
+---
