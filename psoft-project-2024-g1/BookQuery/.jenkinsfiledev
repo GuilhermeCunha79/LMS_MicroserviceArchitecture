@@ -22,8 +22,10 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
+                            sh 'cleanWs()'
                             sh 'mvn clean compile test-compile'
                         } else {
+                            bat 'cleanWs()'
                             bat 'mvn clean compile test-compile'
                         }
                     }
