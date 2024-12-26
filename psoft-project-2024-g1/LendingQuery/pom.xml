@@ -361,7 +361,7 @@
                         <excludedClass>pt.psoft.g1.psoftg1.SmokeTeste</excludedClass>
                     </excludedClasses>
                     <targetClasses>
-                        <param>pt.psoft.g1.psoftg1.model.*</param>
+                        <param>pt.psoft.g1.psoftg1.lendingmanagement.model.*</param>
                     </targetClasses>
                     <!-- Pacote de testes -->
                     <targetTests>
