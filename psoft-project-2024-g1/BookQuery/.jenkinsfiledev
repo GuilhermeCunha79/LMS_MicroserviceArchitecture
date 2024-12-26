@@ -13,7 +13,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git',
-                credentialsId: 'jenkins_1201506', branch: 'recommendation'
+                credentialsId: 'jenkins_1201506', branch: 'feature/recommendation'
             }
         }
 
@@ -22,10 +22,8 @@ pipeline {
                 script {
                     dir(POM_LOC) {
                         if (isUnix()) {
-                            sh 'cleanWs()'
                             sh 'mvn clean compile test-compile'
                         } else {
-                            bat 'cleanWs()'
                             bat 'mvn clean compile test-compile'
                         }
                     }
