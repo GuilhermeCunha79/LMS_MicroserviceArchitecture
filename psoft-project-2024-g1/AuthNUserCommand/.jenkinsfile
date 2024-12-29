@@ -16,10 +16,7 @@ pipeline {
                 expression { return ENVIRONMENT == 'dev' }
             }
             steps {
-                script {
-                    // Carregar e executar a pipeline de DEV
-
-                }
+                echo "Ambiente configurado automaticamente: ${ENVIRONMENT}"
             }
         }
     }
