@@ -140,8 +140,7 @@ pipeline {
                             dir(POM_LOC) {
                                 if (isUnix()) {
                                     sh '''
-                                        . container_id.env
-                                        docker exec $CONTAINER_ID mvn failsafe:integration-test failsafe:verify
+                                        bash -c "source container_id.env && docker exec $CONTAINER_ID mvn failsafe:integration-test failsafe:verify"
                                     '''
                                 } else {
                                     bat '''
