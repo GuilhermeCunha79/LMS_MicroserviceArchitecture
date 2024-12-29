@@ -119,12 +119,14 @@ pipeline {
                                         docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
                                         CONTAINER_ID=$(docker ps -qf "name=users")
                                         echo "Container ID: $CONTAINER_ID"
+                                        echo CONTAINER_ID=$CONTAINER_ID > container_id.env
                                     '''
                                 } else {
                                     bat '''
                                         docker-compose -f %DOCKER_COMPOSE_PATH% up --build -d
                                         FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users"') DO SET CONTAINER_ID=%%i
                                         echo Container ID: %CONTAINER_ID%
+                                        echo CONTAINER_ID=%CONTAINER_ID% > container_id.env
                                     '''
                                 }
                             }
@@ -138,10 +140,12 @@ pipeline {
                             dir(POM_LOC) {
                                 if (isUnix()) {
                                     sh '''
+                                        source container_id.env
                                         docker exec $CONTAINER_ID mvn failsafe:integration-test failsafe:verify
                                     '''
                                 } else {
                                     bat '''
+                                        for /F "tokens=1 delims==" %%i in (container_id.env) do set %%i
                                         docker exec %CONTAINER_ID% mvn failsafe:integration-test failsafe:verify
                                     '''
                                 }
