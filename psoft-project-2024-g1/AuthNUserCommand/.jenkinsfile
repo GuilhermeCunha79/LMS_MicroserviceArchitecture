@@ -47,7 +47,6 @@ pipeline {
                     }
                 }
 
-                stage('Unit + Integration Testing') {
                         stage('Unit Testing') {
                             steps {
                                 script {
@@ -61,9 +60,6 @@ pipeline {
                                 }
                             }
                         }
-
-
-                }
 
                 stage('Checkstyle') {
                     steps {
