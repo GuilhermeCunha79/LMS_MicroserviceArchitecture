@@ -9,6 +9,7 @@ pipeline {
         ENVIRONMENT = "${env.BRANCH_NAME.startsWith('feature/') ? 'dev' : (env.BRANCH_NAME.startsWith('release/') ? 'test' : 'prod')}"
         POM_LOC = "psoft-project-2024-g1/AuthNUserCommand"
         DOCKER_COMPOSE_PATH = "${ENVIRONMENT == 'dev' ? './docker-compose-dev.yml' : (ENVIRONMENT == 'prod' ? './docker-compose-prod.yml' : './docker-compose-test.yml')}"
+        CONTAINER_ID = ""
     }
 
     stages {
@@ -115,20 +116,23 @@ pipeline {
                             dir(POM_LOC) {
                                 echo "Building and running Docker Compose..."
                                 if (isUnix()) {
-                                    sh '''
-                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
-                                        CONTAINER_ID=$(docker ps -qf "name=users")
-                                        echo "Container ID: $CONTAINER_ID"
-                                        echo CONTAINER_ID=$CONTAINER_ID > container_id.env
-                                    '''
+                                    env.CONTAINER_ID = sh(
+                                        script: '''
+                                            docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
+                                            docker ps -qf "name=users"
+                                        ''',
+                                        returnStdout: true
+                                    ).trim()
                                 } else {
-                                    bat '''
-                                        docker-compose -f %DOCKER_COMPOSE_PATH% up --build -d
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users"') DO SET CONTAINER_ID=%%i
-                                        echo Container ID: %CONTAINER_ID%
-                                        echo CONTAINER_ID=%CONTAINER_ID% > container_id.env
-                                    '''
+                                    env.CONTAINER_ID = bat(
+                                        script: '''
+                                            docker-compose -f %DOCKER_COMPOSE_PATH% up --build -d
+                                            FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users"') DO echo %%i
+                                        ''',
+                                        returnStdout: true
+                                    ).trim()
                                 }
+                                echo "Container ID: ${env.CONTAINER_ID}"
                             }
                         }
                     }
@@ -139,14 +143,9 @@ pipeline {
                         script {
                             dir(POM_LOC) {
                                 if (isUnix()) {
-                                    sh '''
-                                        bash -c "source container_id.env && docker exec $CONTAINER_ID mvn failsafe:integration-test failsafe:verify"
-                                    '''
+                                    sh "docker exec ${env.CONTAINER_ID} mvn failsafe:integration-test failsafe:verify"
                                 } else {
-                                    bat '''
-                                        for /F "tokens=1 delims==" %%i in (container_id.env) do set %%i
-                                        docker exec %CONTAINER_ID% mvn failsafe:integration-test failsafe:verify
-                                    '''
+                                    bat "docker exec ${env.CONTAINER_ID} mvn failsafe:integration-test failsafe:verify"
                                 }
                             }
                         }
