@@ -47,19 +47,19 @@ pipeline {
                     }
                 }
 
-                        stage('Unit Testing') {
-                            steps {
-                                script {
-                                    dir(POM_LOC) {
-                                        if (isUnix()) {
-                                            sh 'mvn surefire:test'
-                                        } else {
-                                            bat 'mvn surefire:test'
-                                        }
-                                    }
+                stage('Unit Testing') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn surefire:test'
+                                } else {
+                                    bat 'mvn surefire:test'
                                 }
                             }
                         }
+                    }
+                }
 
                 stage('Checkstyle') {
                     steps {
@@ -95,44 +95,57 @@ pipeline {
                     }
                 }
 
-                stage('Docker Compose Build and Up') {
+                stage('Install') {
                     steps {
                         script {
-                        dir(POM_LOC) {
-                            echo "Building and running Docker Compose..."
-                            if (isUnix()) {
-                                sh '''
-                                    docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
-                                    CONTAINER_ID=$(docker ps -qf "name=users")
-                                    echo "Container ID: $CONTAINER_ID"
-                                '''
-                            } else {
-                                bat '''
-                                    docker-compose -f %DOCKER_COMPOSE_PATH% up --build -d
-                                    FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users"') DO SET CONTAINER_ID=%%i
-                                    echo Container ID: %CONTAINER_ID%
-                                '''
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn install -DskipTests -DskipITs -DskipPitest'
+                                } else {
+                                    bat 'mvn install -DskipTests -DskipITs -DskipPitest'
+                                }
                             }
-                        }
                         }
                     }
                 }
 
+                stage('Docker Compose Build and Up') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                echo "Building and running Docker Compose..."
+                                if (isUnix()) {
+                                    sh '''
+                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
+                                        CONTAINER_ID=$(docker ps -qf "name=users")
+                                        echo "Container ID: $CONTAINER_ID"
+                                    '''
+                                } else {
+                                    bat '''
+                                        docker-compose -f %DOCKER_COMPOSE_PATH% up --build -d
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users"') DO SET CONTAINER_ID=%%i
+                                        echo Container ID: %CONTAINER_ID%
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
 
                 stage('IT Tests on Container') {
                     steps {
                         script {
-                        dir(POM_LOC) {
-                            if (isUnix()) {
-                                sh '''
-                                    docker exec $CONTAINER_ID mvn failsafe:integration-test failsafe:verify
-                                '''
-                            } else {
-                                bat '''
-                                    docker exec %CONTAINER_ID% mvn failsafe:integration-test failsafe:verify
-                                '''
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh '''
+                                        docker exec $CONTAINER_ID mvn failsafe:integration-test failsafe:verify
+                                    '''
+                                } else {
+                                    bat '''
+                                        docker exec %CONTAINER_ID% mvn failsafe:integration-test failsafe:verify
+                                    '''
+                                }
                             }
-                        }
                         }
                     }
                 }
