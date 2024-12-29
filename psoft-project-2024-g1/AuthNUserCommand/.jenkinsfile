@@ -117,12 +117,12 @@ pipeline {
                                 echo "Building and running Docker Compose..."
                                 if (isUnix()) {
                                     sh '''
-                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
+                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build --force-recreate -d
                                         echo "Docker Compose build and up completed."
                                     '''
                                 } else {
                                     bat '''
-                                        docker-compose -f %DOCKER_COMPOSE_PATH% up --build -d
+                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build --force-recreate -d
                                         echo Docker Compose build and up completed.
                                     '''
                                 }
