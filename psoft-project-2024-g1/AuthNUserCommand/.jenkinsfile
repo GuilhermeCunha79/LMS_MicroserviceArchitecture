@@ -6,9 +6,9 @@ pipeline {
     }
 
     environment {
-        // Determinar o ambiente com base no nome da branch
         ENVIRONMENT = "${env.BRANCH_NAME.startsWith('feature/') ? 'dev' : (env.BRANCH_NAME.startsWith('release/') ? 'test' : 'prod')}"
         POM_LOC = "psoft-project-2024-g1/AuthNUserCommand"
+        DOCKER_COMPOSE_PATH = "${ENVIRONMENT == 'dev' ? './docker-compose-dev.yml' : (ENVIRONMENT == 'prod' ? './docker-compose-prod.yml' : './docker-compose-test.yml')}"
     }
 
     stages {
@@ -19,6 +19,7 @@ pipeline {
             }
         }
 
+        //DEV PIPELINE
         stage('Dev Pipeline') {
             when {
                 expression { ENVIRONMENT == 'dev' }
@@ -112,15 +113,39 @@ pipeline {
                     }
                 }
 
-                stage('Install') {
+                stage('Docker Compose Build and Up') {
                     steps {
                         script {
-                            dir(POM_LOC) {
-                                if (isUnix()) {
-                                    sh 'mvn install -DskipTests -DskipITs -DskipPitest'
-                                } else {
-                                    bat 'mvn install -DskipTests -DskipITs -DskipPitest'
-                                }
+                            echo "Building and running Docker Compose..."
+                            if (isUnix()) {
+                                sh '''
+                                    docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
+                                    CONTAINER_ID=$(docker ps -qf "name=users")
+                                    echo "Container ID: $CONTAINER_ID"
+                                '''
+                            } else {
+                                bat '''
+                                    docker-compose -f %DOCKER_COMPOSE_PATH% up --build -d
+                                    FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users"') DO SET CONTAINER_ID=%%i
+                                    echo Container ID: %CONTAINER_ID%
+                                '''
+                            }
+                        }
+                    }
+                }
+
+
+                stage('IT Tests on Container') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh '''
+                                    docker exec $CONTAINER_ID mvn failsafe:integration-test failsafe:verify
+                                '''
+                            } else {
+                                bat '''
+                                    docker exec %CONTAINER_ID% mvn failsafe:integration-test failsafe:verify
+                                '''
                             }
                         }
                     }
@@ -131,14 +156,14 @@ pipeline {
 
     post {
         always {
-            echo "Pipeline '${env.JOB_NAME}' finalizada. Branch: ${env.BRANCH_NAME}, Ambiente: ${ENVIRONMENT}"
-            echo 'Espaço de trabalho limpo.'
+            echo "Pipeline '${env.JOB_NAME}' finished. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
+            echo 'Workspace cleaned.'
         }
         success {
-            echo "Pipeline '${env.JOB_NAME}' concluída com sucesso. Branch: ${env.BRANCH_NAME}, Ambiente: ${ENVIRONMENT}"
+            echo "Pipeline '${env.JOB_NAME}' finished with success. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
         }
         failure {
-            echo "Pipeline '${env.JOB_NAME}' falhou. Branch: ${env.BRANCH_NAME}, Ambiente: ${ENVIRONMENT}"
+            echo "Pipeline '${env.JOB_NAME}' failed. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
         }
     }
 }
