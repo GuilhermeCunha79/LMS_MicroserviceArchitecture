@@ -118,16 +118,12 @@ pipeline {
                                 if (isUnix()) {
                                     sh '''
                                         docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
-                                        CONTAINER_ID=$(docker ps -qf "name=users")
-                                        echo "Container ID: $CONTAINER_ID"
-                                        echo CONTAINER_ID=$CONTAINER_ID > container_id.env
+                                        echo "Docker Compose build and up completed."
                                     '''
                                 } else {
                                     bat '''
                                         docker-compose -f %DOCKER_COMPOSE_PATH% up --build -d
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users"') DO SET CONTAINER_ID=%%i
-                                        echo Container ID: %CONTAINER_ID%
-                                        echo CONTAINER_ID=%CONTAINER_ID% > container_id.env
+                                        echo Docker Compose build and up completed.
                                     '''
                                 }
                             }
@@ -140,9 +136,23 @@ pipeline {
                         script {
                             dir(POM_LOC) {
                                 if (isUnix()) {
-                                    sh "docker exec ${env.CONTAINER_ID} mvn failsafe:integration-test failsafe:verify"
+                                    sh '''
+                                        CONTAINER_ID=$(docker ps -qf "name=users_users")
+                                        if [ -z "$CONTAINER_ID" ]; then
+                                            echo "No container found with the name 'users'."
+                                            exit 1
+                                        fi
+                                        docker exec $CONTAINER_ID mvn failsafe:integration-test failsafe:verify
+                                    '''
                                 } else {
-                                    bat "docker exec ${env.CONTAINER_ID} mvn failsafe:integration-test failsafe:verify"
+                                    bat '''
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users"') DO SET CONTAINER_ID=%%i
+                                        IF "%CONTAINER_ID%"=="" (
+                                            echo No container found with the name 'users'.
+                                            EXIT /B 1
+                                        )
+                                        docker exec %CONTAINER_ID% mvn failsafe:integration-test failsafe:verify
+                                    '''
                                 }
                             }
                         }
