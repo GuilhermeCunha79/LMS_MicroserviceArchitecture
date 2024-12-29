@@ -98,6 +98,7 @@ pipeline {
                 stage('Docker Compose Build and Up') {
                     steps {
                         script {
+                        dir(POM_LOC) {
                             echo "Building and running Docker Compose..."
                             if (isUnix()) {
                                 sh '''
@@ -113,6 +114,7 @@ pipeline {
                                 '''
                             }
                         }
+                        }
                     }
                 }
 
@@ -120,6 +122,7 @@ pipeline {
                 stage('IT Tests on Container') {
                     steps {
                         script {
+                        dir(POM_LOC) {
                             if (isUnix()) {
                                 sh '''
                                     docker exec $CONTAINER_ID mvn failsafe:integration-test failsafe:verify
@@ -129,6 +132,7 @@ pipeline {
                                     docker exec %CONTAINER_ID% mvn failsafe:integration-test failsafe:verify
                                 '''
                             }
+                        }
                         }
                     }
                 }
