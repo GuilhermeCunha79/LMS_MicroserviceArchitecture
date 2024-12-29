@@ -26,6 +26,14 @@
 
     <dependencies>
 
+        <!-- TestContainers para o Docker com imagens específicas (por exemplo, uma base de dados) -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.18.3</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
