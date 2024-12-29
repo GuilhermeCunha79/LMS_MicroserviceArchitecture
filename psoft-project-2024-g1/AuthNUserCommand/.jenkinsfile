@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     // Carregar e executar a pipeline de DEV
-                    load '.jenkinsfiledev'
+
                 }
             }
         }
