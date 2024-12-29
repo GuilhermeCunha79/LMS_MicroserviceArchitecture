@@ -1,184 +1,104 @@
-pipeline {
-    agent any
+// .jenkinsfiledev
 
-    tools {
-        maven 'Maven 3.9.9'
-    }
-
-    environment {
-        POM_LOC = "psoft-project-2024-g1/AuthNUserCommand"
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git',
+return {
+    stage('Checkout') {
+        steps {
+            git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git',
                 credentialsId: 'jenkins_1201506', branch: 'feature/recommendation'
-            }
         }
-
-        stage('Clean + Build') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn clean compile test-compile'
-                        } else {
-                            bat 'mvn clean compile test-compile'
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Unit + Integration Testing') {
-            parallel {
-                stage('Unit Testing') {
-                    steps {
-                        script {
-                            dir(POM_LOC) {
-                                if (isUnix()) {
-                                    sh 'mvn surefire:test'
-                                } else {
-                                    bat 'mvn surefire:test'
-                                }
-                            }
-                        }
-                    }
-                }
-
-                stage('Integration Testing') {
-                    steps {
-                        script {
-                            dir(POM_LOC) {
-                                if (isUnix()) {
-                                    sh 'mvn failsafe:integration-test failsafe:verify'
-                                } else {
-                                    bat 'mvn failsafe:integration-test failsafe:verify'
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Checkstyle') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
-                        } else {
-                            bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
-                        }
-                    }
-                }
-            }
-        }
-/*
-        stage('SonarQube Static Code Analysis') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        withSonarQubeEnv('sonarqube') {
-                            if (isUnix()) {
-                                sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
-                            } else {
-                                bat 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=1201506_arqsoft-25-1201506-1211439'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('SonarQube Quality Gate') {
-            steps {
-                script {
-                    timeout(time: 3, unit: 'MINUTES') {
-                        def qualityGateResult = waitForQualityGate abortPipeline: true
-                        if (qualityGateResult.status == 'OK') {
-                            echo 'Quality gate passed. Proceeding with the pipeline.'
-                        }
-                    }
-                }
-            }
-        }
-*/
-        stage('Checkstyle and JaCoCo Reports') {
-            parallel {
-                stage('Checkstyle') {
-                    steps {
-                        script {
-                            recordIssues(tools: [checkStyle(pattern: '**/target/checkstyle-result.xml')])
-                        }
-                    }
-                }
-                stage('JaCoCo') {
-                    steps {
-                        jacoco execPattern: '**/target/jacoco.exec',
-                               classPattern: '**/target/classes',
-                               sourcePattern: '**/src/main/java',
-                               inclusionPattern: '**/*.class'
-                    }
-                }
-            }
-        }
-
-        stage('Install') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn install -DskipTests -DskipITs -DskipPitest'
-                        } else {
-                            bat 'mvn install -DskipTests -DskipITs -DskipPitest'
-                        }
-                    }
-                }
-            }
-        }
-/*
-        stage('Deploy') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'nohup java -jar /var/lib/jenkins/workspace/pipeline-odsoft/psoft-project-2024-g1/target/psoft-g1-0.0.1-SNAPSHOT.jar --server.port=2228 > output.log 2>&1 &'
-                        } else {
-                            bat 'start /B java -jar .\\target\\psoft-g1-0.0.1-SNAPSHOT.jar --server.port=2228 > output.log 2>&1'
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Smoke Tests') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'sleep 35 && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
-                        } else {
-                            bat 'ping 127.0.0.1 -n 35 > nul && mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste'
-                        }
-                    }
-                }
-            }
-        }
-        */
     }
 
-    post {
-        always {
-            echo 'Pipeline completed. Workspace cleaned.'
+    stage('Clean + Build') {
+        steps {
+            script {
+                dir(POM_LOC) {
+                    if (isUnix()) {
+                        sh 'mvn clean compile test-compile'
+                    } else {
+                        bat 'mvn clean compile test-compile'
+                    }
+                }
+            }
         }
-        success {
-            echo 'Pipeline succeeded.'
+    }
+
+    stage('Unit + Integration Testing') {
+        parallel {
+            stage('Unit Testing') {
+                steps {
+                    script {
+                        dir(POM_LOC) {
+                            if (isUnix()) {
+                                sh 'mvn surefire:test'
+                            } else {
+                                bat 'mvn surefire:test'
+                            }
+                        }
+                    }
+                }
+            }
+
+            stage('Integration Testing') {
+                steps {
+                    script {
+                        dir(POM_LOC) {
+                            if (isUnix()) {
+                                sh 'mvn failsafe:integration-test failsafe:verify'
+                            } else {
+                                bat 'mvn failsafe:integration-test failsafe:verify'
+                            }
+                        }
+                    }
+                }
+            }
         }
-        failure {
-            echo 'Pipeline failed.'
+    }
+
+    stage('Checkstyle') {
+        steps {
+            script {
+                dir(POM_LOC) {
+                    if (isUnix()) {
+                        sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                    } else {
+                        bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                    }
+                }
+            }
+        }
+    }
+
+    stage('Checkstyle and JaCoCo Reports') {
+        parallel {
+            stage('Checkstyle') {
+                steps {
+                    script {
+                        recordIssues(tools: [checkStyle(pattern: '**/target/checkstyle-result.xml')])
+                    }
+                }
+            }
+            stage('JaCoCo') {
+                steps {
+                    jacoco execPattern: '**/target/jacoco.exec',
+                           classPattern: '**/target/classes',
+                           sourcePattern: '**/src/main/java',
+                           inclusionPattern: '**/*.class'
+                }
+            }
+        }
+    }
+
+    stage('Install') {
+        steps {
+            script {
+                dir(POM_LOC) {
+                    if (isUnix()) {
+                        sh 'mvn install -DskipTests -DskipITs -DskipPitest'
+                    } else {
+                        bat 'mvn install -DskipTests -DskipITs -DskipPitest'
+                    }
+                }
+            }
         }
     }
 }

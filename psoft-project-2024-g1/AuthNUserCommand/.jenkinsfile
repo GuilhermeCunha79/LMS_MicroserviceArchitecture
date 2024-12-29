@@ -11,12 +11,34 @@ pipeline {
                 echo "Ambiente configurado automaticamente: ${ENVIRONMENT}"
             }
         }
-        stage('Load and Run Dev Pipeline') {
-            when {
-                expression { return ENVIRONMENT == 'dev' }
-            }
+        stage('Load and Execute Environment Jenkinsfile') {
             steps {
-                echo "Ambiente configurado automaticamente: ${ENVIRONMENT}"
+                script {
+                    def jenkinsfileToLoad
+
+                    // Definir qual Jenkinsfile carregar com base no ambiente configurado
+                    switch (ENVIRONMENT) {
+                        case 'dev':
+                            jenkinsfileToLoad = '.jenkinsfiledev'
+                            break
+                        case 'test':
+                            jenkinsfileToLoad = '.jenkinsfiletest'
+                            break
+                        case 'prod':
+                            jenkinsfileToLoad = '.jenkinsfileprod'
+                            break
+                        default:
+                            error("Ambiente desconhecido: ${ENVIRONMENT}.")
+                    }
+
+                    echo "Carregando o Jenkinsfile: ${jenkinsfileToLoad} para o ambiente ${ENVIRONMENT}"
+
+                    // Carregar e executar o Jenkinsfile específico para o ambiente
+                    def loadedStages = load jenkinsfileToLoad
+
+                    // Executar as etapas carregadas
+                    loadedStages()
+                }
             }
         }
     }
