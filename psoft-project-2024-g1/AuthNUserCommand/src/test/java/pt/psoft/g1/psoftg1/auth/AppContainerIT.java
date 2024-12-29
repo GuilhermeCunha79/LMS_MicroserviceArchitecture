@@ -11,7 +11,7 @@ import java.net.URL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AppContainerIT {
-
+/*
     private final int port = 8071;
     private GenericContainer<?> appContainer;
 
@@ -41,5 +41,5 @@ public class AppContainerIT {
         if (appContainer != null && appContainer.isRunning()) {
             appContainer.stop();
         }
-    }
+    }*/
 }

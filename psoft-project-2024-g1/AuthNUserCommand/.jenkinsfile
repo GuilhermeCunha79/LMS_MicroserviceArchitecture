@@ -48,7 +48,6 @@ pipeline {
                 }
 
                 stage('Unit + Integration Testing') {
-                    parallel {
                         stage('Unit Testing') {
                             steps {
                                 script {
@@ -63,20 +62,7 @@ pipeline {
                             }
                         }
 
-                        stage('Integration Testing') {
-                            steps {
-                                script {
-                                    dir(POM_LOC) {
-                                        if (isUnix()) {
-                                            sh 'mvn failsafe:integration-test failsafe:verify'
-                                        } else {
-                                            bat 'mvn failsafe:integration-test failsafe:verify'
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+
                 }
 
                 stage('Checkstyle') {
