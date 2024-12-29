@@ -2,8 +2,8 @@ services:
     users:
         image: lmsusers:latest
         volumes:
-            - ./src:/app/src  # Montar o diretório 'src' local no contêiner
-            - ./pom.xml:/app/pom.xml  # Montar o arquivo pom.xml
+            - ./src:/app/src
+            - ./pom.xml:/app/pom.xml
         build:
             context: .
             dockerfile: Dockerfile

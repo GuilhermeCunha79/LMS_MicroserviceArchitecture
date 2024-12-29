@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         ENVIRONMENT = "${env.BRANCH_NAME.startsWith('feature/') ? 'dev' : (env.BRANCH_NAME.startsWith('release/') ? 'test' : 'prod')}"
-        POM_LOC = "psoft-project-2024-g1/AuthNUserCommand"
+        POM_LOC = "psoft-project-2024-g1/BookCommand"
         DOCKER_COMPOSE_PATH = "${ENVIRONMENT == 'dev' ? './docker-compose-dev.yml' : (ENVIRONMENT == 'prod' ? './docker-compose-prod.yml' : './docker-compose-test.yml')}"
         CONTAINER_ID = ""
     }
@@ -139,9 +139,9 @@ pipeline {
                             dir(POM_LOC) {
                                 if (isUnix()) {
                                     sh '''
-                                        CONTAINER_ID=$(docker ps -qf "name=users")
+                                        CONTAINER_ID=$(docker ps -qf "name=books")
                                         if [ -z "$CONTAINER_ID" ]; then
-                                            echo "No container found with the name 'users'."
+                                            echo "No container found with the name 'books'."
                                             exit 1
                                         fi
                                         //docker wait $CONTAINER_ID
@@ -149,9 +149,9 @@ pipeline {
                                     '''
                                 } else {
                                     bat '''
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users"') DO SET CONTAINER_ID=%%i
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=books"') DO SET CONTAINER_ID=%%i
                                         IF "%CONTAINER_ID%"=="" (
-                                            echo No container found with the name 'users'.
+                                            echo No container found with the name 'books'.
                                             EXIT /B 1
                                         )
                                         //docker wait %CONTAINER_ID%
@@ -169,17 +169,17 @@ pipeline {
                             dir(POM_LOC) {
                                 if (isUnix()) {
                                     sh '''
-                                        CONTAINER_IDS=$(docker ps -qf "name=user")
+                                        CONTAINER_IDS=$(docker ps -qf "name=book")
                                         if [ -n "$CONTAINER_IDS" ]; then
-                                            echo "Stopping containers with 'user' in the name..."
+                                            echo "Stopping containers with 'book' in the name..."
                                             docker stop $CONTAINER_IDS
                                         else
-                                            echo "No containers found with the name containing 'user'."
+                                            echo "No containers found with the name containing 'book'."
                                         fi
                                     '''
                                 } else {
                                     bat '''
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=user"') DO (
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=book"') DO (
                                             echo Stopping container %%i...
                                             docker stop %%i
                                         )
