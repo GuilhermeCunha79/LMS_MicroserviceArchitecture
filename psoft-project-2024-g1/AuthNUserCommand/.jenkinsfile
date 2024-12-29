@@ -122,17 +122,18 @@ pipeline {
                 }
             }
         }
+    }
 
-        post {
-            always {
-                echo 'Pipeline completada. Espaço de trabalho limpo.'
-            }
-            success {
-                echo 'Pipeline com sucesso.'
-            }
-            failure {
-                echo 'Pipeline falhou.'
-            }
+    post {
+        always {
+            echo "Pipeline '${env.JOB_NAME}' finalizada. Branch: ${env.BRANCH_NAME}, Ambiente: ${ENVIRONMENT}"
+            echo 'Espaço de trabalho limpo.'
+        }
+        success {
+            echo "Pipeline '${env.JOB_NAME}' concluída com sucesso. Branch: ${env.BRANCH_NAME}, Ambiente: ${ENVIRONMENT}"
+        }
+        failure {
+            echo "Pipeline '${env.JOB_NAME}' falhou. Branch: ${env.BRANCH_NAME}, Ambiente: ${ENVIRONMENT}"
         }
     }
 }
