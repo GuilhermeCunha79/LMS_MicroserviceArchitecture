@@ -16,26 +16,25 @@ services:
             mode: replicated
             replicas: 2
 
-    mongo_in_lms_network:
-        image: mongo:latest
+    postgres_in_lms_network:
+        image: postgres:latest
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+        deploy:
+            replicas: 2
         ports:
-            - "27017-27023:27017" # Porta do MongoDB exposta para o host
+            - "5422:5432"
         volumes:
-            - mongo_data:/data/db # Persistência de dados
+            - "postgres_volume:/var/lib/postgresql/data"
         networks:
             - lms_network2
-        environment:
-            - MONGO_INITDB_ROOT_USERNAME=admin
-            - MONGO_INITDB_ROOT_PASSWORD=password
-        deploy:
-            mode: replicated
-            replicas: 1
         healthcheck:
-            test: ["CMD", "mongo", "--eval"]
+            test: [ "CMD", "pg_isready", "-U", "postgres" ]
             interval: 10s
             retries: 5
             timeout: 5s
-
 
 networks:
     lms_network2:

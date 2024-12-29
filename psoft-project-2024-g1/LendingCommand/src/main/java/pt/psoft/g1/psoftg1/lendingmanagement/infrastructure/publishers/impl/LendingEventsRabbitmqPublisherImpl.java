@@ -30,7 +30,7 @@ public class LendingEventsRabbitmqPublisherImpl implements LendingEventsPublishe
     }
 
     @Override
-    public void sendLendingReturned(Lending lending, Long currentVersion) {
+    public void sendLendingReturned(Lending lending) {
         sendLendingEvent(lending, LendingEvents.LENDING_RETURNED);
     }
 
@@ -39,12 +39,12 @@ public class LendingEventsRabbitmqPublisherImpl implements LendingEventsPublishe
         sendLendingEvent(lending, LendingEvents.LENDING_CREATED_READER_FINAL);
     }
 
-    public void sendLendingEvent(Lending book, String bookEventType) {
+    public void sendLendingEvent(Lending lending, String bookEventType) {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
 
-            LendingViewAMQP lendingViewAMQP = lendingViewAMQPMapper.toLendingViewAMQP(book);
+            LendingViewAMQP lendingViewAMQP = lendingViewAMQPMapper.toLendingViewAMQP(lending);
 
             String jsonString = objectMapper.writeValueAsString(lendingViewAMQP);
 

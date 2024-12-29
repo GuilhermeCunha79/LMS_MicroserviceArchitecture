@@ -6,6 +6,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
+import pt.psoft.g1.psoftg1.shared.api.LendingViewAMQP;
 
 import java.nio.charset.StandardCharsets;
 
@@ -58,7 +59,6 @@ public class LendingEventRabbitmqReceiver {
             System.out.println(" [x] Exception receiving Lending event from AMQP (Lending): '" + ex.getMessage() + "'");
         }
     }
-
     @RabbitListener(queues = "#{autoDeleteQueue_Lending_Validation_Reader.name}")
     public void receiveLendingValidationReader(Message msg) {
 
@@ -81,6 +81,53 @@ public class LendingEventRabbitmqReceiver {
             System.out.println(" [x] Exception receiving Lending event from AMQP (Lending): '" + ex.getMessage() + "'");
         }
     }
+
+    @RabbitListener(queues = "#{autoDeleteQueue_Recommendation_Created.name}")
+    public void receiveRecommendationCreated(Message msg) {
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            String jsonReceived = new String(msg.getBody(), StandardCharsets.UTF_8);
+            LendingViewAMQP bookViewAMQP = objectMapper.readValue(jsonReceived, LendingViewAMQP.class);
+
+            System.out.println(" [x] Received Lending Validation from Reader by AMQP (Lending): " + msg + ".");
+            try {
+                lendingService.updateLendingRecommendation(bookViewAMQP);
+                System.out.println(" [x] New Lending inserted from AMQP upon Reader validation (Lending): " + msg + ".");
+            } catch (Exception e) {
+                System.out.println(" [x] Reader provided during Lending creation is invalid. The Lending has been removed (Lending): "
+                        + msg + ". Exception: " + e.getMessage());
+            }
+        } catch (
+                Exception ex) {
+            System.out.println(" [x] Exception receiving Lending event from AMQP (Lending): '" + ex.getMessage() + "'");
+        }
+    }
+
+    @RabbitListener(queues = "#{autoDeleteQueue_Recommendation_Created_Failed.name}")
+    public void receiveRecommendationFailed(Message msg) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            String jsonReceived = new String(msg.getBody(), StandardCharsets.UTF_8);
+            LendingViewAMQP lendingViewAMQP = objectMapper.readValue(jsonReceived, LendingViewAMQP.class);
+
+            System.out.println(" [x] Received Recommendation Failed from Reader by AMQP (Lending): " + msg + ".");
+            try {
+                lendingService.updateLendingRecommendationFailed(lendingViewAMQP);
+                System.out.println(" [x] Lending with number " + lendingViewAMQP.getLendingNumber() +
+                        " failed to process return due to an invalid commentary. Please try again! Message: " + msg + ".");
+            } catch (Exception e) {
+                System.out.println(" [x] Failed to delete Lending with number " + lendingViewAMQP.getLendingNumber() +"."+
+                         msg + ". Exception: " + e.getMessage());
+            }
+        } catch (
+                Exception ex) {
+            System.out.println(" [x] Exception receiving Lending event from AMQP (Lending): '" + ex.getMessage() + "'");
+        }
+    }
+
 
 
 }

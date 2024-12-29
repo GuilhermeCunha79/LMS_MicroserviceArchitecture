@@ -30,7 +30,7 @@ public class LendingEventsRabbitmqPublisherImpl implements LendingEventsPublishe
     }
 
     @Override
-    public void sendLendingReturned(Lending lending, Long currentVersion) {
+    public void sendLendingReturned(Lending lending) {
         sendLendingEvent(lending, LendingEvents.LENDING_RETURNED);
     }
 

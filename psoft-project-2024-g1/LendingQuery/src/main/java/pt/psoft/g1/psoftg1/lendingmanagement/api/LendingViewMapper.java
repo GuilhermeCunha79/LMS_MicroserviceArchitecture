@@ -7,6 +7,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Brief guides:
@@ -29,10 +30,10 @@ public abstract class LendingViewMapper extends MapperInterface {
     public abstract LendingsAverageDurationView toLendingsAverageDurationView(Double lendingsAverageDuration);
 
     @Named("mapToInt")
-    int mapToInt(Number value) {
-        if (value == null) {
-            throw new IllegalArgumentException("Status cannot be null");
+    int mapToInt(Optional<Integer> value) {
+        if (value.isEmpty()) {
+            throw new IllegalArgumentException("Status cannot be null or empty");
         }
-        return value.intValue();
+        return value.get();
     }
 }

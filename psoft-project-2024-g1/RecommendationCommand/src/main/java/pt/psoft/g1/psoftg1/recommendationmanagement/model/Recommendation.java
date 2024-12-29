@@ -25,10 +25,14 @@ public class Recommendation {
     private String readerDetailsId;
 
     @Setter
-    private String isbn; //verificar se é necessario
+    private String isbn;
 
     @Setter
     private Commentary commentary;
+
+    @Getter
+    @Setter
+    private int status;
 
     public Recommendation(String lendingNumber, String readerNumber, String isbn, Commentary commentary) {
         this.recommendationNumber = String.valueOf(Generator.generateLongID());

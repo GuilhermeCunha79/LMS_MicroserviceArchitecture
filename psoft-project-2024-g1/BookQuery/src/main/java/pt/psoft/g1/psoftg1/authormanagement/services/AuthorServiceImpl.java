@@ -9,6 +9,8 @@ import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
+import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.shared.api.AuthorViewAMQP;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +21,31 @@ public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
+
+    @Override
+    public Author create(AuthorViewAMQP authorViewAMQP) {
+
+        final String authorNumber = authorViewAMQP.getAuthorNumber();
+        final String name = authorViewAMQP.getName();
+        final String bio = authorViewAMQP.getBio();
+        final String photo = authorViewAMQP.getPhoto();
+        // Chama o método create com os dados extraídos
+        return create(authorNumber, name, bio, photo);
+    }
+
+    private Author create(String authorNumber,
+                          String name,
+                          String bio,
+                          String photoURI) {
+
+        if (authorRepository.findByAuthorNumber(authorNumber).isPresent()) {
+            throw new ConflictException("Author with AuthorNumber " + authorNumber + " already exists");
+        }
+
+        Author newAuthor = new Author(authorNumber, name, bio, photoURI);
+        return authorRepository.save(newAuthor);
+    }
+
 
     @Override
     public Iterable<Author> findAll() {

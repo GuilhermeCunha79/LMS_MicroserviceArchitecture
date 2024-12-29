@@ -74,6 +74,29 @@ public class LendingServiceImpl implements LendingService {
         return createLending(lendingViewAMQP, "Reader");
     }
 
+    @Override
+    public Lending updateLendingRecommendation(LendingViewAMQP resource) {
+        Optional<Lending> lending= findByLendingNumber(resource.getLendingNumber());
+
+        if (lending.isPresent()) {
+            lending.get().setRecommendationNumber(resource.getRecommendationNumber());
+            return lendingRepository.save(lending.get());
+        }
+
+        return null;
+    }
+
+    @Override
+    public Lending updateLendingRecommendationFailed(LendingViewAMQP resource) {
+        Lending lending = findByLendingNumber(resource.getLendingNumber())
+                .orElseThrow(() -> new NotFoundException("Lending not found: " + resource.getLendingNumber()));
+
+        lending.setReturnedDate(null);
+        lending.setCommentary(null);
+
+        return lendingRepository.save(lending);
+    }
+
     private Lending createLending(LendingViewAMQP lendingViewAMQP, String entityType) {
         final String lendingNumber = lendingViewAMQP.getLendingNumber();
         final String isbn = lendingViewAMQP.getIsbn();
@@ -114,19 +137,19 @@ public class LendingServiceImpl implements LendingService {
 
 
     @Override
-    public Lending setReturned(final String lendingNumber, final SetLendingReturnedRequest resource, final long desiredVersion) {
+    public Lending setReturned(final String lendingNumber, final SetLendingReturnedRequest resource) {
 
         var lending = lendingRepository.findByLendingNumber(lendingNumber)
                 .orElseThrow(() -> new NotFoundException("Cannot update lending with this lending number"));
 
-        lending.setReturned(desiredVersion, resource.getCommentary());
+        lending.setReturned(resource.getCommentary());
 
         if (lending.getDaysDelayed() > 0) {
             final var fine = new Fine(lending);
             fineRepository.save(fine);
         }
 
-        lendingEventsPublisher.sendLendingReturned(lending, desiredVersion);
+        lendingEventsPublisher.sendLendingReturned(lending);
 
         return lendingRepository.save(lending);
     }

@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+    environment {
+        // Determinar o ambiente com base no nome da branch
+        ENVIRONMENT = "${env.BRANCH_NAME.startsWith('feature/') ? 'dev' : (env.BRANCH_NAME.startsWith('release/') ? 'test' : 'prod')}"
+    }
+    stages {
+        stage('Print Environment') {
+            steps {
+                echo "Branch atual: ${env.BRANCH_NAME}"
+                echo "Ambiente configurado automaticamente: ${ENVIRONMENT}"
+            }
+        }
+        stage('Load Environment Jenkinsfile') {
+            steps {
+                script {
+                    def jenkinsfileToLoad
+
+                    // Definir qual Jenkinsfile carregar com base no ambiente configurado
+                    switch (ENVIRONMENT) {
+                        case 'dev':
+                            jenkinsfileToLoad = '.jenkinsfiledev'
+                            break
+                        case 'test':
+                            jenkinsfileToLoad = '.jenkinsfiletest'
+                            break
+                        case 'prod':
+                            jenkinsfileToLoad = '.jenkinsfileprod'
+                            break
+                        default:
+                            error("Ambiente desconhecido: ${ENVIRONMENT}.")
+                    }
+
+                    echo "Loading Jenkinsfile into: ${ENVIRONMENT} (${jenkinsfileToLoad})"
+                    load jenkinsfileToLoad
+                }
+            }
+        }
+    }
+}
