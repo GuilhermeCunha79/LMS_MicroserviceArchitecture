@@ -137,7 +137,7 @@ pipeline {
                             dir(POM_LOC) {
                                 if (isUnix()) {
                                     sh '''
-                                        CONTAINER_ID=$(docker ps -qf "name=users_users")
+                                        CONTAINER_ID=$(docker ps -qf "name=users")
                                         if [ -z "$CONTAINER_ID" ]; then
                                             echo "No container found with the name 'users'."
                                             exit 1
