@@ -37,7 +37,7 @@ services:
         restart: unless-stopped
         ports:
             - "5672:5672" # RabbitMQ main port
-            - "15672:15672" # RabbitMQ management UI
+            - "15673:15672" # RabbitMQ management UI
         environment:
             RABBITMQ_DEFAULT_USER: guest
             RABBITMQ_DEFAULT_PASS: guest
