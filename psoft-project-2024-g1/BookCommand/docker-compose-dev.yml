@@ -32,12 +32,12 @@ services:
       retries: 5
       timeout: 5s
 
-  rabbitmq_in_lms_network_bookCommand:
+  rabbitmq_in_lms_network:
     image: rabbitmq:latest
     restart: unless-stopped
     ports:
-      - "5670:5672" # RabbitMQ main port
-      - "15670:15672" # RabbitMQ management UI
+      - "5672:5672" # RabbitMQ main port
+      - "15672:15672" # RabbitMQ management UI
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
