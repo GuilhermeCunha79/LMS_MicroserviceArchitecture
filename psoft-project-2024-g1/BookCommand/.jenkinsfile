@@ -162,7 +162,7 @@ pipeline {
                         }
                     }
                 }
-
+/*
                 stage('Stop Containers') {
                     steps {
                         script {
@@ -188,7 +188,7 @@ pipeline {
                             }
                         }
                     }
-                }
+                }*/
 
 
             }
