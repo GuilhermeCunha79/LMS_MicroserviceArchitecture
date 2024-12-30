@@ -7,10 +7,12 @@ pipeline {
 
     environment {
         ENVIRONMENT = "${env.BRANCH_NAME.startsWith('feature/') ? 'dev' : (env.BRANCH_NAME.startsWith('release/') ? 'test' : 'prod')}"
-        POM_LOC = "psoft-project-2024-g1/BookCommand"
+        POM_LOC = "psoft-project-2024-g1/LendingCommand"
         DOCKER_COMPOSE_PATH = "${ENVIRONMENT == 'dev' ? './docker-compose-dev.yml' : (ENVIRONMENT == 'prod' ? './docker-compose-prod.yml' : './docker-compose-test.yml')}"
         CONTAINER_ID = ""
     }
+
+
 
     stages {
 
@@ -18,13 +20,14 @@ pipeline {
             steps {
                 script {
                     def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
-                    if (!changes.contains("BookCommand/")) {
+                    if (!changes.contains("LendingCommand/")) {
                         echo "No changes in BookCommand. Skipping pipeline."
                         error("Skipping further stages.") // Interrompe sem alterar o estado anterior do build.
                     }
                 }
             }
         }
+
 
         stage('Print Environment') {
             steps {
@@ -130,13 +133,13 @@ pipeline {
                                 echo "Building and running Docker Compose..."
                                 if (isUnix()) {
                                     sh '''
-                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
+                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build --force-recreate -d
                                         echo "Docker Compose build and up completed."
                                         sleep 3
                                     '''
                                 } else {
                                     bat '''
-                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
+                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build --force-recreate -d
                                         echo Docker Compose build and up completed.
                                         timeout /T 3
                                     '''
@@ -152,9 +155,9 @@ pipeline {
                             dir(POM_LOC) {
                                 if (isUnix()) {
                                     sh '''
-                                        CONTAINER_ID=$(docker ps -qf "name=books")
+                                        CONTAINER_ID=$(docker ps -qf "name=lendings")
                                         if [ -z "$CONTAINER_ID" ]; then
-                                            echo "No container found with the name 'books'."
+                                            echo "No container found with the name 'lendings'."
                                             exit 1
                                         fi
                                         #docker wait $CONTAINER_ID
@@ -162,13 +165,13 @@ pipeline {
                                     '''
                                 } else {
                                     bat '''
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=books"') DO SET CONTAINER_ID=%%i
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=lendings"') DO SET CONTAINER_ID=%%i
                                         IF "%CONTAINER_ID%"=="" (
-                                            echo No container found with the name 'books'.
+                                            echo No container found with the name 'lendings'.
                                             EXIT /B 1
                                         )
                                         REM docker wait %CONTAINER_ID%
-                                        docker exec -w /app %CONTAINER_ID% mvn test-compile failsafe:integration-test failsafe:verify
+                                        docker exec -w /app $CONTAINER_ID mvn test-compile failsafe:integration-test failsafe:verify
                                     '''
                                 }
                             }
@@ -182,17 +185,17 @@ pipeline {
                             dir(POM_LOC) {
                                 if (isUnix()) {
                                     sh '''
-                                        CONTAINER_IDS=$(docker ps -qf "name=book")
+                                        CONTAINER_IDS=$(docker ps -qf "name=lending")
                                         if [ -n "$CONTAINER_IDS" ]; then
-                                            echo "Stopping containers with 'book' in the name..."
+                                            echo "Stopping containers with 'lending' in the name..."
                                             docker stop $CONTAINER_IDS
                                         else
-                                            echo "No containers found with the name containing 'book'."
+                                            echo "No containers found with the name containing 'lending'."
                                         fi
                                     '''
                                 } else {
                                     bat '''
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=book"') DO (
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=lending"') DO (
                                             echo Stopping container %%i...
                                             docker stop %%i
                                         )
@@ -218,10 +221,6 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
-
-
             }
         }
     }
