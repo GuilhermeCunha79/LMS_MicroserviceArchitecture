@@ -53,9 +53,9 @@ pipeline {
                         script {
                             dir(POM_LOC) {
                                 if (isUnix()) {
-                                    sh 'mvn surefire:test'
+                                    sh 'mvn test'
                                 } else {
-                                    bat 'mvn surefire:test'
+                                    bat 'mvn test'
                                 }
                             }
                         }
@@ -119,13 +119,13 @@ pipeline {
                                     sh '''
                                         docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
                                         echo "Docker Compose build and up completed."
-                                        sleep 35
+                                        sleep 3
                                     '''
                                 } else {
                                     bat '''
                                         docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
                                         echo Docker Compose build and up completed.
-                                        timeout /T 35
+                                        timeout /T 3
                                     '''
                                 }
                             }
@@ -145,7 +145,7 @@ pipeline {
                                             exit 1
                                         fi
                                         #docker wait $CONTAINER_ID
-                                        docker exec -w /app $CONTAINER_ID mvn install failsafe:integration-test failsafe:verify
+                                        docker exec -w /app $CONTAINER_ID mvn test-compile failsafe:integration-test failsafe:verify
                                     '''
                                 } else {
                                     bat '''
@@ -155,7 +155,7 @@ pipeline {
                                             EXIT /B 1
                                         )
                                         REM docker wait %CONTAINER_ID%
-                                        docker exec -w /app %CONTAINER_ID% mvn install failsafe:integration-test failsafe:verify
+                                        docker exec -w /app %CONTAINER_ID% mvn test-compile failsafe:integration-test failsafe:verify
                                     '''
                                 }
                             }
