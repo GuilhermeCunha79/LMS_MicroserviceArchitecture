@@ -12,7 +12,22 @@ pipeline {
         CONTAINER_ID = ""
     }
 
+
+
     stages {
+
+        stage('Check Changes') {
+            steps {
+                script {
+                    def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
+                    if (!changes.contains("BookCommand/")) {
+                        echo "No changes in BookCommand. Skipping pipeline."
+                        error("Skipping further stages.") // Interrompe sem alterar o estado anterior do build.
+                    }
+                }
+            }
+        }
+
         stage('Print Environment') {
             steps {
                 echo "Actual Branch: ${env.BRANCH_NAME}"

@@ -118,7 +118,7 @@ public class LendingEventRabbitmqReceiver {
             try {
                 lendingService.updateLendingRecommendationFailed(lendingViewAMQP);
                 System.out.println(" [x] Lending with number " + lendingViewAMQP.getLendingNumber() +
-                        " failed to process return due to an invalid commentary. Please try again! Message: " + msg + ".");
+                        " failed to process return due to an invalid commentary. Please try the return again! Message: " + msg + ".");
             } catch (Exception e) {
                 System.out.println(" [x] Failed to delete Lending with number " + lendingViewAMQP.getLendingNumber() +"."+
                          msg + ". Exception: " + e.getMessage());

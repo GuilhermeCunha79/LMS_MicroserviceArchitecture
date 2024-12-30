@@ -52,6 +52,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     private Recommendation create(String lendingNumber, String readerNumber, String isbn, Commentary commentary) {
 
         if (recommendationRepository.findByLendingNumber(lendingNumber).isPresent()) {
+            recommendationEventsPublisher.sendRecommendationCreatedFailedToLending(new Recommendation(lendingNumber, readerNumber, isbn, Commentary.NEGATIVE));
             throw new ConflictException("Recommendation for Lending " + lendingNumber + " already exists");
         }
 
@@ -75,9 +76,9 @@ public class RecommendationServiceImpl implements RecommendationService {
 
 
     @Override
-    public void delete(LendingViewAMQP lendingViewAMQP) {
-        Recommendation recommendation = recommendationRepository.findByLendingNumber(lendingViewAMQP.getLendingNumber())
-                .orElseThrow(() -> new NoSuchElementException("Recommendation not found for Lending Number: " + lendingViewAMQP.getLendingNumber()));
+    public void delete(String recommendationNumber) {
+        Recommendation recommendation = recommendationRepository.findByLendingNumber(recommendationNumber)
+                .orElseThrow(() -> new NoSuchElementException("Recommendation not found for recommendation Number: " + recommendationNumber));
 
         recommendationRepository.delete(recommendation);
     }

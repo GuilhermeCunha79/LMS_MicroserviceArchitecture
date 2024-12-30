@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import pt.psoft.g1.psoftg1.shared.model.Commentary;
 import pt.psoft.g1.psoftg1.shared.model.Generator;
+import pt.psoft.g1.psoftg1.shared.model.RecommendationStatus;
 
 @Getter
 @Entity
@@ -40,6 +41,7 @@ public class Recommendation {
         this.readerDetailsId = readerNumber;
         this.isbn = isbn;
         this.commentary = commentary;
+        this.status = RecommendationStatus.RECOMMENDATION_WAITING_VALIDATION;
     }
 
     protected Recommendation() {

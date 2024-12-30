@@ -6,6 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQPMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingFactory;
@@ -25,7 +26,7 @@ public class LendingServiceImpl implements LendingService {
     private final LendingRepository lendingRepository;
     private final FineRepository fineRepository;
     private final LendingEventsPublisher lendingEventsPublisher;
-
+    private final LendingViewAMQPMapper lendingViewAMQPMapper;
     @Value("${lendingDurationInDays}")
     private int lendingDurationInDays;
     @Value("${fineValuePerDayInCents}")
@@ -66,7 +67,7 @@ public class LendingServiceImpl implements LendingService {
 
     @Override
     public Lending create(LendingViewAMQP lendingViewAMQP) {
-        return createLending(lendingViewAMQP,  "Book");
+        return createLending(lendingViewAMQP, "Book");
     }
 
     @Override
@@ -76,12 +77,18 @@ public class LendingServiceImpl implements LendingService {
 
     @Override
     public Lending updateLendingRecommendation(LendingViewAMQP resource) {
-        Optional<Lending> lending= findByLendingNumber(resource.getLendingNumber());
+        Optional<Lending> lending = findByLendingNumber(resource.getLendingNumber());
 
         if (lending.isPresent()) {
             lending.get().setRecommendationNumber(resource.getRecommendationNumber());
+            lending.get().setStatus(LendingStatus.LENDING_VALIDATED_READERS);
+
+            lendingEventsPublisher.sendLendingReturnedFinal(lending.get());
+
             return lendingRepository.save(lending.get());
         }
+
+        lendingEventsPublisher.sendLendingFailed(resource.getRecommendationNumber());
 
         return null;
     }
@@ -103,7 +110,7 @@ public class LendingServiceImpl implements LendingService {
         final String readerNumber = lendingViewAMQP.getReaderDetailsId();
         final int status = lendingViewAMQP.getStatus();
 
-        // Retorna imediatamente se o status for LENDING_INVALIDATED
+        // Retorna se o status for LENDING_INVALIDATED
         if (status == LendingStatus.LENDING_INVALIDATED) {
             lendingRepository.findByLendingNumber(lendingNumber)
                     .ifPresent(lending -> {

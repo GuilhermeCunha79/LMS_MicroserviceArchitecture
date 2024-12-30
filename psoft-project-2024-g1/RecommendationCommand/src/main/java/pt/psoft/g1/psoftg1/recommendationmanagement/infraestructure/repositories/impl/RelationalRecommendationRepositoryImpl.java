@@ -43,6 +43,20 @@ public class RelationalRecommendationRepositoryImpl implements RecommendationRep
     }
 
     @Override
+    public Optional<Recommendation> findByRecommendationNumber(String lendingNumber) {
+        try {
+            return Optional.ofNullable(
+                    entityManager.createQuery(
+                                    "SELECT r FROM Recommendation r WHERE r.recommendationNumber = :recommendationNumber", Recommendation.class)
+                            .setParameter("recommendationNumber", lendingNumber)
+                            .getSingleResult()
+            );
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Optional<Recommendation> findByLendingNumber(String lendingNumber) {
         try {
             return Optional.ofNullable(

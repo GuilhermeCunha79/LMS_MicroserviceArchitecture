@@ -53,6 +53,13 @@ public  class RabbitmqClientConfig {
             return new AnonymousQueue();
         }
 
+        @Bean(name = "autoDeleteQueue_Lending_Returned_Failed")
+        public Queue autoDeleteQueue_Lending_Returned_Failed() {
+
+            System.out.println("autoDeleteQueue_Lending_Returned_Failed created!");
+            return new AnonymousQueue();
+        }
+
         @Bean
         public Binding binding2(DirectExchange direct,
                                 Queue autoDeleteQueue_Lending_Returned) {

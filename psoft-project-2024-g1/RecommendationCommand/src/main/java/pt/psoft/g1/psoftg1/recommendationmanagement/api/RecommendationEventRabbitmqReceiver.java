@@ -64,14 +64,12 @@ public class RecommendationEventRabbitmqReceiver {
     public void receiveLendingReturnedFailed(Message msg) {
 
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
 
             String jsonReceived = new String(msg.getBody(), StandardCharsets.UTF_8);
-            LendingViewAMQP lendingViewAMQP = objectMapper.readValue(jsonReceived, LendingViewAMQP.class);
 
             System.out.println(" [x] Received Lending Returned Failure by AMQP (Recommendation): " + msg + ".");
             try {
-                recommendationService.delete(lendingViewAMQP);
+                recommendationService.delete(jsonReceived);
                 System.out.println(" [x] Recommendation deleted from AMQP (Recommendation): " + msg + ".");
             } catch (Exception e) {
                 System.out.println(e.getMessage());

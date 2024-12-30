@@ -11,5 +11,5 @@ public interface RecommendationService {
     Recommendation create(CreateRecommendationRequest request);
     Recommendation create(LendingViewAMQP lendingViewAMQP); // AMQP request
     Recommendation update(LendingViewAMQP lendingViewAMQP); // AMQP request
-    void delete(LendingViewAMQP lendingViewAMQP); // AMQP request
+    void delete(String recommendationNumber); // AMQP request
 }
