@@ -23,7 +23,7 @@ services:
     deploy:
       replicas: 1
     ports:
-      - "5472:5432"
+      - "5469:5432"
     networks:
       - lms_network2
     healthcheck:

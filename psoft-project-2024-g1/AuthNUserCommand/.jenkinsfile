@@ -145,7 +145,7 @@ pipeline {
                                             exit 1
                                         fi
                                         #docker wait $CONTAINER_ID
-                                        docker exec $CONTAINER_ID mvn failsafe:integration-test failsafe:verify
+                                        docker exec /app $CONTAINER_ID mvn failsafe:integration-test failsafe:verify
                                     '''
                                 } else {
                                     bat '''
@@ -155,7 +155,7 @@ pipeline {
                                             EXIT /B 1
                                         )
                                         REM docker wait %CONTAINER_ID%
-                                        docker exec %CONTAINER_ID% mvn failsafe:integration-test failsafe:verify
+                                        docker exec /app %CONTAINER_ID% mvn failsafe:integration-test failsafe:verify
                                     '''
                                 }
                             }
