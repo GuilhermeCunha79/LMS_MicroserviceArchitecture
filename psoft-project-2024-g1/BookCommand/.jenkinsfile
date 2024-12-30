@@ -190,21 +190,7 @@ pipeline {
                     }
                 }
 
-                stage('Clean Up Containers and Resources') {
-                    steps {
-                        script {
-                            if (isUnix()) {
-                                sh 'docker container prune -f'
-                                sh 'docker volume prune -f'
-                                sh 'docker image prune -af'
-                            } else {
-                                bat 'docker container prune -f'
-                                bat 'docker volume prune -f'
-                                bat 'docker image prune -af'
-                            }
-                        }
-                    }
-                }
+
             }
         }
     }
