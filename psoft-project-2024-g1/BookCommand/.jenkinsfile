@@ -119,13 +119,13 @@ pipeline {
                                     sh '''
                                         docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
                                         echo "Docker Compose build and up completed."
-                                        sleep 2
+                                        sleep 35
                                     '''
                                 } else {
                                     bat '''
                                         docker-compose -f ${DOCKER_COMPOSE_PATH} up --build -d
                                         echo Docker Compose build and up completed.
-                                        timeout /T 2
+                                        timeout /T 35
                                     '''
                                 }
                             }
@@ -145,7 +145,7 @@ pipeline {
                                             exit 1
                                         fi
                                         #docker wait $CONTAINER_ID
-                                        docker exec -it $CONTAINER_ID /bin/bash -c "mvn failsafe:integration-test failsafe:verify"
+                                        docker exec -w /app $CONTAINER_ID mvn install failsafe:integration-test failsafe:verify
                                     '''
                                 } else {
                                     bat '''
@@ -155,7 +155,7 @@ pipeline {
                                             EXIT /B 1
                                         )
                                         REM docker wait %CONTAINER_ID%
-                                        docker exec -it $CONTAINER_ID /bin/bash -c "mvn failsafe:integration-test failsafe:verify"
+                                        docker exec -w /app %CONTAINER_ID% mvn install failsafe:integration-test failsafe:verify
                                     '''
                                 }
                             }
