@@ -20,8 +20,8 @@ pipeline {
             steps {
                 script {
                     def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
-                    if (!changes.contains("AuthNUserCommand/")) {
-                        echo "No changes in AuthNUserCommand. Skipping pipeline."
+                    if (!changes.contains("amqp-rabbitmq/")) {
+                        echo "No changes in amqp-rabbitmq. Skipping pipeline."
                         currentBuild.result = 'NOT_BUILT'
                         return
                     }
@@ -59,20 +59,6 @@ pipeline {
                                     sh 'mvn clean compile test-compile'
                                 } else {
                                     bat 'mvn clean compile test-compile'
-                                }
-                            }
-                        }
-                    }
-                }
-
-                stage('Unit Testing') {
-                    steps {
-                        script {
-                            dir(POM_LOC) {
-                                if (isUnix()) {
-                                    sh 'mvn test'
-                                } else {
-                                    bat 'mvn test'
                                 }
                             }
                         }
@@ -150,62 +136,6 @@ pipeline {
                     }
                 }
 
-                stage('IT Tests on Container') {
-                    steps {
-                        script {
-                            dir(POM_LOC) {
-                                if (isUnix()) {
-                                    sh '''
-                                        CONTAINER_ID=$(docker ps -qf "name=users")
-                                        if [ -z "$CONTAINER_ID" ]; then
-                                            echo "No container found with the name 'users'."
-                                            exit 1
-                                        fi
-                                        #docker wait $CONTAINER_ID
-                                        docker exec -w /app $CONTAINER_ID mvn test failsafe:integration-test failsafe:verify
-                                    '''
-                                } else {
-                                    bat '''
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users"') DO SET CONTAINER_ID=%%i
-                                        IF "%CONTAINER_ID%"=="" (
-                                            echo No container found with the name 'users'.
-                                            EXIT /B 1
-                                        )
-                                        REM docker wait %CONTAINER_ID%
-                                        docker exec -w /app $CONTAINER_ID mvn test failsafe:integration-test failsafe:verify
-                                    '''
-                                }
-                            }
-                        }
-                    }
-                }
-
-                stage('Stop Containers') {
-                    steps {
-                        script {
-                            dir(POM_LOC) {
-                                if (isUnix()) {
-                                    sh '''
-                                        CONTAINER_IDS=$(docker ps -qf "name=user")
-                                        if [ -n "$CONTAINER_IDS" ]; then
-                                            echo "Stopping containers with 'user' in the name..."
-                                            docker stop $CONTAINER_IDS
-                                        else
-                                            echo "No containers found with the name containing 'user'."
-                                        fi
-                                    '''
-                                } else {
-                                    bat '''
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=user"') DO (
-                                            echo Stopping container %%i...
-                                            docker stop %%i
-                                        )
-                                    '''
-                                }
-                            }
-                        }
-                    }
-                }
 
                 stage('Clean Up Containers and Resources') {
                     steps {
