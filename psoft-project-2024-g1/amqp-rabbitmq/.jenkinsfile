@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         ENVIRONMENT = "${env.BRANCH_NAME.startsWith('feature/') ? 'dev' : (env.BRANCH_NAME.startsWith('release/') ? 'test' : 'prod')}"
-        POM_LOC = "psoft-project-2024-g1/AuthNUserCommand"
+        POM_LOC = "psoft-project-2024-g1/amqp-rabbitmq"
         DOCKER_COMPOSE_PATH = "${ENVIRONMENT == 'dev' ? './docker-compose-dev.yml' : (ENVIRONMENT == 'prod' ? './docker-compose-prod.yml' : './docker-compose-test.yml')}"
         CONTAINER_ID = ""
     }
