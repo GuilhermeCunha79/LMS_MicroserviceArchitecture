@@ -21,8 +21,9 @@ pipeline {
                 script {
                     def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
                     if (!changes.contains("AuthNUserCommand/")) {
-                        echo "No changes in BookCommand. Skipping pipeline."
-                        error("Skipping further stages.") // Interrompe sem alterar o estado anterior do build.
+                        echo "No changes in AuthNUserCommand. Skipping pipeline."
+                        currentBuild.result = 'NOT_BUILT'
+                        return
                     }
                 }
             }
