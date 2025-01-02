@@ -9,6 +9,8 @@ services:
             dockerfile: Dockerfile
         ports:
             - "8067:8080"
+        deploy:
+            replicas: 3
         environment:
             SPRING_PROFILES_ACTIVE: dev,bootstrap, relational, firebase
         networks:
@@ -21,9 +23,9 @@ services:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: password
         deploy:
-            replicas: 1
+            replicas: 3
         ports:
-            - "5471:5432"
+            - "5487-5490:5432"
         networks:
             - lms_network2
         healthcheck:

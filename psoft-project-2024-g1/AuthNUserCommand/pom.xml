@@ -203,7 +203,7 @@
                 <version>3.5.1</version>
                 <configuration>
                     <excludes>
-                        <excludedClass>pt.psoft.g1.psoftg1.SmokeTeste</excludedClass>
+                        <excludedClass>pt.psoft.g1.psoftg1.auth.SmokeTeste</excludedClass>
                     </excludes>
                     <includes>
                         <include>**/*Test.java</include>

@@ -127,6 +127,8 @@ pipeline {
                     }
                 }
 
+
+
                 stage('Docker Compose Build and Up') {
                     steps {
                         script {
@@ -222,6 +224,184 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
+
+        //TEST PIPELINE
+        stage('Test Pipeline') {
+            when {
+                expression { ENVIRONMENT == 'test' }
+            }
+            stages {
+                stage('Checkout') {
+                    steps {
+                        echo "Branch checkout: ${env.BRANCH_NAME}"
+                        git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git',
+                            credentialsId: 'jenkins_1201506', branch: "${env.BRANCH_NAME}"
+                    }
+                }
+
+                stage('Clean + Build') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn clean compile test-compile'
+                                } else {
+                                    bat 'mvn clean compile test-compile'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Checkstyle') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                } else {
+                                    bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Checkstyle and JaCoCo Reports') {
+                    parallel {
+                        stage('Checkstyle') {
+                            steps {
+                                script {
+                                    recordIssues(tools: [checkStyle(pattern: '**/target/checkstyle-result.xml')])
+                                }
+                            }
+                        }
+                        stage('JaCoCo') {
+                            steps {
+                                jacoco execPattern: '**/target/jacoco.exec',
+                                       classPattern: '**/target/classes',
+                                       sourcePattern: '**/src/main/java',
+                                       inclusionPattern: '**/*.class'
+                            }
+                        }
+                    }
+                }
+
+                stage('Install') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn install -DskipTests -DskipITs -DskipPitest'
+                                } else {
+                                    bat 'mvn install -DskipTests -DskipITs -DskipPitest'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Docker Image Build') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                echo "Building and running Docker Compose..."
+                                if (isUnix()) {
+                                    sh 'docker build -t lmsusers .'
+                                } else {
+                                    bat 'docker build -t lmsusers .'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Docker Stack Deploy') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                echo "Building and running Docker Compose..."
+                                if (isUnix()) {
+                                    sh '''
+                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
+                                        echo "Docker Compose build and up completed."
+                                        sleep 3
+                                    '''
+                                } else {
+                                    bat '''
+                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
+                                        echo Docker Compose build and up completed.
+                                        timeout /T 3
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Unit and IT Tests on Container') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh '''
+                                        CONTAINER_ID=$(docker ps -qf "name=users_users")
+                                        if [ -z "$CONTAINER_ID" ]; then
+                                            echo "No container found with the name 'users_users'."
+                                            exit 1
+                                        fi
+                                        #docker wait $CONTAINER_ID
+                                        docker exec -w /app $CONTAINER_ID mvn test failsafe:integration-test failsafe:verify
+                                    '''
+                                } else {
+                                    bat '''
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
+                                        IF "%CONTAINER_ID%"=="" (
+                                            echo No container found with the name 'users_users'.
+                                            EXIT /B 1
+                                        )
+                                        REM docker wait %CONTAINER_ID%
+                                        docker exec -w /app $CONTAINER_ID mvn test failsafe:integration-test failsafe:verify
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Smoke Tests') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh '''
+                                        CONTAINER_ID=$(docker ps -qf "name=users_users")
+                                        if [ -z "$CONTAINER_ID" ]; then
+                                            echo "No container found with the name 'users_users'."
+                                            exit 1
+                                        fi
+                                        docker exec -w /app $CONTAINER_ID mvn test -Dtest=pt.psoft.g1.psoftg1.auth.SmokeTeste
+                                    '''
+                                } else {
+                                    bat '''
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
+                                        IF "%CONTAINER_ID%"=="" (
+                                            echo No container found with the name 'users_users'.
+                                            EXIT /B 1
+                                        )
+                                        docker exec -w /app $CONTAINER_ID mvn test -Dtest=pt.psoft.g1.psoftg1.auth.SmokeTeste
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+
+
             }
         }
     }

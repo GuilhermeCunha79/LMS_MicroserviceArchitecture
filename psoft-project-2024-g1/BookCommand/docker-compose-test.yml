@@ -7,23 +7,23 @@ services:
         ports:
             - "8087:8080"
         environment:
-            SPRING_PROFILES_ACTIVE: bootstrap, relational, IDService1
+            SPRING_PROFILES_ACTIVE: test1, relational, IDService1
         networks:
             - lms_network2
         volumes:
             - "uploaded_files_volume_bookscommand:/tmp"
         deploy:
             mode: replicated
-            replicas: 2
+            replicas: 3
 
-    postgres_in_lms_network:
+    postgres_in_lms_network_bookCommand:
         image: postgres:latest
         restart: unless-stopped
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: password
         deploy:
-            replicas: 2
+            replicas: 3
         ports:
             - "5421:5432"
         volumes:

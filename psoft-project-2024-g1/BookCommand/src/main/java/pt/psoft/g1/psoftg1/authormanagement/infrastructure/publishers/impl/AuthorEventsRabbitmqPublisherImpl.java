@@ -22,7 +22,7 @@ public class AuthorEventsRabbitmqPublisherImpl implements AuthorEventsPublisher 
     private DirectExchange direct;
     private final AuthorViewAMQPMapper authorViewAMQPMapper;
 
-    private final int count = 0;
+    private int count = 0;
 
     @Override
     public void sendAuthorCreated(Author book) {
