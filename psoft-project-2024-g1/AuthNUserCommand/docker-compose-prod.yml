@@ -1,0 +1,45 @@
+services:
+    users:
+        image: lmsusers:latest
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8094:8080"
+        environment:
+            SPRING_PROFILES_ACTIVE: bootstrap, relational, firebase
+        networks:
+            - lms_network2
+        volumes:
+            - "uploaded_files_volume:/tmp"
+        deploy:
+            mode: replicated
+
+    postgres_in_lms_network:
+        image: postgres:latest
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+        deploy:
+            replicas: 1
+        ports:
+            - "5442-5448:5432"
+        volumes:
+            - "postgres_volume:/var/lib/postgresql/data"
+        networks:
+            - lms_network2
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-U", "postgres" ]
+            interval: 10s
+            retries: 5
+            timeout: 5s
+
+
+volumes:
+    uploaded_files_volume:
+    postgres_volume:
+
+networks:
+    lms_network2:
+        external: true
