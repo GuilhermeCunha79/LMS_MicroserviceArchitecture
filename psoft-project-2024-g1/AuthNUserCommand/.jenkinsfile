@@ -303,6 +303,24 @@ pipeline {
                     }
                 }
 
+                stage('Clean Up Containers and Resources') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'docker container ls -a --filter "name=user" -q | xargs -r docker container rm -f'
+                                sh 'docker volume ls --filter "name=user" -q | xargs -r docker volume rm -f'
+                                sh 'docker image ls --filter "reference=*user*" -q | xargs -r docker image rm -f'
+                            } else {
+                                bat '''
+                                for /F "tokens=*" %%i in ('docker container ls -a --filter "name=user" -q') do docker container rm -f %%i
+                                for /F "tokens=*" %%i in ('docker volume ls --filter "name=user" -q') do docker volume rm -f %%i
+                                for /F "tokens=*" %%i in ('docker image ls --filter "reference=*user*" -q') do docker image rm -f %%i
+                                '''
+                            }
+                        }
+                    }
+                }
+
                 stage('Docker Image Build') {
                     steps {
                         script {
@@ -325,40 +343,9 @@ pipeline {
                                echo "Building and running Docker Compose..."
                                if (isUnix()) {
                                    sh '''
-                                       # Stop and remove existing containers before deploy
-                                       EXISTING_CONTAINERS=$(docker ps -qf "name=users_postgres")
-                                       if [ -n "$EXISTING_CONTAINERS" ]; then
-                                           echo "Stopping and removing existing containers..."
-                                           docker stop $EXISTING_CONTAINERS
-                                           docker rm -f $EXISTING_CONTAINERS
-                                       fi
-
-                                       # Find containers using the users_postgres_volume and remove them
-                                       CONTAINERS_USING_VOLUME=$(docker ps -q --filter volume=users_postgres_volume)
-                                       if [ -n "$CONTAINERS_USING_VOLUME" ]; then
-                                           echo "Stopping and removing containers using users_postgres_volume..."
-                                           docker stop $CONTAINERS_USING_VOLUME
-                                           docker rm -f $CONTAINERS_USING_VOLUME
-                                       fi
-
-                                       # Remove associated volumes
-                                       EXISTING_VOLUMES=$(docker volume ls -qf "name=users_postgres")
-                                       if [ -n "$EXISTING_VOLUMES" ]; then
-                                           echo "Removing associated volumes..."
-                                           docker volume rm $EXISTING_VOLUMES
-                                       fi
-
-                                       # Now deploy Docker stack
                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
                                        echo "Docker Compose build and up completed."
-                                       sleep 50
-
-                                       # Get all container IDs matching 'users_postgres'
-                                       CONTAINER_IDS=$(docker ps -qf "name=users_postgres")
-                                       if [ -z "$CONTAINER_IDS" ]; then
-                                           echo "Postgres containers not found."
-                                           exit 7
-                                       fi
+                                       sleep 15
 
                                        # Loop through each container ID and execute SQL command
                                        for CONTAINER_IDD in $CONTAINER_IDS; do
