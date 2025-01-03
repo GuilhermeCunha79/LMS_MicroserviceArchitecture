@@ -318,83 +318,100 @@ pipeline {
                     }
                 }
 
-                stage('Docker Stack Deploy') {
-                    steps {
-                        script {
-                            dir(POM_LOC) {
-                                echo "Building and running Docker Compose..."
-                                if (isUnix()) {
-                                    sh '''
-                                        # Stop and remove existing containers before deploy
-                                        EXISTING_CONTAINERS=$(docker ps -qf "name=users_postgres")
-                                        if [ -n "$EXISTING_CONTAINERS" ]; then
-                                            echo "Stopping and removing existing containers..."
-                                            docker stop $EXISTING_CONTAINERS
-                                            docker rm $EXISTING_CONTAINERS
-                                        fi
+               stage('Docker Stack Deploy') {
+                   steps {
+                       script {
+                           dir(POM_LOC) {
+                               echo "Building and running Docker Compose..."
+                               if (isUnix()) {
+                                   sh '''
+                                       # Stop and remove existing containers before deploy
+                                       EXISTING_CONTAINERS=$(docker ps -qf "name=users_postgres")
+                                       if [ -n "$EXISTING_CONTAINERS" ]; then
+                                           echo "Stopping and removing existing containers..."
+                                           docker stop $EXISTING_CONTAINERS
+                                           docker rm $EXISTING_CONTAINERS
+                                       fi
 
-                                        # Remove associated volumes
-                                        EXISTING_VOLUMES=$(docker volume ls -qf "name=users_postgres")
-                                        if [ -n "$EXISTING_VOLUMES" ]; then
-                                            echo "Removing associated volumes..."
-                                            docker volume rm $EXISTING_VOLUMES
-                                        fi
+                                       # Find containers using the users_postgres_volume and remove them
+                                       CONTAINERS_USING_VOLUME=$(docker ps -q --filter volume=users_postgres_volume)
+                                       if [ -n "$CONTAINERS_USING_VOLUME" ]; then
+                                           echo "Stopping and removing containers using users_postgres_volume..."
+                                           docker stop $CONTAINERS_USING_VOLUME
+                                           docker rm $CONTAINERS_USING_VOLUME
+                                       fi
 
-                                        # Now deploy Docker stack
-                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
-                                        echo "Docker Compose build and up completed."
-                                        sleep 5
+                                       # Remove associated volumes
+                                       EXISTING_VOLUMES=$(docker volume ls -qf "name=users_postgres")
+                                       if [ -n "$EXISTING_VOLUMES" ]; then
+                                           echo "Removing associated volumes..."
+                                           docker volume rm $EXISTING_VOLUMES
+                                       fi
 
-                                        # Get all container IDs matching 'users_postgres'
-                                        CONTAINER_IDS=$(docker ps -qf "name=users_postgres")
-                                        if [ -z "$CONTAINER_IDS" ]; then
-                                            echo "Postgres containers not found."
-                                            exit 7
-                                        fi
+                                       # Now deploy Docker stack
+                                       docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
+                                       echo "Docker Compose build and up completed."
+                                       sleep 5
 
-                                        # Loop through each container ID and execute SQL command
-                                        for CONTAINER_IDD in $CONTAINER_IDS; do
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
-                                        done
-                                    '''
-                                } else {
-                                    bat '''
-                                        REM Stop and remove existing containers before deploy
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_postgres"') DO (
-                                            SET CONTAINER_IDD=%%i
-                                            REM Stop and remove the container
-                                            docker stop %%i
-                                            docker rm %%i
-                                        )
+                                       # Get all container IDs matching 'users_postgres'
+                                       CONTAINER_IDS=$(docker ps -qf "name=users_postgres")
+                                       if [ -z "$CONTAINER_IDS" ]; then
+                                           echo "Postgres containers not found."
+                                           exit 7
+                                       fi
 
-                                        REM Remove associated volumes
-                                        FOR /F "tokens=*" %%i IN ('docker volume ls -qf "name=users_postgres"') DO (
-                                            docker volume rm %%i
-                                        )
+                                       # Loop through each container ID and execute SQL command
+                                       for CONTAINER_IDD in $CONTAINER_IDS; do
+                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
+                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
+                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
+                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
+                                       done
+                                   '''
+                               } else {
+                                   bat '''
+                                       REM Stop and remove existing containers before deploy
+                                       FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_postgres"') DO (
+                                           SET CONTAINER_IDD=%%i
+                                           REM Stop and remove the container
+                                           docker stop %%i
+                                           docker rm %%i
+                                       )
 
-                                        REM Now deploy Docker stack
-                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
-                                        echo Docker Compose build and up completed.
-                                        timeout /T 7
+                                       REM Find containers using the users_postgres_volume and remove them
+                                       FOR /F "tokens=*" %%i IN ('docker ps -q --filter volume=users_postgres_volume') DO (
+                                           SET CONTAINER_IDD=%%i
+                                           REM Stop and remove the container
+                                           docker stop %%i
+                                           docker rm %%i
+                                       )
 
-                                        REM Get all container IDs matching 'users_postgres'
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_postgres"') DO (
-                                            SET CONTAINER_IDD=%%i
-                                            REM Execute SQL command in each container
-                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
-                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
-                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
-                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
-                                        )
-                                    '''
-                                }
-                            }
-                        }
-                    }
-                }
+                                       REM Remove associated volumes
+                                       FOR /F "tokens=*" %%i IN ('docker volume ls -qf "name=users_postgres"') DO (
+                                           docker volume rm %%i
+                                       )
+
+                                       REM Now deploy Docker stack
+                                       docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
+                                       echo Docker Compose build and up completed.
+                                       timeout /T 7
+
+                                       REM Get all container IDs matching 'users_postgres'
+                                       FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_postgres"') DO (
+                                           SET CONTAINER_IDD=%%i
+                                           REM Execute SQL command in each container
+                                           docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
+                                           docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
+                                           docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
+                                           docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
+                                       )
+                                   '''
+                               }
+                           }
+                       }
+                   }
+               }
+
 
 
 
