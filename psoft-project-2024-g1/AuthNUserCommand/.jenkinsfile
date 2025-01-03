@@ -341,63 +341,91 @@ pipeline {
                     }
                 }
 
-                stage('Unit and IT Tests on Container') {
-                    steps {
-                        script {
-                            dir(POM_LOC) {
-                                if (isUnix()) {
-                                    sh '''
-                                        CONTAINER_ID=$(docker ps -qf "name=users_users")
-                                        if [ -z "$CONTAINER_ID" ]; then
-                                            echo "No container found with the name 'users_users'."
-                                            exit 1
-                                        fi
-                                        #docker wait $CONTAINER_ID
-                                        docker exec -w /app $CONTAINER_ID mvn test failsafe:integration-test failsafe:verify
-                                    '''
-                                } else {
-                                    bat '''
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
-                                        IF "%CONTAINER_ID%"=="" (
-                                            echo No container found with the name 'users_users'.
-                                            EXIT /B 1
-                                        )
-                                        REM docker wait %CONTAINER_ID%
-                                        docker exec -w /app $CONTAINER_ID mvn test failsafe:integration-test failsafe:verify
-                                    '''
-                                }
-                            }
-                        }
-                    }
-                }
+               stage('Unit and IT Tests on Container') {
+                   steps {
+                       script {
+                           dir(POM_LOC) {
+                               if (isUnix()) {
+                                   sh '''
+                                       CONTAINER_IDS=$(docker ps -qf "name=users_users")
+                                       if [ -z "$CONTAINER_IDS" ]; then
+                                           echo "No container found with the name 'users_users'."
+                                           exit 1
+                                       fi
+                                       for CONTAINER_ID in $CONTAINER_IDS; do
+                                           echo "Running Unit and IT tests on container $CONTAINER_ID"
+                                           docker exec -w /app $CONTAINER_ID mvn test failsafe:integration-test failsafe:verify
+                                           TEST_EXIT_CODE=$?
+                                           if [ $TEST_EXIT_CODE -eq 0 ]; then
+                                               echo "Tests completed successfully on container $CONTAINER_ID, failing pipeline."
+                                               exit 1
+                                           fi
+                                           echo "Tests failed on container $CONTAINER_ID with exit code $TEST_EXIT_CODE."
+                                       done
+                                   '''
+                               } else {
+                                   bat '''
+                                       FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
+                                       IF "%CONTAINER_ID%"=="" (
+                                           echo No container found with the name 'users_users'.
+                                           EXIT /B 1
+                                       )
+                                       docker exec -w /app %%i mvn test failsafe:integration-test failsafe:verify
+                                       SET TEST_EXIT_CODE=%ERRORLEVEL%
+                                       IF "%TEST_EXIT_CODE%"=="0" (
+                                           echo Tests completed successfully on container %%i, failing pipeline.
+                                           EXIT /B 1
+                                       )
+                                       echo Tests failed on container %%i with exit code %TEST_EXIT_CODE%.
+                                   '''
+                               }
+                           }
+                       }
+                   }
+               }
 
-                stage('Smoke Tests') {
-                    steps {
-                        script {
-                            dir(POM_LOC) {
-                                if (isUnix()) {
-                                    sh '''
-                                        CONTAINER_ID=$(docker ps -qf "name=users_users")
-                                        if [ -z "$CONTAINER_ID" ]; then
-                                            echo "No container found with the name 'users_users'."
-                                            exit 1
-                                        fi
-                                        docker exec -w /app $CONTAINER_ID mvn test -Dtest=pt.psoft.g1.psoftg1.auth.SmokeTeste
-                                    '''
-                                } else {
-                                    bat '''
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
-                                        IF "%CONTAINER_ID%"=="" (
-                                            echo No container found with the name 'users_users'.
-                                            EXIT /B 1
-                                        )
-                                        docker exec -w /app $CONTAINER_ID mvn test -Dtest=pt.psoft.g1.psoftg1.auth.SmokeTeste
-                                    '''
-                                }
-                            }
-                        }
-                    }
-                }
+               stage('Smoke Tests') {
+                   steps {
+                       script {
+                           dir(POM_LOC) {
+                               if (isUnix()) {
+                                   sh '''
+                                       CONTAINER_IDS=$(docker ps -qf "name=users_users")
+                                       if [ -z "$CONTAINER_IDS" ]; then
+                                           echo "No container found with the name 'users_users'."
+                                           exit 1
+                                       fi
+                                       for CONTAINER_ID in $CONTAINER_IDS; do
+                                           echo "Running Smoke Tests on container $CONTAINER_ID"
+                                           docker exec -w /app $CONTAINER_ID mvn test -Dtest=pt.psoft.g1.psoftg1.auth.SmokeTeste
+                                           TEST_EXIT_CODE=$?
+                                           if [ $TEST_EXIT_CODE -eq 0 ]; then
+                                               echo "Smoke tests completed successfully on container $CONTAINER_ID, failing pipeline."
+                                               exit 1
+                                           fi
+                                           echo "Smoke tests failed on container $CONTAINER_ID with exit code $TEST_EXIT_CODE."
+                                       done
+                                   '''
+                               } else {
+                                   bat '''
+                                       FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
+                                       IF "%CONTAINER_ID%"=="" (
+                                           echo No container found with the name 'users_users'.
+                                           EXIT /B 1
+                                       )
+                                       docker exec -w /app %%i mvn test -Dtest=pt.psoft.g1.psoftg1.auth.SmokeTeste
+                                       SET TEST_EXIT_CODE=%ERRORLEVEL%
+                                       IF "%TEST_EXIT_CODE%"=="0" (
+                                           echo Smoke tests completed successfully on container %%i, failing pipeline.
+                                           EXIT /B 1
+                                       )
+                                       echo Smoke tests failed on container %%i with exit code %TEST_EXIT_CODE%.
+                                   '''
+                               }
+                           }
+                       }
+                   }
+               }
 
                 stage('Performance Tests') {
                     steps {
