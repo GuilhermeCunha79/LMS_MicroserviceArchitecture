@@ -13,7 +13,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git',
-                credentialsId: 'jenkins_1201506', branch: 'main'
+                credentialsId: 'jenkins_1201506', branch: 'feature/recommendation'
             }
         }
 
@@ -63,20 +63,6 @@ pipeline {
             }
         }
 
-        stage('Mutation Testing') {
-            steps {
-                script {
-                    dir(POM_LOC) {
-                        if (isUnix()) {
-                            sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-                        } else {
-                            bat 'mvn org.pitest:pitest-maven:mutationCoverage'
-                        }
-                    }
-                }
-            }
-        }
-
         stage('Checkstyle') {
             steps {
                 script {
@@ -90,7 +76,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('SonarQube Static Code Analysis') {
             steps {
                 script {
@@ -119,7 +105,7 @@ pipeline {
                 }
             }
         }
-
+*/
         stage('Checkstyle and JaCoCo Reports') {
             parallel {
                 stage('Checkstyle') {
@@ -153,7 +139,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('Deploy') {
             steps {
                 script {
@@ -181,6 +167,7 @@ pipeline {
                 }
             }
         }
+        */
     }
 
     post {

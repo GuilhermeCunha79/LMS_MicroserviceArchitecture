@@ -89,12 +89,14 @@ public class Lending {
      */
     @Temporal(TemporalType.DATE)
     @Getter
+    @Setter
     private LocalDate returnedDate;
 
     // optimistic-lock
     /**
      * Version of the object, to handle concurrency of accesses.
      */
+
 
     /**
      * Optional commentary written by a reader when the book is returned.
@@ -121,8 +123,11 @@ public class Lending {
      */
     @Getter
     @Setter
-    private int status = LendingStatus.LENDING_WAITING_VALIDATION;
+    private Integer status = LendingStatus.LENDING_WAITING_VALIDATION;
 
+    @Getter
+    @Setter
+    private String recommendationNumber="NOT RETURNED YET";
 
     /**
      * Constructs a new {@code Lending} object to be persisted in the database.
@@ -150,6 +155,7 @@ public class Lending {
         setDaysUntilReturn();
         setDaysOverdue();
         this.status = LendingStatus.LENDING_WAITING_VALIDATION;
+        this.recommendationNumber = "NOT RETURNED YET";
     }
 
     public Lending(String lendingNumber, String isbn, String readerDetails, int lendingDuration, int fineValuePerDayInCents, int status) {
@@ -168,6 +174,26 @@ public class Lending {
         setDaysUntilReturn();
         setDaysOverdue();
         this.status = status;
+    }
+
+    public Lending(String lendingNumber, String isbn, String readerDetails, int lendingDuration, int fineValuePerDayInCents,
+                   int status, String recommendationNumber) {
+        this.pk = String.valueOf(Generator.generateLongID());
+        try {
+            this.isbn = Objects.requireNonNull(isbn);
+            this.readerDetailsId = Objects.requireNonNull(readerDetails);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("Null objects passed to lending");
+        }
+        this.lendingNumber = new LendingNumber(lendingNumber);
+        this.startDate = LocalDate.now();
+        this.limitDate = LocalDate.now().plusDays(lendingDuration);
+        this.returnedDate = null;
+        this.fineValuePerDayInCents = fineValuePerDayInCents;
+        setDaysUntilReturn();
+        setDaysOverdue();
+        this.status = status;
+        this.recommendationNumber = recommendationNumber;
     }
 
     public void setValidated(int status) {
@@ -192,6 +218,10 @@ public class Lending {
             this.commentary = commentary;
 
         this.returnedDate = LocalDate.now();
+    }
+
+    public Optional<Integer> getStatus() {
+        return Optional.ofNullable(status);
     }
 
     public void setReturned(final String commentary) {

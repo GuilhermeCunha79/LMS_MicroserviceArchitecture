@@ -6,10 +6,10 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQP;
 import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQPMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.publishers.LendingEventsPublisher;
+import pt.psoft.g1.psoftg1.shared.api.LendingViewAMQP;
 import pt.psoft.g1.psoftg1.shared.model.LendingEvents;
 
 @Service
@@ -30,7 +30,7 @@ public class LendingEventsRabbitmqPublisherImpl implements LendingEventsPublishe
     }
 
     @Override
-    public void sendLendingReturned(Lending lending, Long currentVersion) {
+    public void sendLendingReturned(Lending lending) {
         sendLendingEvent(lending, LendingEvents.LENDING_RETURNED);
     }
 

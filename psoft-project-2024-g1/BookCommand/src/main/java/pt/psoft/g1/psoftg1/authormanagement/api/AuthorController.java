@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,6 @@ public class AuthorController {
     private final AuthorViewMapper authorViewMapper;
     private final ConcurrencyService concurrencyService;
     private final FileStorageService fileStorageService;
-    private final BookViewMapper bookViewMapper;
 
 
     //Create
@@ -95,53 +95,6 @@ public class AuthorController {
         return ResponseEntity.ok()
                 .eTag(Long.toString(author.getVersion()))
                 .body(authorViewMapper.toAuthorView(author));
-    }
-
-
-    //Gets
-    @Operation(summary = "Know an author’s detail given its author number")
-    @GetMapping(value = "/{authorNumber}")
-    public ResponseEntity<AuthorView> findByAuthorNumber(
-            @PathVariable("authorNumber")
-            @Parameter(description = "The number of the Author to find") final Long authorNumber) {
-
-        final var author = authorService.findByAuthorNumber(String.valueOf(authorNumber))
-                .orElseThrow(() -> new NotFoundException(Author.class, authorNumber));
-
-        return ResponseEntity.ok()
-                .eTag(Long.toString(author.getVersion()))
-                .body(authorViewMapper.toAuthorView(author));
-    }
-
-
-    //get - Photo
-    @Operation(summary= "Gets a author photo")
-    @GetMapping("/{authorNumber}/photo")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<byte[]> getSpecificAuthorPhoto(@PathVariable("authorNumber")
-                                                             @Parameter(description = "The number of the Author to find")
-                                                             final Long authorNumber) {
-
-        Author authorDetails = authorService.findByAuthorNumber(authorNumber.toString())
-                .orElseThrow(() -> new NotFoundException(Author.class, authorNumber));
-
-        //In case the user has no photo, just return a 200 OK without body
-        if(authorDetails.getPhoto() == null) {
-            return ResponseEntity.ok().build();
-        }
-
-        String photoFile = authorDetails.getPhoto().getPhotoFile();
-        byte[] image = this.fileStorageService.getFile(photoFile);
-        String fileFormat = this.fileStorageService.getExtension(authorDetails.getPhoto().getPhotoFile())
-                .orElseThrow(() -> new ValidationException("Unable to get file extension"));
-
-        if(image == null) {
-            return ResponseEntity.ok().build();
-        }
-
-        return ResponseEntity.ok()
-                .contentType(fileFormat.equals("png") ? MediaType.IMAGE_PNG : MediaType.IMAGE_JPEG)
-                .body(image);
     }
 
     //Delete a foto

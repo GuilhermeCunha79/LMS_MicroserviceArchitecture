@@ -1,6 +1,6 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.services;
 
-import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQP;
+import pt.psoft.g1.psoftg1.shared.api.LendingViewAMQP;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
@@ -13,6 +13,8 @@ public interface LendingService {
     Lending createReader(LendingViewAMQP resource);
     Lending setReturned(LendingViewAMQP resource);
     Optional<Lending> update(LendingViewAMQP resource);
+    Lending updateLendingRecommendation(LendingViewAMQP resource);
+    Lending updateLendingRecommendationFailed(LendingViewAMQP resource);
 
     //HTTP
     Optional<Lending> findByLendingNumber(String lendingNumber);

@@ -1,0 +1,457 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven 3.9.9'
+    }
+
+    environment {
+        ENVIRONMENT = "${env.BRANCH_NAME.startsWith('feature/') ? 'dev' : (env.BRANCH_NAME.startsWith('release/') ? 'test' : 'prod')}"
+        POM_LOC = "psoft-project-2024-g1/AuthNUserCommand"
+        DOCKER_COMPOSE_PATH = "${ENVIRONMENT == 'dev' ? './docker-compose-dev.yml' : (ENVIRONMENT == 'prod' ? './docker-compose-prod.yml' : './docker-compose-test.yml')}"
+        CONTAINER_ID = ""
+    }
+
+
+
+    stages {
+
+        stage('Check Changes') {
+            steps {
+                script {
+                    def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
+                    if (!changes.contains("AuthNUserCommand/")) {
+                        echo "No changes in AuthNUserCommand. Skipping pipeline."
+                        currentBuild.result = 'NOT_BUILT'
+                        return
+                    }
+                }
+            }
+        }
+
+
+        stage('Print Environment') {
+            steps {
+                echo "Actual Branch: ${env.BRANCH_NAME}"
+                echo "Auto configured Environment: ${ENVIRONMENT}"
+            }
+        }
+
+        //DEV PIPELINE
+        stage('Dev Pipeline') {
+            when {
+                expression { ENVIRONMENT == 'dev' }
+            }
+            stages {
+                stage('Checkout') {
+                    steps {
+                        echo "Branch checkout: ${env.BRANCH_NAME}"
+                        git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git',
+                            credentialsId: 'jenkins_1201506', branch: "${env.BRANCH_NAME}"
+                    }
+                }
+
+                stage('Clean + Build') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn clean compile test-compile'
+                                } else {
+                                    bat 'mvn clean compile test-compile'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Unit Testing') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn test'
+                                } else {
+                                    bat 'mvn test'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Checkstyle') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                } else {
+                                    bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Checkstyle and JaCoCo Reports') {
+                    parallel {
+                        stage('Checkstyle') {
+                            steps {
+                                script {
+                                    recordIssues(tools: [checkStyle(pattern: '**/target/checkstyle-result.xml')])
+                                }
+                            }
+                        }
+                        stage('JaCoCo') {
+                            steps {
+                                jacoco execPattern: '**/target/jacoco.exec',
+                                       classPattern: '**/target/classes',
+                                       sourcePattern: '**/src/main/java',
+                                       inclusionPattern: '**/*.class'
+                            }
+                        }
+                    }
+                }
+
+                stage('Install') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn install -DskipTests -DskipITs -DskipPitest'
+                                } else {
+                                    bat 'mvn install -DskipTests -DskipITs -DskipPitest'
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+
+                stage('Docker Compose Build and Up') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                echo "Building and running Docker Compose..."
+                                if (isUnix()) {
+                                    sh '''
+                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build --force-recreate -d
+                                        echo "Docker Compose build and up completed."
+                                        sleep 3
+                                    '''
+                                } else {
+                                    bat '''
+                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build --force-recreate -d
+                                        echo Docker Compose build and up completed.
+                                        timeout /T 3
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('IT Tests on Container') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh '''
+                                        CONTAINER_ID=$(docker ps -qf "name=users")
+                                        if [ -z "$CONTAINER_ID" ]; then
+                                            echo "No container found with the name 'users'."
+                                            exit 1
+                                        fi
+                                        #docker wait $CONTAINER_ID
+                                        docker exec -w /app $CONTAINER_ID mvn test failsafe:integration-test failsafe:verify
+                                    '''
+                                } else {
+                                    bat '''
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users"') DO SET CONTAINER_ID=%%i
+                                        IF "%CONTAINER_ID%"=="" (
+                                            echo No container found with the name 'users'.
+                                            EXIT /B 1
+                                        )
+                                        REM docker wait %CONTAINER_ID%
+                                        docker exec -w /app $CONTAINER_ID mvn test failsafe:integration-test failsafe:verify
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Stop Containers') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh '''
+                                        CONTAINER_IDS=$(docker ps -qf "name=user")
+                                        if [ -n "$CONTAINER_IDS" ]; then
+                                            echo "Stopping containers with 'user' in the name..."
+                                            docker stop $CONTAINER_IDS
+                                        else
+                                            echo "No containers found with the name containing 'user'."
+                                        fi
+                                    '''
+                                } else {
+                                    bat '''
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=user"') DO (
+                                            echo Stopping container %%i...
+                                            docker stop %%i
+                                        )
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Clean Up Containers and Resources') {
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                sh 'docker container prune -f'
+                                sh 'docker volume prune -f'
+                                sh 'docker image prune -af'
+                            } else {
+                                bat 'docker container prune -f'
+                                bat 'docker volume prune -f'
+                                bat 'docker image prune -af'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //TEST PIPELINE
+        stage('Test Pipeline') {
+            when {
+                expression { ENVIRONMENT == 'test' }
+            }
+            stages {
+                stage('Checkout') {
+                    steps {
+                        echo "Branch checkout: ${env.BRANCH_NAME}"
+                        git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git',
+                            credentialsId: 'jenkins_1201506', branch: "${env.BRANCH_NAME}"
+                    }
+                }
+
+                stage('Clean + Build') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn clean compile test-compile'
+                                } else {
+                                    bat 'mvn clean compile test-compile'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Checkstyle') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                } else {
+                                    bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Checkstyle and JaCoCo Reports') {
+                    parallel {
+                        stage('Checkstyle') {
+                            steps {
+                                script {
+                                    recordIssues(tools: [checkStyle(pattern: '**/target/checkstyle-result.xml')])
+                                }
+                            }
+                        }
+                        stage('JaCoCo') {
+                            steps {
+                                jacoco execPattern: '**/target/jacoco.exec',
+                                       classPattern: '**/target/classes',
+                                       sourcePattern: '**/src/main/java',
+                                       inclusionPattern: '**/*.class'
+                            }
+                        }
+                    }
+                }
+
+                stage('Install') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn install -DskipTests -DskipITs -DskipPitest'
+                                } else {
+                                    bat 'mvn install -DskipTests -DskipITs -DskipPitest'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Docker Image Build') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                echo "Building and running Docker Compose..."
+                                if (isUnix()) {
+                                    sh 'docker build -t lmsusers .'
+                                } else {
+                                    bat 'docker build -t lmsusers .'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Docker Stack Deploy') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                echo "Building and running Docker Compose..."
+                                if (isUnix()) {
+                                    sh '''
+                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
+                                        echo "Docker Compose build and up completed."
+                                        sleep 3
+                                    '''
+                                } else {
+                                    bat '''
+                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
+                                        echo Docker Compose build and up completed.
+                                        timeout /T 3
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Unit and IT Tests on Container') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh '''
+                                        CONTAINER_ID=$(docker ps -qf "name=users_users")
+                                        if [ -z "$CONTAINER_ID" ]; then
+                                            echo "No container found with the name 'users_users'."
+                                            exit 1
+                                        fi
+                                        #docker wait $CONTAINER_ID
+                                        docker exec -w /app $CONTAINER_ID mvn test failsafe:integration-test failsafe:verify
+                                    '''
+                                } else {
+                                    bat '''
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
+                                        IF "%CONTAINER_ID%"=="" (
+                                            echo No container found with the name 'users_users'.
+                                            EXIT /B 1
+                                        )
+                                        REM docker wait %CONTAINER_ID%
+                                        docker exec -w /app $CONTAINER_ID mvn test failsafe:integration-test failsafe:verify
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Smoke Tests') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh '''
+                                        CONTAINER_ID=$(docker ps -qf "name=users_users")
+                                        if [ -z "$CONTAINER_ID" ]; then
+                                            echo "No container found with the name 'users_users'."
+                                            exit 1
+                                        fi
+                                        docker exec -w /app $CONTAINER_ID mvn test -Dtest=pt.psoft.g1.psoftg1.auth.SmokeTeste
+                                    '''
+                                } else {
+                                    bat '''
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
+                                        IF "%CONTAINER_ID%"=="" (
+                                            echo No container found with the name 'users_users'.
+                                            EXIT /B 1
+                                        )
+                                        docker exec -w /app $CONTAINER_ID mvn test -Dtest=pt.psoft.g1.psoftg1.auth.SmokeTeste
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Performance Tests') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh '''
+                                        CONTAINER_ID=$(docker ps -qf "name=users_users")
+                                        if [ -z "$CONTAINER_ID" ]; then
+                                            echo "No container found with the name 'users_users'."
+                                            exit 1
+                                        fi
+                                        docker exec -it $CONTAINER_ID jmeter -n -t /app/src/test/resources/assets/MicroserviceTestUsers.jmx -l /results.jtl
+                                        TEST_EXIT_CODE=$?
+                                        if [ $TEST_EXIT_CODE -eq 0 ]; then
+                                            echo "Tests completed successfully, failing pipeline."
+                                            exit 1
+                                        fi
+                                        echo "Tests failed with exit code $TEST_EXIT_CODE."
+                                    '''
+                                } else {
+                                    bat '''
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
+                                        IF "%CONTAINER_ID%"=="" (
+                                            echo No container found with the name 'users_users'.
+                                            EXIT /B 1
+                                        )
+                                        docker exec -it %CONTAINER_ID% jmeter -n -t /app/src/test/resources/assets/MicroserviceTestUsers.jmx -l /results.jtl
+                                        SET TEST_EXIT_CODE=%ERRORLEVEL%
+                                        IF "%TEST_EXIT_CODE%"=="0" (
+                                            echo Tests completed successfully, failing pipeline.
+                                            EXIT /B 1
+                                        )
+                                        echo Tests failed with exit code %TEST_EXIT_CODE%.
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline '${env.JOB_NAME}' finished. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
+            echo 'Workspace cleaned.'
+        }
+        success {
+            echo "Pipeline '${env.JOB_NAME}' finished with success. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
+        }
+        failure {
+            echo "Pipeline '${env.JOB_NAME}' failed. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
+        }
+    }
+}

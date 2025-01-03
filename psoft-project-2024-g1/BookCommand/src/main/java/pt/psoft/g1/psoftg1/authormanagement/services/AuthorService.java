@@ -5,6 +5,7 @@ import pt.psoft.g1.psoftg1.shared.api.AuthorViewAMQP;
 
 import java.util.Optional;
 
+
 public interface AuthorService {
 
     Author create(CreateAuthorRequest resource);

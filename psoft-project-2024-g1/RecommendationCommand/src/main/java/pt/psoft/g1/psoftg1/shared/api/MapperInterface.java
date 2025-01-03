@@ -1,11 +1,5 @@
 package pt.psoft.g1.psoftg1.shared.api;
 
-import org.mapstruct.Named;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 public abstract class MapperInterface {

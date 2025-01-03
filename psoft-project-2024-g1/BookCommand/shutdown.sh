@@ -1,9 +1,10 @@
 
-docker service scale lmsbooks=0
+docker service scale bookcommand_lmsbooks=0
+docker service scale bookcommand_postgres_in_lms_network=0
 remove=$(docker service rm lmsbooks)
 
-if [[ "$remove" == "lmsbooks" ]]; then
-  echo "Stopped lmsbooks"
+if [[ "$remove" == "bookcommand_lmsbooks" ]]; then
+  echo "Stopped bookcommand_lmsbooks"
 
     db_base_name="books_db_"
     db_base_port=55000
@@ -20,5 +21,5 @@ if [[ "$remove" == "lmsbooks" ]]; then
       echo "Stopped ${db_name} on port ${db_port}"
     done
 else
-  echo "Could not stop lmsbooks"
+  echo "Could not stop bookcommand_lmsbooks"
 fi

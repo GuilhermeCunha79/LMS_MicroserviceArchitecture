@@ -49,12 +49,15 @@ public class Author extends EntityWithPhoto {
         setPhotoInternal(photoURI);
     }
 
-    @PrePersist
-    protected void onPrePersist() {
-        this.authorNumber= String.valueOf(Generator.generateLongID());
+    public Author(String authorNumber, String name, String bio, String photoURI) {
+        this.authorNumber= authorNumber;
+        setName(name);
+        setBio(bio);
+        setPhotoInternal(photoURI);
     }
 
-    protected Author() {
+
+    public Author() {
         // got ORM only
     }
 

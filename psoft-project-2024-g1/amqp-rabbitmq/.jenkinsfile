@@ -1,0 +1,154 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven 3.9.9'
+    }
+
+    environment {
+        ENVIRONMENT = "${env.BRANCH_NAME.startsWith('feature/') ? 'dev' : (env.BRANCH_NAME.startsWith('release/') ? 'test' : 'prod')}"
+        POM_LOC = "psoft-project-2024-g1/amqp-rabbitmq"
+        DOCKER_COMPOSE_PATH = "${ENVIRONMENT == 'dev' ? './docker-compose-dev.yml' : (ENVIRONMENT == 'prod' ? './docker-compose-prod.yml' : './docker-compose-test.yml')}"
+        CONTAINER_ID = ""
+    }
+
+
+
+    stages {
+
+        stage('Check Changes') {
+            steps {
+                script {
+                    def changes = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim()
+                    if (!changes.contains("amqp-rabbitmq/")) {
+                        echo "No changes in amqp-rabbitmq. Skipping pipeline."
+                        currentBuild.result = 'NOT_BUILT'
+                        return
+                    }
+                }
+            }
+        }
+
+
+        stage('Print Environment') {
+            steps {
+                echo "Actual Branch: ${env.BRANCH_NAME}"
+                echo "Auto configured Environment: ${ENVIRONMENT}"
+            }
+        }
+
+        //DEV PIPELINE
+        stage('Dev Pipeline') {
+            when {
+                expression { ENVIRONMENT == 'dev' }
+            }
+            stages {
+                stage('Checkout') {
+                    steps {
+                        echo "Branch checkout: ${env.BRANCH_NAME}"
+                        git url: 'https://1201506@bitbucket.org/1201506/arqsoft-25-1201506-1211439.git',
+                            credentialsId: 'jenkins_1201506', branch: "${env.BRANCH_NAME}"
+                    }
+                }
+
+                stage('Clean + Build') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn clean compile test-compile'
+                                } else {
+                                    bat 'mvn clean compile test-compile'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Checkstyle') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                } else {
+                                    bat 'mvn checkstyle:checkstyle -Dcheckstyle.failOnViolation=false'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Checkstyle and JaCoCo Reports') {
+                    parallel {
+                        stage('Checkstyle') {
+                            steps {
+                                script {
+                                    recordIssues(tools: [checkStyle(pattern: '**/target/checkstyle-result.xml')])
+                                }
+                            }
+                        }
+                        stage('JaCoCo') {
+                            steps {
+                                jacoco execPattern: '**/target/jacoco.exec',
+                                       classPattern: '**/target/classes',
+                                       sourcePattern: '**/src/main/java',
+                                       inclusionPattern: '**/*.class'
+                            }
+                        }
+                    }
+                }
+
+                stage('Install') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh 'mvn install -DskipTests -DskipITs -DskipPitest'
+                                } else {
+                                    bat 'mvn install -DskipTests -DskipITs -DskipPitest'
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage('Docker Compose Build and Up') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                echo "Building and running Docker Compose..."
+                                if (isUnix()) {
+                                    sh '''
+                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build --force-recreate -d
+                                        echo "Docker Compose build and up completed."
+                                        sleep 3
+                                    '''
+                                } else {
+                                    bat '''
+                                        docker-compose -f ${DOCKER_COMPOSE_PATH} up --build --force-recreate -d
+                                        echo Docker Compose build and up completed.
+                                        timeout /T 3
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline '${env.JOB_NAME}' finished. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
+            echo 'Workspace cleaned.'
+        }
+        success {
+            echo "Pipeline '${env.JOB_NAME}' finished with success. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
+        }
+        failure {
+            echo "Pipeline '${env.JOB_NAME}' failed. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
+        }
+    }
+}

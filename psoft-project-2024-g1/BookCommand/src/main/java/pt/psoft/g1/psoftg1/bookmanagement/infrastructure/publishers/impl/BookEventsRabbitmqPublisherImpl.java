@@ -26,8 +26,6 @@ public class BookEventsRabbitmqPublisherImpl implements BookEventsPublisher {
     private DirectExchange direct1;  // Exchange de empréstimos (LMS.lending)
     private final BookViewAMQPMapper bookViewAMQPMapper;
 
-    private int count = 0;
-
     @Override
     public BookViewAMQP sendBookCreated(Book book) {
         return sendBookEvent(book, book.getVersion(), BookEvents.BOOK_CREATED);
