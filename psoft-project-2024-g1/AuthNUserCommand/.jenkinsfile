@@ -329,7 +329,15 @@ pipeline {
                                         echo "Docker Compose build and up completed."
                                         sleep 5
 
-                                        # Get all container IDs matching 'users_postgres'
+                                        # Get all container IDs matching 'users_postgres' and remove them
+                                        CONTAINER_IDS=$(docker ps -qf "name=users_postgres")
+                                        if [ ! -z "$CONTAINER_IDS" ]; then
+                                            echo "Removing existing containers and their volumes..."
+                                            docker rm -f $CONTAINER_IDS
+                                            docker volume rm $(docker volume ls -qf "name=users_postgres*")
+                                        fi
+
+                                        # Get all container IDs matching 'users_postgres' again after cleanup
                                         CONTAINER_IDS=$(docker ps -qf "name=users_postgres")
                                         if [ -z "$CONTAINER_IDS" ]; then
                                             echo "Postgres containers not found."
@@ -338,16 +346,10 @@ pipeline {
 
                                         # Loop through each container ID and execute SQL command
                                         for CONTAINER_IDD in $CONTAINER_IDS; do
-                                            for DB_NAME in test_users_1 test_users_2 test_users_3 test_users_4; do
-                                                docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "
-                                                    DO \$\$
-                                                    BEGIN
-                                                        IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = '${DB_NAME}') THEN
-                                                            CREATE DATABASE ${DB_NAME};
-                                                        END IF;
-                                                    END \$\$;
-                                                "
-                                            done
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
                                         done
                                     '''
                                 } else {
@@ -356,14 +358,22 @@ pipeline {
                                         echo Docker Compose build and up completed.
                                         timeout /T 7
 
-                                        REM Get all container IDs matching 'users_postgres'
+                                        REM Get all container IDs matching 'users_postgres' and remove them
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_postgres"') DO (
+                                            SET CONTAINER_IDD=%%i
+                                            REM Remove container and associated volume
+                                            docker rm -f %%i
+                                            docker volume rm users_postgres*
+                                        )
+
+                                        REM Get all container IDs matching 'users_postgres' after cleanup
                                         FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_postgres"') DO (
                                             SET CONTAINER_IDD=%%i
                                             REM Execute SQL command in each container
-                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'test_users_1') THEN CREATE DATABASE test_users_1; END IF; END \$\$;"
-                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'test_users_2') THEN CREATE DATABASE test_users_2; END IF; END \$\$;"
-                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'test_users_3') THEN CREATE DATABASE test_users_3; END IF; END \$\$;"
-                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'test_users_4') THEN CREATE DATABASE test_users_4; END IF; END \$\$;"
+                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
+                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
+                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
+                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
                                         )
                                     '''
                                 }
@@ -371,6 +381,7 @@ pipeline {
                         }
                     }
                 }
+
 
                stage('Unit and IT Tests on Container') {
                    steps {
