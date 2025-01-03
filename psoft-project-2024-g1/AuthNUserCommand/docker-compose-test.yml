@@ -28,12 +28,11 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: test_users_{{.Task.Slot}}
+      POSTGRES_DB: postgres
     ports:
       - "5447-5450:5432"
     volumes:
       - "postgres_volume:/var/lib/postgresql/data"
-      - ./init-scripts:/docker-entrypoint-initdb.d
     networks:
       - lms_network2
     healthcheck:
