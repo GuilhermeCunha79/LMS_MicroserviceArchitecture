@@ -364,6 +364,8 @@ pipeline {
                                        echo "Docker Compose build and up completed."
                                        sleep 15
 
+                                       CONTAINER_IDS=$(docker ps -q --filter "name=users_postgres")
+
                                        # Loop through each container ID and execute SQL command
                                        for CONTAINER_IDD in $CONTAINER_IDS; do
                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
