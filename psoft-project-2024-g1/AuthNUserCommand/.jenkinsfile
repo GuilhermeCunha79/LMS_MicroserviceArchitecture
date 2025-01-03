@@ -329,15 +329,22 @@ pipeline {
                                         echo "Docker Compose build and up completed."
                                         sleep 5
 
-                                        # Get all container IDs matching 'users_postgres' and remove them
-                                        CONTAINER_IDS=$(docker ps -qf "name=users_postgres")
-                                        if [ ! -z "$CONTAINER_IDS" ]; then
-                                            echo "Removing existing containers and their volumes..."
-                                            docker rm -f $CONTAINER_IDS
-                                            docker volume rm $(docker volume ls -qf "name=users_postgres*")
+                                        # Stop and remove existing containers
+                                        EXISTING_CONTAINERS=$(docker ps -qf "name=users_postgres")
+                                        if [ -n "$EXISTING_CONTAINERS" ]; then
+                                            echo "Stopping and removing existing containers..."
+                                            docker stop $EXISTING_CONTAINERS
+                                            docker rm $EXISTING_CONTAINERS
                                         fi
 
-                                        # Get all container IDs matching 'users_postgres' again after cleanup
+                                        # Remove associated volumes
+                                        EXISTING_VOLUMES=$(docker volume ls -qf "name=users_postgres")
+                                        if [ -n "$EXISTING_VOLUMES" ]; then
+                                            echo "Removing associated volumes..."
+                                            docker volume rm $EXISTING_VOLUMES
+                                        fi
+
+                                        # Get all container IDs matching 'users_postgres'
                                         CONTAINER_IDS=$(docker ps -qf "name=users_postgres")
                                         if [ -z "$CONTAINER_IDS" ]; then
                                             echo "Postgres containers not found."
@@ -358,15 +365,20 @@ pipeline {
                                         echo Docker Compose build and up completed.
                                         timeout /T 7
 
-                                        REM Get all container IDs matching 'users_postgres' and remove them
+                                        REM Stop and remove existing containers
                                         FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_postgres"') DO (
                                             SET CONTAINER_IDD=%%i
-                                            REM Remove container and associated volume
-                                            docker rm -f %%i
-                                            docker volume rm users_postgres*
+                                            REM Stop and remove the container
+                                            docker stop %%i
+                                            docker rm %%i
                                         )
 
-                                        REM Get all container IDs matching 'users_postgres' after cleanup
+                                        REM Remove associated volumes
+                                        FOR /F "tokens=*" %%i IN ('docker volume ls -qf "name=users_postgres"') DO (
+                                            docker volume rm %%i
+                                        )
+
+                                        REM Get all container IDs matching 'users_postgres'
                                         FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_postgres"') DO (
                                             SET CONTAINER_IDD=%%i
                                             REM Execute SQL command in each container
@@ -381,6 +393,7 @@ pipeline {
                         }
                     }
                 }
+
 
 
                stage('Unit and IT Tests on Container') {
