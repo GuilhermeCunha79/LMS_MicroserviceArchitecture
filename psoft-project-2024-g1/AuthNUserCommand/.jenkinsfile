@@ -325,11 +325,7 @@ pipeline {
                                 echo "Building and running Docker Compose..."
                                 if (isUnix()) {
                                     sh '''
-                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
-                                        echo "Docker Compose build and up completed."
-                                        sleep 5
-
-                                        # Stop and remove existing containers
+                                        # Stop and remove existing containers before deploy
                                         EXISTING_CONTAINERS=$(docker ps -qf "name=users_postgres")
                                         if [ -n "$EXISTING_CONTAINERS" ]; then
                                             echo "Stopping and removing existing containers..."
@@ -343,6 +339,11 @@ pipeline {
                                             echo "Removing associated volumes..."
                                             docker volume rm $EXISTING_VOLUMES
                                         fi
+
+                                        # Now deploy Docker stack
+                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
+                                        echo "Docker Compose build and up completed."
+                                        sleep 5
 
                                         # Get all container IDs matching 'users_postgres'
                                         CONTAINER_IDS=$(docker ps -qf "name=users_postgres")
@@ -361,11 +362,7 @@ pipeline {
                                     '''
                                 } else {
                                     bat '''
-                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
-                                        echo Docker Compose build and up completed.
-                                        timeout /T 7
-
-                                        REM Stop and remove existing containers
+                                        REM Stop and remove existing containers before deploy
                                         FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_postgres"') DO (
                                             SET CONTAINER_IDD=%%i
                                             REM Stop and remove the container
@@ -377,6 +374,11 @@ pipeline {
                                         FOR /F "tokens=*" %%i IN ('docker volume ls -qf "name=users_postgres"') DO (
                                             docker volume rm %%i
                                         )
+
+                                        REM Now deploy Docker stack
+                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
+                                        echo Docker Compose build and up completed.
+                                        timeout /T 7
 
                                         REM Get all container IDs matching 'users_postgres'
                                         FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_postgres"') DO (
@@ -393,6 +395,7 @@ pipeline {
                         }
                     }
                 }
+
 
 
 
