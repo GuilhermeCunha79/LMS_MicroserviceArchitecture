@@ -5,6 +5,8 @@
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Microservice Test">
@@ -16,13 +18,13 @@
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">500</stringProp>
+          <stringProp name="LoopController.loops">1000</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
       <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login - POST">
-          <stringProp name="HTTPSampler.domain">localhost</stringProp>
+          <stringProp name="HTTPSampler.domain">172.17.0.1</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
           <stringProp name="HTTPSampler.path">users/api/public/login</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -73,7 +75,7 @@ props.put(&apos;bearerToken&apos;, vars.get(&apos;bearerToken&apos;))
             <stringProp name="Scope.variable">${__setProperty(bearerToken, ${bearerToken},)} </stringProp>
           </RegexExtractor>
           <hashTree/>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">Authorizarion</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs"></stringProp>
             <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
@@ -155,44 +157,70 @@ props.put(&apos;bearerToken&apos;, vars.get(&apos;bearerToken&apos;))
         </ResultCollector>
         <hashTree/>
         <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR223 Assertion">
-          <stringProp name="cacheKey">true</stringProp>
-          <stringProp name="filename"></stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
           <stringProp name="parameters"></stringProp>
-          <stringProp name="script">// Valor de throughput desejado (exemplo: 20 amostras por segundo)
-def targetThroughput = 20
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">// Define o limite mínimo de throughput desejado
+double minThroughput = 25; // 25r/s
 
-// Obter o número de requisições realizadas até o momento (acumulado no contexto global)
-def requestCount = ctx.getVariables().get(&quot;requestCount&quot;) ?: 0
-requestCount = requestCount.toInteger()
+// Obtém o resultado da amostra anterior
+def result = prev;
 
-// Obter o tempo total até o momento (em milissegundos)
-def totalTime = ctx.getVariables().get(&quot;totalTime&quot;) ?: 0
-totalTime = totalTime.toInteger()
+// Inicializa variáveis para cálculo de throughput
+double totalRequests = 0;
+double totalTimeSeconds = 0;
 
-// Atualizar os valores para o próximo ciclo
-totalTime += prev.getTime()  // Tempo de resposta da requisição atual
-requestCount += 1           // Contabilizar a requisição atual
+// Inicializa variáveis para cálculo de falhas
+int failedRequests = 0;
+int minSamplesForFailureCheck = 500; // Limite mínimo de amostras para verificação de falhas
 
-// Salvar os valores atualizados no contexto global
-ctx.getVariables().put(&quot;requestCount&quot;, requestCount.toString())
-ctx.getVariables().put(&quot;totalTime&quot;, totalTime.toString())
+// Recupera o valor de totalSampleCount e totalTimeSeconds armazenados (se existirem) ou define como 0
+def totalSampleCount = vars.get(&apos;totalSampleCount&apos;) ? vars.get(&apos;totalSampleCount&apos;).toInteger() : 0;
+def accumulatedTime = vars.get(&apos;totalTimeSeconds&apos;) ? vars.get(&apos;totalTimeSeconds&apos;).toDouble() : 0.0;
 
-// Calcular o throughput acumulado (amostras por segundo)
-def currentThroughput = requestCount / (totalTime / 1000)  // throughput em amostras por segundo
+// Verifica se o resultado não é nulo e soma os tempos e contagens de amostras
+if (result) {
+    totalRequests += result.getSampleCount();
+    accumulatedTime += result.getTime() / 1000.0; // Tempo em segundos
+    
+    // Verifica se a amostra falhou
+    if (result.isSuccessful() == false) {
+        failedRequests += 1;
+    }
+    totalSampleCount += result.getSampleCount(); // Acumula a contagem de amostras
+}
 
-// Exibir o throughput no console
-log.info(&quot;Current Throughput: &quot; + currentThroughput)
+// Armazena o totalSampleCount e accumulatedTime atualizados na variável de contexto para futuras iterações
+vars.put(&apos;totalSampleCount&apos;, totalSampleCount.toString());
+vars.put(&apos;totalTimeSeconds&apos;, accumulatedTime.toString());
 
-// Verificar se o throughput atual é maior ou igual ao desejado
-if (currentThroughput &gt;= targetThroughput) {
-    // Atingiu o throughput desejado, retorna 1
-    return 1
-} else {
-    // Não atingiu o throughput, retorna 0
-    return 0
+// Calcula o throughput (requests por segundo) somente se o número mínimo de amostras for atingido
+if (totalSampleCount &gt;= minSamplesForFailureCheck) {
+    double throughput = minSamplesForFailureCheck / accumulatedTime; // Usa o tempo total acumulado
+
+    // Número de threads
+    int numThreads = 5;
+
+    // Multiplica o throughput pelo número de threads
+    double throughputAdjusted = throughput * numThreads * 2;
+
+    // Loga o throughput ajustado
+    log.info(&quot;Throughput calculado e ajustado (por &quot; + numThreads + &quot; threads): &quot; + throughputAdjusted + &quot; req/s&quot;);
+
+    // Verifica se o throughput ajustado está abaixo do limite
+    if (throughputAdjusted &lt; minThroughput) {
+        AssertionResult.setFailure(true);
+        AssertionResult.setFailureMessage(&quot;Throughput abaixo do limite: &quot; + throughputAdjusted + &quot; req/s (mínimo: &quot; + minThroughput + &quot;)&quot;);
+        return 0;
+    }
+
+    // Calcula a percentagem de falhas se o número mínimo de amostras for atingido
+    double failurePercentage = (failedRequests / totalSampleCount) * 100;
+
+    return 1;
 }
 </stringProp>
-          <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223Assertion>
         <hashTree/>
       </hashTree>

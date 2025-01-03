@@ -399,9 +399,45 @@ pipeline {
                     }
                 }
 
-
-
-
+                stage('Performance Tests') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                if (isUnix()) {
+                                    sh '''
+                                        CONTAINER_ID=$(docker ps -qf "name=users_users")
+                                        if [ -z "$CONTAINER_ID" ]; then
+                                            echo "No container found with the name 'users_users'."
+                                            exit 1
+                                        fi
+                                        docker exec -it $CONTAINER_ID jmeter -n -t /app/src/test/resources/assets/MicroserviceTestUsers.jmx -l /results.jtl
+                                        TEST_EXIT_CODE=$?
+                                        if [ $TEST_EXIT_CODE -eq 0 ]; then
+                                            echo "Tests completed successfully, failing pipeline."
+                                            exit 1
+                                        fi
+                                        echo "Tests failed with exit code $TEST_EXIT_CODE."
+                                    '''
+                                } else {
+                                    bat '''
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
+                                        IF "%CONTAINER_ID%"=="" (
+                                            echo No container found with the name 'users_users'.
+                                            EXIT /B 1
+                                        )
+                                        docker exec -it %CONTAINER_ID% jmeter -n -t /app/src/test/resources/assets/MicroserviceTestUsers.jmx -l /results.jtl
+                                        SET TEST_EXIT_CODE=%ERRORLEVEL%
+                                        IF "%TEST_EXIT_CODE%"=="0" (
+                                            echo Tests completed successfully, failing pipeline.
+                                            EXIT /B 1
+                                        )
+                                        echo Tests failed with exit code %TEST_EXIT_CODE%.
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

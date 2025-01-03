@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.auth;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -10,10 +11,16 @@ import pt.psoft.g1.psoftg1.usermanagement.api.UserView;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(properties = "spring.profiles.active= relational, firebase")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "spring.profiles.active= bootstrap, relational,firebase")
 public class SmokeTeste {
 
     private RestTemplate restTemplate;
+
+  /*  @LocalServerPort
+    private int port;*/
+
+    private final String url = "http://localhost/users/api/public/login";
 
     @BeforeEach
     void setUp() {
@@ -22,8 +29,6 @@ public class SmokeTeste {
 
     @Test
     public void testUser_Authorized() {
-        String BASE_URL = "http://localhost:8094/api/";
-        String url = BASE_URL + "public/login";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -46,13 +51,10 @@ public class SmokeTeste {
         assertThat(userView).isNotNull();
         assertThat(userView.getUsername()).isEqualTo("maria@gmail.com");
         assertThat(userView.getFullName()).isEqualTo("Maria Roberta");
-
     }
 
     @Test
     public void testUser_Unauthorized() {
-        String BASE_URL = "http://localhost:8094/api/";
-        String url = BASE_URL + "public/login";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -78,5 +80,3 @@ public class SmokeTeste {
     }
 
 }
-
-

@@ -14,7 +14,7 @@ services:
             - "uploaded_files_volume_bookquery:/tmp"
         deploy:
             mode: replicated
-            replicas: 3
+            replicas: 2
 
     postgres_in_lms_network:
         image: postgres:latest
@@ -23,7 +23,8 @@ services:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: password
         deploy:
-            replicas: 3
+            mode: replicated
+            replicas: 2
         ports:
             - "5422:5432"
         volumes:

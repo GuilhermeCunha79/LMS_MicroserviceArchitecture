@@ -12,7 +12,7 @@ else
 fi
 
 # Base de dados e configurações
-db_container_name="users_postgres_in_lms_network_user"
+db_container_name="postgres_in_lms_network_user"
 db_base_name="users_"
 db_base_port=5472
 
@@ -61,8 +61,8 @@ if docker service ls --filter "name=users" --format "{{.Name}}" | grep -q "^user
 else
   docker service create -d \
     --name users \
-    --env SPRING_PROFILES_ACTIVE=bootstrap,relational,IDService1 \
-    --env spring.datasource.url=jdbc:postgresql://users_db_{{.Task.Slot}}:5447/postgres \
+    --env SPRING_PROFILES_ACTIVE=test,relational,firebase \
+    --env spring.datasource.url=jdbc:postgresql://postgres_in_lms_network_user:5447/postgres \
     --env spring.datasource.username=postgres \
     --env spring.datasource.password=password \
     --env file.upload-dir=/tmp/uploads-psoft-g1-instance{{.Task.Slot}} \
@@ -70,7 +70,7 @@ else
     --mount type=volume,source=uploaded_files_volume_{{.Task.Slot}},target=/tmp \
     --publish 8094:8080 \
     --network lms_network2 \
-    users:latest
+    lmsusers:latest
 
   docker service scale users_users=$1
 fi
