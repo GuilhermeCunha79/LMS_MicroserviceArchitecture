@@ -338,7 +338,10 @@ pipeline {
 
                                         # Loop through each container ID and execute SQL command
                                         for CONTAINER_IDD in $CONTAINER_IDS; do
-                                            docker exec $CONTAINER_IDD psql -U postgres -c "CREATE DATABASE test_users_1; CREATE DATABASE test_users_2; CREATE DATABASE test_users_3; CREATE DATABASE test_users_4;"
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
                                         done
                                     '''
                                 } else {
@@ -351,7 +354,10 @@ pipeline {
                                         FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_postgres"') DO (
                                             SET CONTAINER_IDD=%%i
                                             REM Execute SQL command in each container
-                                            docker exec $CONTAINER_IDD psql -U postgres -c "CREATE DATABASE test_users_1; CREATE DATABASE test_users_2; CREATE DATABASE test_users_3; CREATE DATABASE test_users_4;"
+                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
+                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
+                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
+                                            docker exec %%i psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
                                         )
                                     '''
                                 }
