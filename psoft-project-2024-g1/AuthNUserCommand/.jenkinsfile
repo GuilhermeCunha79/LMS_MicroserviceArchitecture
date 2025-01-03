@@ -351,7 +351,7 @@ pipeline {
                                        # Now deploy Docker stack
                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
                                        echo "Docker Compose build and up completed."
-                                       sleep 5
+                                       sleep 15
 
                                        # Get all container IDs matching 'users_postgres'
                                        CONTAINER_IDS=$(docker ps -qf "name=users_postgres")
