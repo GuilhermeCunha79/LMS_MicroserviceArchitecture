@@ -303,23 +303,40 @@ pipeline {
                     }
                 }
 
-                stage('Clean Up Containers and Resources') {
+                stage('Clean Up Containers, Services, and Resources') {
                     steps {
                         script {
                             if (isUnix()) {
+                                // Remover serviços que contêm 'user'
+                                sh 'docker service ls --filter "name=user" -q | xargs -r docker service rm'
+
+                                // Remover containers com nome contendo 'user'
                                 sh 'docker container ls -a --filter "name=user" -q | xargs -r docker container rm -f'
+
+                                // Remover volumes com nome contendo 'user'
                                 sh 'docker volume ls --filter "name=user" -q | xargs -r docker volume rm -f'
+
+                                // Remover imagens com nome contendo 'user'
                                 sh 'docker image ls --filter "reference=*user*" -q | xargs -r docker image rm -f'
                             } else {
                                 bat '''
+                                REM Remover serviços com nome contendo 'user'
+                                for /F "tokens=*" %%i in ('docker service ls --filter "name=user" -q') do docker service rm %%i
+
+                                REM Remover containers com nome contendo 'user'
                                 for /F "tokens=*" %%i in ('docker container ls -a --filter "name=user" -q') do docker container rm -f %%i
+
+                                REM Remover volumes com nome contendo 'user'
                                 for /F "tokens=*" %%i in ('docker volume ls --filter "name=user" -q') do docker volume rm -f %%i
+
+                                REM Remover imagens com nome contendo 'user'
                                 for /F "tokens=*" %%i in ('docker image ls --filter "reference=*user*" -q') do docker image rm -f %%i
                                 '''
                             }
                         }
                     }
                 }
+
 
                 stage('Docker Image Build') {
                     steps {
