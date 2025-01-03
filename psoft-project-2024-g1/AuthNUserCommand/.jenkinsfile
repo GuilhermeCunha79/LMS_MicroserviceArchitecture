@@ -330,7 +330,7 @@ pipeline {
                                        if [ -n "$EXISTING_CONTAINERS" ]; then
                                            echo "Stopping and removing existing containers..."
                                            docker stop $EXISTING_CONTAINERS
-                                           docker rm $EXISTING_CONTAINERS
+                                           docker rm -f $EXISTING_CONTAINERS
                                        fi
 
                                        # Find containers using the users_postgres_volume and remove them
@@ -338,7 +338,7 @@ pipeline {
                                        if [ -n "$CONTAINERS_USING_VOLUME" ]; then
                                            echo "Stopping and removing containers using users_postgres_volume..."
                                            docker stop $CONTAINERS_USING_VOLUME
-                                           docker rm $CONTAINERS_USING_VOLUME
+                                           docker rm -f $CONTAINERS_USING_VOLUME
                                        fi
 
                                        # Remove associated volumes
