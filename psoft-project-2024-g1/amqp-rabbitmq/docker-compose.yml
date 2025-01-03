@@ -84,6 +84,7 @@ services:
 
     nginx:
         image: nginx:latest
+        restart: unless-stopped
         deploy:
             replicas: 1
         ports:

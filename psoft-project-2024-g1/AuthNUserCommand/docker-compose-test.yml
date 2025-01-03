@@ -5,9 +5,13 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8094-8097:8080"
+      - "8093-8097:8080"
     environment:
       SPRING_PROFILES_ACTIVE: test, bootstrap, relational, firebase
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_in_lms_network_user:5432/test_users_{{.Task.Slot}}
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
     networks:
       - lms_network2
     deploy:
@@ -24,10 +28,12 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: test_users_{{.Task.Slot}}
     ports:
       - "5447-5450:5432"
     volumes:
       - "postgres_volume:/var/lib/postgresql/data"
+      - ./init-scripts:/docker-entrypoint-initdb.d
     networks:
       - lms_network2
     healthcheck:
