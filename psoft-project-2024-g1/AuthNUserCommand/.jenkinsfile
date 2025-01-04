@@ -387,8 +387,6 @@ pipeline {
                                             docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_3 -f /tmp/dump.sql
                                             docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_4 -f /tmp/dump.sql
 
-                                            # Clean up the dump file from the container
-                                            docker exec $CONTAINER_IDD rm /tmp/dump.sql
                                         done
                                    '''
                                } else {
