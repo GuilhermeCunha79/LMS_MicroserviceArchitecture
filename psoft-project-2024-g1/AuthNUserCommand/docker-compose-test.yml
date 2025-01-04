@@ -16,7 +16,7 @@ services:
     networks:
       - lms_network2
     deploy:
-      replicas: 2
+      replicas: 3
     volumes:
       - ./src:/app/src
       - ./pom.xml:/app/pom.xml
@@ -32,6 +32,7 @@ services:
       - "5447-5450:5432"
     volumes:
       - "postgres_volume:/var/lib/postgresql/data"
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
     networks:
       - lms_network2
     healthcheck:
@@ -40,7 +41,7 @@ services:
       retries: 5
       timeout: 5s
     deploy:
-      replicas: 2
+      replicas: 3
 
   nginx_user:
     image: nginx:latest
