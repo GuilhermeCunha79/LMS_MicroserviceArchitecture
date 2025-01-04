@@ -378,14 +378,12 @@ pipeline {
 
                                             sleep 10
 
-                                            # Copy the dump.sql into the container
-                                            docker cp dump.sql $CONTAINER_IDD:/tmp/dump.sql
+                                            # Restaurar o dump.sql diretamente para cada banco de dados
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_1 -f /app/src/main/java/resources/dump.sql
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_2 -f /app/src/main/java/resources/dump.sql
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_3 -f /app/src/main/java/resources/dump.sql
+                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_4 -f /app/src/main/java/resources/dump.sql
 
-                                            # Restore the dump.sql into each created database
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_1 -f /tmp/dump.sql
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_2 -f /tmp/dump.sql
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_3 -f /tmp/dump.sql
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_4 -f /tmp/dump.sql
 
                                             # Clean up the dump file from the container
                                             docker exec $CONTAINER_IDD rm /tmp/dump.sql
