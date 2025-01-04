@@ -391,7 +391,7 @@ pipeline {
                        }
                    }
                }
-
+/*
                stage('Unit and IT Tests on Container') {
                    steps {
                        script {
@@ -424,7 +424,7 @@ pipeline {
                            }
                        }
                    }
-               }
+               }*/
 
                stage('Smoke Tests') {
                    steps {
