@@ -265,7 +265,7 @@ pipeline {
                             }
                         }
                     }
-                }
+                }*/
 
                 stage('Checkstyle and JaCoCo Reports') {
                     parallel {
@@ -365,7 +365,7 @@ pipeline {
                                         docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
                                         echo "Docker Compose build and up completed."
                                         sleep 50
-docker volume ls --filter name=postgres -q | xargs -r docker volume rm -f
+
                                         CONTAINER_IDS=$(docker ps -q --filter "name=users_postgres")
 
                                         # Loop through each container ID and execute SQL commands
