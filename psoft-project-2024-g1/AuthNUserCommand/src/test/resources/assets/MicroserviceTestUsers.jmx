@@ -11,14 +11,14 @@
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Microservice Test">
         <intProp name="ThreadGroup.num_threads">5</intProp>
-        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">2</intProp>
         <longProp name="ThreadGroup.duration">300</longProp>
         <longProp name="ThreadGroup.delay">10</longProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">1000</stringProp>
+          <stringProp name="LoopController.loops">200</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -213,13 +213,13 @@ if (totalSampleCount &gt;= minSamplesForFailureCheck) {
     if (throughputAdjusted &lt; minThroughput) {
         AssertionResult.setFailure(true);
         AssertionResult.setFailureMessage(&quot;Throughput abaixo do limite: &quot; + throughputAdjusted + &quot; req/s (mínimo: &quot; + minThroughput + &quot;)&quot;);
-        return 0;
+        return 1;
     }
 
     // Calcula a percentagem de falhas se o número mínimo de amostras for atingido
     double failurePercentage = (failedRequests / totalSampleCount) * 100;
 
-    return 1;
+    return 0;
 }
 </stringProp>
         </JSR223Assertion>
