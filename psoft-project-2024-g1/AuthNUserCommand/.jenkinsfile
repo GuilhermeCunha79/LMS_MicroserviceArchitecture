@@ -365,16 +365,11 @@ pipeline {
                                         docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
                                         echo "Docker Compose build and up completed."
                                         sleep 50
-
+docker volume ls --filter name=postgres -q | xargs -r docker volume rm -f
                                         CONTAINER_IDS=$(docker ps -q --filter "name=users_postgres")
 
                                         # Loop through each container ID and execute SQL commands
                                         for CONTAINER_IDD in $CONTAINER_IDS; do
-                                            # Create databases
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
 
                                             # Copy the dump.sql into the container
                                             docker cp dump.sql $CONTAINER_IDD:/tmp/dump.sql
