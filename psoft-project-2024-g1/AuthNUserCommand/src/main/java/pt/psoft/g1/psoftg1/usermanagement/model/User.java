@@ -49,7 +49,7 @@ import lombok.Setter;
  *
  */
 @Entity
-@Table(name = "T_USER")
+@Table(name = "t_user")
 @EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails {
 
@@ -58,7 +58,7 @@ public class User implements UserDetails {
 	// database primary key
 	@Id
 	@Getter
-	@Column(name="USER_ID")
+	@Column(name="user_idr stack rm")
 	private Long id;
 
 	// optimistic lock concurrency control
