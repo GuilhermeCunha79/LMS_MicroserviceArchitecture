@@ -112,12 +112,15 @@ public class User implements UserDetails {
 	@Embedded
 	private Name name;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-	@Column(name = "role")
+	@ElementCollection(fetch = FetchType.LAZY) // Usar LAZY para otimizar o carregamento.
+	@CollectionTable(
+			name = "user_roles",
+			joinColumns = @JoinColumn(name = "user_id")
+	)
+	@Column(name = "role") // Removida a definição explícita de tipo.
 	@Getter
 	@Setter
-	private Set<Role> authorities = new HashSet<>();
+	private Set<String> authorities = new HashSet<>();
 
 	protected User() {
 		// for ORM only
@@ -175,7 +178,7 @@ public class User implements UserDetails {
 	}
 
     public void addAuthority(final Role r) {
-		authorities.add(r);
+		authorities.add(r.getAuthority());
 	}
 
 	@Override

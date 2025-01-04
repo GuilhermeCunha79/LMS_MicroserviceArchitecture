@@ -12,7 +12,7 @@ import pt.psoft.g1.psoftg1.usermanagement.api.UserView;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "spring.profiles.active=  test,bootstrap, relational,firebase")
+        properties = "spring.profiles.active=  test, bootstrap, relational,firebase")
 public class SmokeTeste {
 
     private RestTemplate restTemplate;
@@ -20,13 +20,13 @@ public class SmokeTeste {
   /*  @LocalServerPort
     private int port;*/
 
-    private final String url = "http://172.17.0.1:8094/api/public/login";
+    private final String url = "http://localhost:8094/api/public/login";
 
     @BeforeEach
     void setUp() {
         this.restTemplate = new RestTemplate();
     }
-/*
+
     @Test
     public void testUser_Authorized() {
 
@@ -52,7 +52,7 @@ public class SmokeTeste {
         assertThat(userView.getUsername()).isEqualTo("maria@gmail.com");
         assertThat(userView.getFullName()).isEqualTo("Maria Roberta");
     }
-*/
+
     @Test
     public void testUser_Unauthorized() {
 
