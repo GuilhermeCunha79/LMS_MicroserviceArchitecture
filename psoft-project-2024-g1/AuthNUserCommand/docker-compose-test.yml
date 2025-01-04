@@ -16,7 +16,7 @@ services:
     networks:
       - lms_network2
     deploy:
-      replicas: 3
+      replicas: 2
     volumes:
       - ./src:/app/src
       - ./pom.xml:/app/pom.xml
