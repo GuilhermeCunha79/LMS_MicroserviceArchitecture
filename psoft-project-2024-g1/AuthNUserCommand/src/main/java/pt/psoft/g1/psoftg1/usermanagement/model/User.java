@@ -112,13 +112,7 @@ public class User implements UserDetails {
 	@Embedded
 	private Name name;
 
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(
-			name = "user_roles",
-			joinColumns = @JoinColumn(name = "user_id")
-	)
-	@Enumerated(EnumType.STRING) // Ou EnumType.ORDINAL para salvar o índice do enum.
-	@Column(name = "role")
+	@ElementCollection
 	@Getter
 	@Setter
 	private Set<Role> authorities = new HashSet<>();

@@ -11,7 +11,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_in_lms_network_user:5432/test_users_{{.Task.Slot}}
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
-      SPRING_JPA_HIBERNATE_DDL-AUTO: update
     networks:
       - lms_network2
     deploy:
