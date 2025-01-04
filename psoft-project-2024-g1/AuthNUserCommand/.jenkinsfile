@@ -364,7 +364,7 @@ pipeline {
                                    sh '''
                                         docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
                                         echo "Docker Compose build and up completed."
-                                        sleep 50
+                                        sleep 80
 
                                         CONTAINER_IDS=$(docker ps -q --filter "name=users_postgres")
 
