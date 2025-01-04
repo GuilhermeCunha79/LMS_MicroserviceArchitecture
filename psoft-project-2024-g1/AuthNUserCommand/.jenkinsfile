@@ -371,6 +371,11 @@ pipeline {
                                         # Loop through each container ID and execute SQL commands
                                         for CONTAINER_IDD in $CONTAINER_IDS; do
 
+                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
+                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
+                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
+                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
+
                                             # Copy the dump.sql into the container
                                             docker cp dump.sql $CONTAINER_IDD:/tmp/dump.sql
 
