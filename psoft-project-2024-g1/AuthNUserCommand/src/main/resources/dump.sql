@@ -31,7 +31,7 @@ CREATE TABLE public.forbidden_name (
 );
 
 
-ALTER TABLE public.forbidden_name OWNER TO test_users_1;
+ALTER TABLE public.forbidden_name OWNER TO postgres;
 
 --
 -- Name: forbidden_name_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -45,7 +45,7 @@ CREATE SEQUENCE public.forbidden_name_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.forbidden_name_seq OWNER TO test_users_1;
+ALTER SEQUENCE public.forbidden_name_seq OWNER TO postgres;
 
 --
 -- Name: photo; Type: TABLE; Schema: public; Owner: postgres
@@ -57,7 +57,7 @@ CREATE TABLE public.photo (
 );
 
 
-ALTER TABLE public.photo OWNER TO test_users_1;
+ALTER TABLE public.photo OWNER TO postgres;
 
 --
 -- Name: photo_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -71,7 +71,7 @@ CREATE SEQUENCE public.photo_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.photo_seq OWNER TO test_users_1;
+ALTER SEQUENCE public.photo_seq OWNER TO postgres;
 
 --
 -- Name: t_user; Type: TABLE; Schema: public; Owner: postgres
@@ -92,7 +92,7 @@ CREATE TABLE public.t_user (
 );
 
 
-ALTER TABLE public.t_user OWNER TO test_users_1;
+ALTER TABLE public.t_user OWNER TO postgres;
 
 --
 -- Name: user_roles; Type: TABLE; Schema: public; Owner: postgres
@@ -104,7 +104,7 @@ CREATE TABLE public.user_roles (
 );
 
 
-ALTER TABLE public.user_roles OWNER TO test_users_1;
+ALTER TABLE public.user_roles OWNER TO postgres;
 
 --
 -- Name: forbidden_name forbidden_name_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
