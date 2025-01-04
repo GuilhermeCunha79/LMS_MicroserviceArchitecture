@@ -112,10 +112,9 @@ public class User implements UserDetails {
 	@Embedded
 	private Name name;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-	@Column(name = "role", columnDefinition = "VARCHAR(255)")
+	@ElementCollection
 	@Getter
+	@Setter
 	private Set<Role> authorities = new HashSet<>();
 
 	protected User() {
