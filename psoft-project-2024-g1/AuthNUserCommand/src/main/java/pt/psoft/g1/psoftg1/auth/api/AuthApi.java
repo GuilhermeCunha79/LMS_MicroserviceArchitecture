@@ -111,8 +111,7 @@ public class AuthApi {
 			final Instant now = Instant.now();
 			final long expiry = 36000L; // 1 hours is usually too long for a token to be valid. adjust for production
 
-			final String scope = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-					.collect(joining(" "));
+			final String scope = "ROLE_ADMIN";
 
 			final JwtClaimsSet claims = JwtClaimsSet.builder().issuer("example.io").issuedAt(now)
 					.expiresAt(now.plusSeconds(expiry)).subject(format("%s,%s", user.getId(), user.getUsername()))
