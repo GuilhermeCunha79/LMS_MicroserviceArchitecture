@@ -310,8 +310,9 @@ pipeline {
                                 sh 'docker service ls --filter "name=postgres" -q | xargs -r docker service rm'
 
                                 // Remover containers com nome contendo 'user'
-                                sh 'docker container ls -a --filter "name=user" -q | xargs -r docker container rm -f'
-                                sh 'docker container ls -a --filter "name=postgres" -q | xargs -r docker container rm -f'
+                                sh 'docker container ls -a --filter "name=user" -q | xargs -r docker container stop && docker container ls -a --filter "name=user" -q | xargs -r docker container rm -f'
+                                sh 'docker container ls -a --filter "name=postgres" -q | xargs -r docker container stop && docker container ls -a --filter "name=postgres" -q | xargs -r docker container rm -f'
+
 
                                 // Remover volumes com nome contendo 'user'
                                 sh 'docker volume ls --filter "name=user" -q | xargs -r docker volume rm -f'
