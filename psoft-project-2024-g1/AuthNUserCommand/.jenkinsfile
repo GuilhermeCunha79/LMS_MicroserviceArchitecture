@@ -12,8 +12,6 @@ pipeline {
         CONTAINER_ID = ""
     }
 
-
-
     stages {
 
         stage('Check Changes') {
@@ -341,7 +339,6 @@ pipeline {
                     }
                 }
 
-
                 stage('Docker Image Build') {
                     steps {
                         script {
@@ -368,7 +365,6 @@ pipeline {
                                        echo "Docker Compose build and up completed."
                                        sleep 50
 
-
                                        CONTAINER_IDS=$(docker ps -q --filter "name=users_postgres")
 
                                        # Loop through each container ID and execute SQL command
@@ -385,6 +381,18 @@ pipeline {
                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
                                        echo Docker Compose build and up completed.
                                        timeout /T 3
+
+                                       REM Wait for containers to start
+                                       timeout /T 50
+
+                                       REM Get container IDs
+                                       FOR /F "tokens=*" %%I IN ('docker ps -q --filter "name=users_postgres"') DO (
+                                           REM Execute SQL commands in each container
+                                           docker exec %%I psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
+                                           docker exec %%I psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
+                                           docker exec %%I psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
+                                           docker exec %%I psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
+                                       )
                                    '''
                                }
                            }
@@ -471,7 +479,7 @@ pipeline {
                                         fi
                                         for CONTAINER_ID in $CONTAINER_IDS; do
                                             echo "Running tests on container $CONTAINER_ID"
-                                            docker exec -it $CONTAINER_ID jmeter -n -t /app/src/test/resources/assets/MicroserviceTestUsers.jmx -l /results_$CONTAINER_ID.jtl
+                                            docker exec -i $CONTAINER_ID jmeter -n -t /app/src/test/resources/assets/MicroserviceTestUsers.jmx -l /results_$CONTAINER_ID.jtl
                                             TEST_EXIT_CODE=$?
                                             if [ $TEST_EXIT_CODE -eq 0 ]; then
                                                 echo "Tests completed successfully on container $CONTAINER_ID, failing pipeline."
@@ -487,7 +495,7 @@ pipeline {
                                             echo No container found with the name 'users_users'.
                                             EXIT /B 1
                                         )
-                                        docker exec -it %%i jmeter -n -t /app/src/test/resources/assets/MicroserviceTestUsers.jmx -l /results_%%i.jtl
+                                        docker exec -i %%i jmeter -n -t /app/src/test/resources/assets/MicroserviceTestUsers.jmx -l /results_%%i.jtl
                                         SET TEST_EXIT_CODE=%ERRORLEVEL%
                                         IF "%TEST_EXIT_CODE%"=="0" (
                                             echo Tests completed successfully on container %%i, failing pipeline.

@@ -58,7 +58,7 @@ public class User implements UserDetails {
 	// database primary key
 	@Id
 	@Getter
-	@Column(name="user_idr stack rm")
+	@Column(name="user_id")
 	private Long id;
 
 	// optimistic lock concurrency control
