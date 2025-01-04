@@ -376,6 +376,8 @@ pipeline {
                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
 
+                                            sleep 10
+
                                             # Copy the dump.sql into the container
                                             docker cp dump.sql $CONTAINER_IDD:/tmp/dump.sql
 
