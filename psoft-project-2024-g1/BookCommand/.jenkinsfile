@@ -329,21 +329,20 @@ pipeline {
                             if (isUnix()) {
                                 sh 'docker stack rm bookcommand'
                                 // Remover serviços que contêm 'book'
-                                sh 'docker service ls --filter "name=book" -q | xargs -r docker service rm'
-                                sh 'docker service ls --filter "name=postgres" -q | xargs -r docker service rm'
+                                sh 'docker service ls --filter "name=bookcommand" -q | xargs -r docker service rm'
+                                sh 'docker service ls --filter "name=postgres_in_lms_network_bookcommand" -q | xargs -r docker service rm'
 
                                 // Remover containers com nome contendo 'user'
-                                sh 'docker container ls -a --filter "name=book" -q | xargs -r docker container stop && docker container ls -a --filter "name=book" -q | xargs -r docker container rm -f'
-                                sh 'docker container ls -a --filter "name=postgres" -q | xargs -r docker container stop && docker container ls -a --filter "name=postgres" -q | xargs -r docker container rm -f'
+                                sh 'docker container ls -a --filter "name=bookcommand" -q | xargs -r docker container stop && docker container ls -a --filter "name=bookcommand" -q | xargs -r docker container rm -f'
+                                sh 'docker container ls -a --filter "name=postgres_in_lms_network_bookcommand" -q | xargs -r docker container stop && docker container ls -a --filter "name=postgres" -q | xargs -r docker container rm -f'
 
 
                                 // Remover volumes com nome contendo 'user'
-                                sh 'docker volume ls --filter "name=book" -q | xargs -r docker volume rm -f'
-                                sh 'docker volume ls --filter "name=postgres" -q | xargs -r docker volume rm -f'
-                                sh 'docker volume ls --filter "name=volume" -q | xargs -r docker volume rm -f'
+                                sh 'docker volume ls --filter "name=bookcommand" -q | xargs -r docker volume rm -f'
+                                sh 'docker volume ls --filter "name=postgres_in_lms_network_bookcommand" -q | xargs -r docker volume rm -f'
 
                                 // Remover imagens com nome contendo 'user'
-                                sh 'docker image ls --filter "reference=*book*" -q | xargs -r docker image rm -f'
+                                sh 'docker image ls --filter "reference=*bookcommand*" -q | xargs -r docker image rm -f'
 
                             } else {
                                 bat '''
@@ -386,14 +385,14 @@ pipeline {
                                echo "Building and running Docker Compose..."
                                if (isUnix()) {
                                    sh '''
-                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
+                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} bookcommand
                                         echo "Docker Compose build and up completed."
                                         sleep 60
                                    '''
                                } else {
                                    bat '''
                                        REM Now deploy Docker stack
-                                       docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
+                                       docker stack deploy -c ${DOCKER_COMPOSE_PATH} bookcommand
                                        echo Docker Compose build and up completed.
                                        timeout /T 50
 
@@ -456,9 +455,9 @@ pipeline {
                                    '''
                                } else {
                                    bat '''
-                                       FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
+                                       FOR /F "tokens=*" %%i IN ('docker ps -qf "name=bookcommand_bookcommanda') DO SET CONTAINER_ID=%%i
                                        IF "%CONTAINER_ID%"=="" (
-                                           echo No container found with the name 'users_users'.
+                                           echo No container found with the name 'bookcommand_bookcommanda'.
                                            EXIT /B 1
                                        )
                                        echo Running Smoke Tests on container %CONTAINER_ID%
@@ -476,14 +475,14 @@ pipeline {
                             dir(POM_LOC) {
                                 if (isUnix()) {
                                     sh '''
-                                        CONTAINER_IDS=$(docker ps -qf "name=users_users")
+                                        CONTAINER_IDS=$(docker ps -qf "name=bookcommand_bookcommanda")
                                         if [ -z "$CONTAINER_IDS" ]; then
-                                            echo "No container found with the name 'users_users'."
+                                            echo "No container found with the name 'bookcommand_bookcommanda'."
                                             exit 1
                                         fi
                                         for CONTAINER_ID in $CONTAINER_IDS; do
                                             echo "Running tests on container $CONTAINER_ID"
-                                            docker exec -i $CONTAINER_ID jmeter -n -t /app/src/test/resources/assets/MicroserviceTestUsers.jmx -l /results_$CONTAINER_ID.jtl
+                                            docker exec -i $CONTAINER_ID jmeter -n -t /app/src/test/resources/assets/MicroserviceTestBookCommand.jmx -l /results_$CONTAINER_ID.jtl
                                             TEST_EXIT_CODE=$?
                                             if [ $TEST_EXIT_CODE -eq 2 ]; then
                                                 echo "Tests completed successfully on container $CONTAINER_ID, failing pipeline."
@@ -494,12 +493,12 @@ pipeline {
                                     '''
                                 } else {
                                     bat '''
-                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=users_users"') DO SET CONTAINER_ID=%%i
+                                        FOR /F "tokens=*" %%i IN ('docker ps -qf "name=bookcommand_bookcommanda"') DO SET CONTAINER_ID=%%i
                                         IF "%CONTAINER_ID%"=="" (
-                                            echo No container found with the name 'users_users'.
+                                            echo No container found with the name 'bookcommand_bookcommanda'.
                                             EXIT /B 1
                                         )
-                                        docker exec -i %%i jmeter -n -t /app/src/test/resources/assets/MicroserviceTestUsers.jmx -l /results_%%i.jtl
+                                        docker exec -i %%i jmeter -n -t /app/src/test/resources/assets/MicroserviceTestBookCommand.jmx -l /results_%%i.jtl
                                         SET TEST_EXIT_CODE=%ERRORLEVEL%
                                         IF "%TEST_EXIT_CODE%"=="0" (
                                             echo Tests completed successfully on container %%i, failing pipeline.
@@ -545,7 +544,7 @@ pipeline {
             echo "Pipeline '${env.JOB_NAME}' finished with success. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
         }
         failure {
-            sh 'docker stack rm users'
+            sh 'docker stack rm bookcommand'
             echo "Pipeline '${env.JOB_NAME}' failed. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
         }
     }
