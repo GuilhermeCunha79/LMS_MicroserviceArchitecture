@@ -12,7 +12,7 @@ import pt.psoft.g1.psoftg1.usermanagement.api.UserView;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "spring.profiles.active=  test, bootstrap, relational,firebase")
+        properties = "spring.profiles.active=  bootstrap, relational,firebase")
 public class SmokeTeste {
 
     private RestTemplate restTemplate;
