@@ -10,7 +10,7 @@ pipeline {
         POM_LOC = "psoft-project-2024-g1/AuthNUserCommand"
         DOCKER_COMPOSE_PATH = "${ENVIRONMENT == 'dev' ? './docker-compose-dev.yml' : (ENVIRONMENT == 'prod' ? './docker-compose-prod.yml' : './docker-compose-test.yml')}"
         CONTAINER_ID = ""
-        DOCKER_CREDS = credentials('docker-credentials')
+       // DOCKER_CREDS = credentials('docker-credentials')
     }
 
     stages {
