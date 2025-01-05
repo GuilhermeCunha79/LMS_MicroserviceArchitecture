@@ -337,6 +337,7 @@ pipeline {
                                 // Remover volumes com nome contendo 'user'
                                 sh 'docker volume ls --filter "name=user" -q | xargs -r docker volume rm -f'
                                 sh 'docker volume ls --filter "name=postgres" -q | xargs -r docker volume rm -f'
+                                sh 'docker volume ls --filter "name=volume" -q | xargs -r docker volume rm -f'
 
                                 // Remover imagens com nome contendo 'user'
                                 sh 'docker image ls --filter "reference=*user*" -q | xargs -r docker image rm -f'

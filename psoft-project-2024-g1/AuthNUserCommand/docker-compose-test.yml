@@ -20,21 +20,18 @@ services:
     volumes:
       - ./src:/app/src
       - ./pom.xml:/app/pom.xml
-      - "uploaded_files_volume:/tmp"
+      - "uploaded_files_volume_users:/tmp"
     depends_on:
       - postgres_in_lms_network_user
 
   postgres_in_lms_network_user:
     image: postgres:latest
-    restart: on-failure
     environment:
+      POSTGRES_DB: test_users
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
       - "5447-5450:5432"
-    volumes:
-      - "postgres_volume:/var/lib/postgresql/data"
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - lms_network2
     healthcheck:
@@ -60,8 +57,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
 
 volumes:
-  uploaded_files_volume:
-  postgres_volume:
+  uploaded_files_volume_users:
 
 networks:
   lms_network2:
