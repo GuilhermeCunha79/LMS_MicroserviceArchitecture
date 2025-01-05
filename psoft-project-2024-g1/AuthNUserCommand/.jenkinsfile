@@ -520,12 +520,12 @@ pipeline {
                                 if (isUnix()) {
                                     sh '''
                                         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                                        docker push ${REPOSITORY}:${IMAGE_TAG}
+                                        docker push ${REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG}
                                     '''
                                 } else {
                                     bat '''
                                         echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin
-                                        docker push %REPOSITORY%:%IMAGE_TAG%
+                                        docker push %REPOSITORY%/%IMAGE_NAME%:%IMAGE_TAG%
                                     '''
                                 }
                             }
@@ -551,8 +551,8 @@ pipeline {
 
                                     After your action, the pipeline will continue.
                                 """,
-                                to: "12015065@isep.ipp.pt",
-                                from: 'isep@example.com',
+                                to: "1201506@isep.ipp.pt",
+                                from: 'jenkins@example.com',
                                 replyTo: 'jenkins@example.com'
                             )
 
