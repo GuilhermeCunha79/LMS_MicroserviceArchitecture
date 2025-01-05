@@ -320,7 +320,6 @@ pipeline {
 
                                 // Remover imagens com nome contendo 'user'
                                 sh 'docker image ls --filter "reference=*user*" -q | xargs -r docker image rm -f'
-                                sh 'docker image ls --filter "reference=*postgres*" -q | xargs -r docker image rm -f'
                             } else {
                                 bat '''
                                 REM Remover serviços com nome contendo 'user'
