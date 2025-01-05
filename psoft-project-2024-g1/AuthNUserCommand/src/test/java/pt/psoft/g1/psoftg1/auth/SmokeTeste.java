@@ -20,7 +20,7 @@ public class SmokeTeste {
   /*  @LocalServerPort
     private int port;*/
 
-    private final String url = "http://172.17.0.1:8094/api/public/login";
+    private final String url = "http://172.17.0.1:81/users/api/public/login";
 
     @BeforeEach
     void setUp() {
