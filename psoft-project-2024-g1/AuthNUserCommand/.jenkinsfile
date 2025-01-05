@@ -384,56 +384,22 @@ pipeline {
                                    sh '''
                                         docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
                                         echo "Docker Compose build and up completed."
-                                        sleep 50
-
-                                        CONTAINER_IDS=$(docker ps -q --filter "name=users_postgres")
-
-                                        # Loop through each container ID and execute SQL commands
-                                        for CONTAINER_IDD in $CONTAINER_IDS; do
-
-                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
-                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
-                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
-                                           docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
-
-                                            sleep 10
-
-                                            # Copy the dump.sql into the container
-                                            docker cp dump.sql $CONTAINER_IDD:/tmp/dump.sql
-
-                                            # Restore the dump.sql into each created database
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_1 -f /tmp/dump.sql
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_2 -f /tmp/dump.sql
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_3 -f /tmp/dump.sql
-                                            docker exec $CONTAINER_IDD psql -U postgres -v ON_ERROR_STOP=1 -d test_users_4 -f /tmp/dump.sql
-
-                                        done
+                                        sleep 5
                                    '''
                                } else {
                                    bat '''
                                        REM Now deploy Docker stack
                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
                                        echo Docker Compose build and up completed.
-                                       timeout /T 3
+                                       timeout /T 5
 
-                                       REM Wait for containers to start
-                                       timeout /T 50
-
-                                       REM Get container IDs
-                                       FOR /F "tokens=*" %%I IN ('docker ps -q --filter "name=users_postgres"') DO (
-                                           REM Execute SQL commands in each container
-                                           docker exec %%I psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_1;"
-                                           docker exec %%I psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_2;"
-                                           docker exec %%I psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_3;"
-                                           docker exec %%I psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE test_users_4;"
-                                       )
                                    '''
                                }
                            }
                        }
                    }
                }
-/*
+
                stage('Unit and IT Tests on Container') {
                    steps {
                        script {
@@ -543,7 +509,7 @@ pipeline {
                     }
                 }
 
-                stage('Push to Docker Hub') {
+            /*    stage('Push to Docker Hub') {
                     steps {
                         script {
                              // Extrai username e password da variável DOCKER_CREDS

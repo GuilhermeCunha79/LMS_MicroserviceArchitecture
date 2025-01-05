@@ -5,22 +5,24 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8093-8097:8080"
+      - "8094-8097:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: test, bootstrap, relational, firebase
-     # SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_in_lms_network_user:5432/test_users_{{.Task.Slot}}?currentSchema=public
-      # SPRING_DATASOURCE_USERNAME: postgres
-      # SPRING_DATASOURCE_PASSWORD: password
-      # SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      - SPRING_PROFILES_ACTIVE=bootstrap, relational, firebase
+      - spring.datasource.url=jdbc:postgresql://postgres_in_lms_network_user:${POSTGRES_PORT:-5432}/test_users_{{.Task.Slot}}
+      - spring.datasource.username=postgres
+      - spring.datasource.password=password
+      - file.upload-dir=/tmp/uploads-psoft-g1-instance1
     networks:
       - lms_network2
     deploy:
+      mode: replicated
       replicas: 2
     volumes:
       - ./src:/app/src
       - ./pom.xml:/app/pom.xml
-      - "uploaded_files_volume1:/tmp"
+      - "uploaded_files_volume:/tmp"
+    depends_on:
+      - postgres_in_lms_network_user
 
   postgres_in_lms_network_user:
     image: postgres:latest
@@ -29,9 +31,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
-      - "5447-5451:5432"
+      - "5447-5450:5432"
     volumes:
-      - "postgres_volume1:/var/lib/postgresql/data"
+      - "postgres_volume:/var/lib/postgresql/data"
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - lms_network2
     healthcheck:
@@ -40,6 +43,7 @@ services:
       retries: 5
       timeout: 5s
     deploy:
+      mode: replicated
       replicas: 2
 
   nginx_user:
@@ -56,8 +60,8 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
 
 volumes:
-  uploaded_files_volume1:
-  postgres_volume1:
+  uploaded_files_volume:
+  postgres_volume:
 
 networks:
   lms_network2:
