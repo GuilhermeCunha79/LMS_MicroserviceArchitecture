@@ -4,10 +4,16 @@ FROM openjdk:21-jdk-slim
 # Defina o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y maven
+# Atualizar o sistema e instalar dependências (maven e wget)
+RUN apt-get update && apt-get install -y maven wget
+
+# Instalar o JMeter
+RUN wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz && \
+    tar -xvzf apache-jmeter-5.5.tgz && \
+    mv apache-jmeter-5.5 /opt/jmeter
 
 # Copie o arquivo JAR do seu projeto para o contêiner
 COPY /target/bookCommand-0.0.1-SNAPSHOT.jar app.jar
 
 # Comando para executar o aplicativo
-CMD ["java", "-jar", "app.jar", "mvn"]
+CMD ["java", "-jar", "app.jar", "mvn", "/tests/MicroserviceTestBookCommand.jmx", "-l", "/tests/results.jtl"]

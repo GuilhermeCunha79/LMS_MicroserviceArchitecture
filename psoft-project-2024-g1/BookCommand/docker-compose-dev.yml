@@ -20,8 +20,6 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-    deploy:
-      replicas: 1
     ports:
       - "5469:5432"
     networks:

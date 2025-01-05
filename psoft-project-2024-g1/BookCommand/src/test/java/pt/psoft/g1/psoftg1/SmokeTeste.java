@@ -7,6 +7,7 @@ import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorView;
+import pt.psoft.g1.psoftg1.shared.model.Generator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,16 +24,16 @@ public class SmokeTeste {
 
 
     @Test
-    public void testCreateAuthorNumber_Unauthorized() {
-        String BASE_URL = "http://localhost:8087/api/";
-        String url = BASE_URL + "authors/";
+    public void testCreateAuthor() {
+        String url = "http://172.17.0.1:83/bookcommand/api/authors";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
+
         String requestBody = """
                 {
-                    "name": "Ldoldss Jose",
+                    "name": "LdoldSss Jose",
                     "bio": "dLodsl"
                 }""";
 
@@ -43,7 +44,7 @@ public class SmokeTeste {
             ResponseEntity<AuthorView> response = restTemplate.exchange(url, HttpMethod.POST, entity, AuthorView.class);
 
             // Assert
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         } catch (HttpClientErrorException.Unauthorized ex) {
             // Assert
             assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
