@@ -1,6 +1,6 @@
 services:
     users_prod:
-        image: lmsusers:latest
+        image: patxic0/images-repository-lms/lmsusers:latest
         build:
             context: .
             dockerfile: Dockerfile

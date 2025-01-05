@@ -369,9 +369,9 @@ pipeline {
                             dir(POM_LOC) {
                                 echo "Building and running Docker Compose..."
                                 if (isUnix()) {
-                                    sh 'docker build -t ${REPOSITORY}:${IMAGE_TAG} .'
+                                    sh 'docker build -t ${REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG} .'
                                 } else {
-                                    bat 'docker build -t ${REPOSITORY}:${IMAGE_TAG} .'
+                                    bat 'docker build -t ${REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG} .'
                                 }
                             }
                         }
@@ -387,7 +387,7 @@ pipeline {
                                    sh '''
                                         docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
                                         echo "Docker Compose build and up completed."
-                                        sleep 50
+                                        sleep 60
                                    '''
                                } else {
                                    bat '''
