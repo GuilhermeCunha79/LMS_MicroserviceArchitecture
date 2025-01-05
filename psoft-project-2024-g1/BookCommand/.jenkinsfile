@@ -461,7 +461,7 @@ pipeline {
                                            EXIT /B 1
                                        )
                                        echo Running Smoke Tests on container %CONTAINER_ID%
-                                       docker exec -w /app %CONTAINER_ID% mvn test -Dtest=pt.psoft.g1.psoftg1.auth.SmokeTeste
+                                       docker exec -w /app %CONTAINER_ID% mvn test -Dtest=pt.psoft.g1.psoftg1.SmokeTeste
                                    '''
                                }
                            }
