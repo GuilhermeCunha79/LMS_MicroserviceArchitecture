@@ -324,6 +324,7 @@ pipeline {
                     steps {
                         script {
                             if (isUnix()) {
+                                sh 'docker stack rm users'
                                 // Remover serviços que contêm 'user'
                                 sh 'docker service ls --filter "name=user" -q | xargs -r docker service rm'
                                 sh 'docker service ls --filter "name=postgres" -q | xargs -r docker service rm'
@@ -340,7 +341,6 @@ pipeline {
                                 // Remover imagens com nome contendo 'user'
                                 sh 'docker image ls --filter "reference=*user*" -q | xargs -r docker image rm -f'
 
-                                sh 'docker stack rm users'
                             } else {
                                 bat '''
                                 REM Remover serviços com nome contendo 'user'
