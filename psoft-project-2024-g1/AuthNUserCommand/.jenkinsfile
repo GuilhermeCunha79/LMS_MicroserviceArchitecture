@@ -13,6 +13,7 @@ pipeline {
         IMAGE_NAME = 'lmsusers'
         IMAGE_TAG = 'latest'
         REPOSITORY = 'patxic0/images-repository-lms'
+        GREEN_ENV = "${ENVIRONMENT}green-env"
     }
 
     stages {
@@ -544,6 +545,7 @@ pipeline {
             echo "Pipeline '${env.JOB_NAME}' finished with success. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
         }
         failure {
+            sh 'docker stack rm users'
             echo "Pipeline '${env.JOB_NAME}' failed. Branch: ${env.BRANCH_NAME}, Environment: ${ENVIRONMENT}"
         }
     }
