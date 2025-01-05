@@ -10,7 +10,9 @@ pipeline {
         POM_LOC = "psoft-project-2024-g1/AuthNUserCommand"
         DOCKER_COMPOSE_PATH = "${ENVIRONMENT == 'dev' ? './docker-compose-dev.yml' : (ENVIRONMENT == 'prod' ? './docker-compose-prod.yml' : './docker-compose-test.yml')}"
         CONTAINER_ID = ""
-       // DOCKER_CREDS = credentials('docker-credentials')
+        IMAGE_NAME = 'lmsusers'
+        IMAGE_TAG = 'latest'
+        REPOSITORY = 'patxic0/images-repository-lms'
     }
 
     stages {
@@ -367,9 +369,9 @@ pipeline {
                             dir(POM_LOC) {
                                 echo "Building and running Docker Compose..."
                                 if (isUnix()) {
-                                    sh 'docker build -t lmsusers .'
+                                    sh 'docker build -t ${REPOSITORY}:${IMAGE_TAG} .'
                                 } else {
-                                    bat 'docker build -t lmsusers .'
+                                    bat 'docker build -t ${REPOSITORY}:${IMAGE_TAG} .'
                                 }
                             }
                         }
@@ -510,15 +512,25 @@ pipeline {
                     }
                 }
 
-            /*    stage('Push to Docker Hub') {
+                stage('Docker Push') {
                     steps {
                         script {
-                             // Extrai username e password da variável DOCKER_CREDS
-                             sh 'echo $DOCKER_CREDS_PSWD | docker login -u $DOCKER_CREDS_USR --password-stdin'
-                             sh 'docker push my-docker-image:latest'
+                            withCredentials([usernamePassword(credentialsId: 'docker_credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                                if (isUnix()) {
+                                    sh '''
+                                        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                                        docker push ${REPOSITORY}:${IMAGE_TAG}
+                                    '''
+                                } else {
+                                    bat '''
+                                        echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin
+                                        docker push %REPOSITORY%:%IMAGE_TAG%
+                                    '''
+                                }
+                            }
                         }
                     }
-                }*/
+                }
             }
         }
     }
