@@ -385,14 +385,14 @@ pipeline {
                                    sh '''
                                         docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
                                         echo "Docker Compose build and up completed."
-                                        sleep 5
+                                        sleep 50
                                    '''
                                } else {
                                    bat '''
                                        REM Now deploy Docker stack
                                        docker stack deploy -c ${DOCKER_COMPOSE_PATH} users
                                        echo Docker Compose build and up completed.
-                                       timeout /T 5
+                                       timeout /T 50
 
                                    '''
                                }
@@ -400,7 +400,7 @@ pipeline {
                        }
                    }
                }
-/*
+
                stage('Unit and IT Tests on Container') {
                    steps {
                        script {
@@ -510,7 +510,7 @@ pipeline {
                     }
                 }
 
-                stage('Push to Docker Hub') {
+            /*    stage('Push to Docker Hub') {
                     steps {
                         script {
                              // Extrai username e password da variável DOCKER_CREDS
