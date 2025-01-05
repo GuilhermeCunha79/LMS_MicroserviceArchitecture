@@ -484,7 +484,7 @@ pipeline {
                                             echo "Running tests on container $CONTAINER_ID"
                                             docker exec -i $CONTAINER_ID jmeter -n -t /app/src/test/resources/assets/MicroserviceTestUsers.jmx -l /results_$CONTAINER_ID.jtl
                                             TEST_EXIT_CODE=$?
-                                            if [ $TEST_EXIT_CODE -eq 0 ]; then
+                                            if [ $TEST_EXIT_CODE -eq 2 ]; then
                                                 echo "Tests completed successfully on container $CONTAINER_ID, failing pipeline."
                                                 exit 1
                                             fi
