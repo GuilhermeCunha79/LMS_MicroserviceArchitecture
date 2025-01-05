@@ -25,7 +25,7 @@ public class SmokeTeste {
 
     @Test
     public void testCreateAuthor() {
-        String url = "http://172.17.0.1:83/bookcommand/api/authors";
+        String url = "http://172.17.0.1:83/bookcommanda/api/authors";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

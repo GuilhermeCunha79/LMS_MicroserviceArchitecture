@@ -17,6 +17,12 @@ services:
     deploy:
       mode: replicated
       replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        max_failure_ratio: 0.2
+        failure_action: rollback
+        order: stop-first
     volumes:
       - ./src:/app/src
       - ./pom.xml:/app/pom.xml
