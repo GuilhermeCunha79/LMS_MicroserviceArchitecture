@@ -542,16 +542,16 @@ pipeline {
                                 body: """
                                     Hello,
 
-                                    The deployment has been made to the test environment. Please access the link below to check the deployed service:
+                                    The deployment has been made to the test environment. Please access the link below to check the deployed service.
 
-                                    $SERVICE_URL
+                                    ${env.BUILD_URL}  // Link to the Jenkins build page
 
                                     To proceed with the deployment to production, click "Approve".
                                     To abort, click "Reject".
 
                                     After your action, the pipeline will continue.
                                 """,
-                                to: "1201506@isep.ipp.pt"
+                                to: "12015065@isep.ipp.pt",
                                 from: 'isep@example.com',
                                 replyTo: 'jenkins@example.com'
                             )
