@@ -8,7 +8,7 @@ services:
       - "8094-8097:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=bootstrap, relational, firebase
-      - spring.datasource.url=jdbc:postgresql://postgres_in_lms_network_user:${POSTGRES_PORT:-5432}/test_users_{{.Task.Slot}}
+      - spring.datasource.url=jdbc:postgresql://postgres_in_lms_network_user:${POSTGRES_PORT:-5432}/test_users
       - spring.datasource.username=postgres
       - spring.datasource.password=password
       - file.upload-dir=/tmp/uploads-psoft-g1-instance1
