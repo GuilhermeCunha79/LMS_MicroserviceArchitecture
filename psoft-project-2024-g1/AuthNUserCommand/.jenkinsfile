@@ -532,6 +532,47 @@ pipeline {
                         }
                     }
                 }
+
+                stage('Notify and Wait for Approval') {
+                    steps {
+                        script {
+                            // Send email to the user who triggered the pipeline
+                            emailext(
+                                subject: "Action Required: Approve or Reject Deployment",
+                                body: """
+                                    Hello,
+
+                                    The deployment has been made to the test environment. Please access the link below to check the deployed service:
+
+                                    $SERVICE_URL
+
+                                    To proceed with the deployment to production, click "Approve".
+                                    To abort, click "Reject".
+
+                                    After your action, the pipeline will continue.
+                                """,
+                                to: "1201506@isep.ipp.pt"
+                                from: 'isep@example.com',
+                                replyTo: 'jenkins@example.com'
+                            )
+
+                            // Pause the pipeline, waiting for user input
+                            def userInput = input(
+                                message: 'Approve or reject the deployment to production?',
+                                parameters: [
+                                    [$class: 'ChoiceParameterDefinition', choices: ['Approve', 'Reject'], description: 'Choose to proceed', name: 'DeployDecision']
+                                ]
+                            )
+
+                            // If the user chooses "Reject", abort the deployment
+                            if (userInput == 'Reject') {
+                                error "Deployment to production rejected."
+                            }
+
+                            echo "Deployment approved! Proceeding with production deployment..."
+                        }
+                    }
+                }
             }
         }
     }

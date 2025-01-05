@@ -23,6 +23,8 @@ services:
                 max_failure_ratio: 0.2
                 failure_action: rollback
                 order: stop-first
+                placement:
+                    constraints: [ node.role == worker ]
         volumes:
             - ./src:/app/src
             - ./pom.xml:/app/pom.xml
@@ -47,6 +49,8 @@ services:
             timeout: 5s
         deploy:
             replicas: 3
+            placement:
+                constraints: [ node.role == worker ]
 
     nginx_user_prod:
         image: nginx:latest
