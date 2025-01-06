@@ -1,3 +1,4 @@
+
 services:
     bookquery:
         image: bookquery:latest

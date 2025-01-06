@@ -14,6 +14,7 @@ pipeline {
         IMAGE_TAG = 'latest'
         REPOSITORY = 'patxic0/images-repository-lmsusers'
         GREEN_ENV = "${ENVIRONMENT}green-env"
+        PACT_BROKER_URL = 'http://localhost:9292'
     }
 
     stages {
@@ -437,6 +438,39 @@ pipeline {
                        }
                    }
                }
+
+                stage('Publish Pact Contracts') {
+                    steps {
+                        script {
+                            sh '''
+                                 CONTAINER_ID=$(docker ps -qf "name=users")
+                                 if [ -z "$CONTAINER_ID" ]; then
+                                     echo "No container found with the name 'users'."
+                                     exit 1
+                                # fi
+                                # docker wait $CONTAINER_ID
+                                #docker exec -T $CONTAINER_ID mvn pact:publish -Dpact.broker.url=$PACT_BROKER_URL
+                            '''
+                        }
+                    }
+                }
+
+                stage('Verify Provider Pact') {
+                    steps {
+                        script {
+                            sh '''
+                                CONTAINER_ID=$(docker ps -qf "name=users")
+                                if [ -z "$CONTAINER_ID" ]; then
+                                     echo "No container found with the name 'users'."
+                                     exit 1
+                                 fi
+                                # docker wait $CONTAINER_ID
+                                #docker exec -T $CONTAINER_ID mvn pact:verify -Dpact.broker.url=$PACT_BROKER_URL
+                            '''
+                        }
+                    }
+                }
+
 
                stage('Smoke Tests') {
                    steps {

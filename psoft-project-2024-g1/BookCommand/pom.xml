@@ -58,7 +58,6 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>au.com.dius.pact.consumer</groupId>
             <artifactId>junit5</artifactId>
@@ -154,6 +153,8 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.3.0</version>
         </dependency>
+
+
 
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -441,6 +442,23 @@
                     <timestampedReports>false</timestampedReports>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>au.com.dius</groupId>
+                <artifactId>pact-jvm-provider-maven_2.12</artifactId>
+                <version>3.6.15</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>publish</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <pactBrokerUrl>http://localhost:9292</pactBrokerUrl>
+                </configuration>
+            </plugin>
+
 
             <plugin>
                 <groupId>org.jacoco</groupId>
