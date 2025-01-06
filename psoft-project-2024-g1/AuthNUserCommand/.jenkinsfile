@@ -443,10 +443,10 @@ pipeline {
                     steps {
                         script {
                             sh '''
-                                 CONTAINER_ID=$(docker ps -qf "name=users")
-                                 if [ -z "$CONTAINER_ID" ]; then
-                                     echo "No container found with the name 'users'."
-                                     exit 1
+                                 #CONTAINER_ID=$(docker ps -qf "name=users")
+                                 #if [ -z "$CONTAINER_ID" ]; then
+                                     #echo "No container found with the name 'users'."
+                                     #exit 1
                                 # fi
                                 # docker wait $CONTAINER_ID
                                 #docker exec -T $CONTAINER_ID mvn pact:publish -Dpact.broker.url=$PACT_BROKER_URL
@@ -459,11 +459,11 @@ pipeline {
                     steps {
                         script {
                             sh '''
-                                CONTAINER_ID=$(docker ps -qf "name=users")
-                                if [ -z "$CONTAINER_ID" ]; then
-                                     echo "No container found with the name 'users'."
-                                     exit 1
-                                 fi
+                                #CONTAINER_ID=$(docker ps -qf "name=users")
+                                #if [ -z "$CONTAINER_ID" ]; then
+                                     #echo "No container found with the name 'users'."
+                                     #exit 1
+                                 #fi
                                 # docker wait $CONTAINER_ID
                                 #docker exec -T $CONTAINER_ID mvn pact:verify -Dpact.broker.url=$PACT_BROKER_URL
                             '''
@@ -605,6 +605,28 @@ pipeline {
                             }
 
                             echo "Deployment approved! Proceeding with production deployment..."
+                        }
+                    }
+                }
+
+                stage('Docker Stack Deploy To Production') {
+                    steps {
+                        script {
+                            dir(POM_LOC) {
+                                echo "Building and running Docker Compose..."
+                                if (isUnix()) {
+                                    sh '''
+                                        docker stack deploy -c ./docker-compose-prod.yml usrs_prod
+                                        echo "Docker Compose build and up completed."
+                                    '''
+                                } else {
+                                    bat '''
+                                        REM Now deploy Docker stack
+                                        docker stack deploy -c ./docker-compose-prod.yml usrs_prod
+                                        echo Docker Compose build and up completed.
+                                    '''
+                                }
+                            }
                         }
                     }
                 }
