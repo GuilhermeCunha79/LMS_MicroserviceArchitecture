@@ -73,10 +73,6 @@ public class SecurityConfig {
         // Set session management to stateless
         http = http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        // Set unauthorized requests exception handler
-        http = http.exceptionHandling(
-                exceptions -> exceptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
 
         // Set permissions on endpoints
         http.authorizeHttpRequests()
@@ -85,44 +81,36 @@ public class SecurityConfig {
                 .requestMatchers(format("%s/**", swaggerPath)).permitAll()
                 // Our public endpoints
                 .requestMatchers("/api/public/**").permitAll() // public assets & end-points
-                .requestMatchers(HttpMethod.POST, "/api/readers").permitAll() // unregistered should be able to register
                 // Our private endpoints
                 // authors
-                .requestMatchers(HttpMethod.POST, "/api/authors").hasRole(Role.LIBRARIAN)
-                .requestMatchers(HttpMethod.PATCH, "/api/authors/{authorNumber}").hasRole(Role.LIBRARIAN)
-                .requestMatchers(HttpMethod.GET, "/api/authors/{authorNumber}").hasAnyRole(Role.READER, Role.LIBRARIAN)
-                .requestMatchers(HttpMethod.GET, "/api/authors").hasAnyRole(Role.READER, Role.LIBRARIAN)
-                .requestMatchers(HttpMethod.GET, "/api/authors/{authorNumber}/books").hasRole(Role.READER)
+                .requestMatchers(HttpMethod.POST, "/api/authors").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/authors/{authorNumber}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/authors/{authorNumber}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/authors").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/authors/{authorNumber}/books").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/authors/{authorNumber}/photo")
-                .hasAnyRole(Role.READER, Role.LIBRARIAN)
-                .requestMatchers(HttpMethod.DELETE, "/api/authors/{authorNumber}/photo").hasAnyRole(Role.LIBRARIAN)
-                .requestMatchers(HttpMethod.GET, "/api/authors/{authorNumber}/coauthors").hasRole(Role.READER)
+                .permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/authors/{authorNumber}/photo").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/authors/{authorNumber}/coauthors").permitAll()
                 .requestMatchers("/actuator/prometheus").permitAll()  // Permitir acesso público ao Prometheus
                 .requestMatchers("/actuator/**").permitAll()
                 // end authors
                 // books
-                .requestMatchers(HttpMethod.PUT, "/api/books/{isbn}").hasAnyRole(Role.LIBRARIAN, Role.READER, Role.ADMIN)
-                .requestMatchers(HttpMethod.PATCH, "/api/books/{isbn}").hasRole(Role.LIBRARIAN)
+                .requestMatchers(HttpMethod.PUT, "/api/books/{isbn}").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/books/{isbn}").permitAll()
                 //.requestMatchers(HttpMethod.GET, "/api/books/{isbn}/avgDuration").hasRole(Role.LIBRARIAN)
-                .requestMatchers(HttpMethod.GET, "/api/books").hasAnyRole(Role.LIBRARIAN, Role.READER)
-                .requestMatchers(HttpMethod.GET, "/api/books/{isbn}").hasAnyRole(Role.READER, Role.LIBRARIAN)
+                .requestMatchers(HttpMethod.GET, "/api/books").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/books/{isbn}").permitAll()
                 //.requestMatchers(HttpMethod.GET, "/api/books/top5").hasRole(Role.LIBRARIAN)
-                .requestMatchers(HttpMethod.GET, "/api/books/{isbn}/photo").hasAnyRole(Role.LIBRARIAN, Role.READER)
-                .requestMatchers(HttpMethod.DELETE, "/api/books/{isbn}/photo").hasRole(Role.LIBRARIAN)
+                .requestMatchers(HttpMethod.GET, "/api/books/{isbn}/photo").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/books/{isbn}/photo").permitAll()
                 //.requestMatchers(HttpMethod.GET, "/api/books/suggestions").hasRole(Role.READER)
-                .requestMatchers(HttpMethod.POST, "/api/books/search").hasAnyRole(Role.LIBRARIAN, Role.READER)
+                .requestMatchers(HttpMethod.POST, "/api/books/search").permitAll()
                 // endBooks
-//                // genres
-//                .requestMatchers(HttpMethod.GET, "/api/genres/top5").hasRole(Role.LIBRARIAN)
-//                .requestMatchers(HttpMethod.GET, "/api/genres/avgLendings").hasRole(Role.LIBRARIAN)
-//                .requestMatchers(HttpMethod.POST, "/api/genres/avgLendingsPerGenre").hasRole(Role.LIBRARIAN)
-//                .requestMatchers(HttpMethod.GET, "/api/genres/lendingsPerMonthLastTwelveMonths").hasRole(Role.LIBRARIAN)
-//                .requestMatchers(HttpMethod.GET, "/api/genres/lendingsAverageDurationPerMonth").hasRole(Role.LIBRARIAN)
-//                // end genres
+
                 // Admin has access to all endpoints
-                .requestMatchers("/**").hasRole(Role.ADMIN).anyRequest().authenticated()
+                .requestMatchers("/**").permitAll();
                 // Set up oauth2 resource server
-                .and().httpBasic(Customizer.withDefaults()).oauth2ResourceServer().jwt();
 
         return http.build();
     }

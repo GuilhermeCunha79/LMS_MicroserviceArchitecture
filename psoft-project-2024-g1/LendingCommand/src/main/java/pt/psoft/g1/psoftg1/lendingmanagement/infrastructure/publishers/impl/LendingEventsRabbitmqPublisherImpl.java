@@ -30,8 +30,18 @@ public class LendingEventsRabbitmqPublisherImpl implements LendingEventsPublishe
     }
 
     @Override
-    public void sendLendingReturned(Lending lending, Long currentVersion) {
+    public void sendLendingFailed(String lending) {
+        sendLendingEventString(lending, LendingEvents.LENDING_FAILED);
+    }
+
+    @Override
+    public void sendLendingReturned(Lending lending) {
         sendLendingEvent(lending, LendingEvents.LENDING_RETURNED);
+    }
+
+    @Override
+    public void sendLendingReturnedFinal(Lending lending) {
+        sendLendingEvent(lending, LendingEvents.LENDING_RETURNED_FINAL);
     }
 
     @Override
@@ -39,14 +49,30 @@ public class LendingEventsRabbitmqPublisherImpl implements LendingEventsPublishe
         sendLendingEvent(lending, LendingEvents.LENDING_CREATED_READER_FINAL);
     }
 
-    public void sendLendingEvent(Lending book, String bookEventType) {
+    public void sendLendingEvent(Lending lending, String bookEventType) {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
 
-            LendingViewAMQP lendingViewAMQP = lendingViewAMQPMapper.toLendingViewAMQP(book);
+            LendingViewAMQP lendingViewAMQP = lendingViewAMQPMapper.toLendingViewAMQP(lending);
 
             String jsonString = objectMapper.writeValueAsString(lendingViewAMQP);
+
+            this.template.convertAndSend(direct.getName(), bookEventType, jsonString);
+
+            System.out.println(" [x] Sent '" + jsonString + "'");
+        }
+        catch( Exception ex ) {
+            System.out.println(" [x] Exception sending Lending event: '" + ex.getMessage() + "'");
+        }
+    }
+
+    public void sendLendingEventString(String lending, String bookEventType) {
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            String jsonString = objectMapper.writeValueAsString(lending);
 
             this.template.convertAndSend(direct.getName(), bookEventType, jsonString);
 

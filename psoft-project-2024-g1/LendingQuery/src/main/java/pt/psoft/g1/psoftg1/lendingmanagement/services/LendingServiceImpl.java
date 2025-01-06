@@ -6,7 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
-import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQP;
+import pt.psoft.g1.psoftg1.shared.api.LendingViewAMQP;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingFactory;
@@ -83,6 +83,29 @@ public class LendingServiceImpl implements LendingService {
                     }
                     return lendingRepository.save(newLending);
                 });
+    }
+
+    @Override
+    public Lending updateLendingRecommendation(LendingViewAMQP resource) {
+        Optional<Lending> lending= findByLendingNumber(resource.getLendingNumber());
+
+        if (lending.isPresent()) {
+            lending.get().setRecommendationNumber(resource.getRecommendationNumber());
+            return lendingRepository.save(lending.get());
+        }
+
+        return null;
+    }
+
+    @Override
+    public Lending updateLendingRecommendationFailed(LendingViewAMQP resource) {
+        Lending lending = findByLendingNumber(resource.getLendingNumber())
+                .orElseThrow(() -> new NotFoundException("Lending not found: " + resource.getLendingNumber()));
+
+        lending.setReturnedDate(null);
+        lending.setCommentary(null);
+
+        return lendingRepository.save(lending);
     }
 
     @Override

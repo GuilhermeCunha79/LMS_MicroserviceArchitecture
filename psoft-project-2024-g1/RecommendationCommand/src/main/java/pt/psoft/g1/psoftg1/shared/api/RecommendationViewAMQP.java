@@ -25,4 +25,7 @@ public class RecommendationViewAMQP {
 
     @Setter
     private String commentary;
+
+    @Setter
+    private int status;
 }

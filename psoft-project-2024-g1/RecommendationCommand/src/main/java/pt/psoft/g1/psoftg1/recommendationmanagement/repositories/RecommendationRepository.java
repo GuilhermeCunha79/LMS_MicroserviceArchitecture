@@ -14,7 +14,7 @@ public interface RecommendationRepository {
     Recommendation save(Recommendation recommendation);
 
     void delete(Recommendation author);
-
+    Optional<Recommendation> findByRecommendationNumber(String lendingNumber);
     Optional<Recommendation> findByLendingNumber(String lendingNumber);
     List<Recommendation> findAll();
 }

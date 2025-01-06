@@ -1,4 +1,3 @@
-
 services:
     bookquery:
         image: bookquery:latest
@@ -8,55 +7,35 @@ services:
         ports:
             - "8085:8080"
         environment:
-            SPRING_PROFILES_ACTIVE: bootstrap, mongo, IDService1
-            SPRING_DATA_MONGODB_URI: mongodb://admin:password@mongo_book_query:27017/bookquery
+            SPRING_PROFILES_ACTIVE: bootstrap, relational, IDService1
         networks:
             - lms_network2
         volumes:
             - "uploaded_files_volume_bookquery:/tmp"
         deploy:
             mode: replicated
-            replicas: 1
-        depends_on:
-            - mongo_book_query
+            replicas: 2
 
-
-    mongo_book_query:
+    mongo_in_lms_network:
         image: mongo:latest
         ports:
             - "27017-27023:27017" # Porta do MongoDB exposta para o host
-        restart: always
-        environment:
-            MONGO_INITDB_ROOT_USERNAME: admin
-            MONGO_INITDB_ROOT_PASSWORD: password
+        volumes:
+            - mongo_data:/data/db # Persistência de dados
         networks:
             - lms_network2
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=admin
+            - MONGO_INITDB_ROOT_PASSWORD=password
         deploy:
             mode: replicated
             replicas: 1
-        volumes:
-            - mongo_data:/data/db # Persistência de dados
         healthcheck:
-            test: [ "CMD", "mongo", "--eval" ]
+            test: ["CMD", "mongo", "--eval"]
             interval: 10s
             retries: 5
             timeout: 5s
 
-    mongo-express:
-        image: mongo-express:latest
-        restart: always
-        ports:
-            - 8081:8081
-        environment:
-            ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-            ME_CONFIG_MONGODB_ADMINPASSWORD: password
-            ME_CONFIG_MONGODB_URL: mongodb://admin:password@localhost:27017/bookquery
-            ME_CONFIG_BASICAUTH: "false"
-        networks:
-            - lms_network2
-        deploy:
-            mode: replicated
-            replicas: 1
 
 networks:
     lms_network2:

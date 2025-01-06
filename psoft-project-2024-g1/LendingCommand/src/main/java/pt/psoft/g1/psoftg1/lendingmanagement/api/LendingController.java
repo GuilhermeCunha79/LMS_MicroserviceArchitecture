@@ -56,14 +56,10 @@ public class LendingController {
                 @Parameter(description = "The sequential component of the Lending to find")
                 final Integer seq,
             @Valid @RequestBody final SetLendingReturnedRequest resource) {
-        final String ifMatchValue = request.getHeader(ConcurrencyService.IF_MATCH);
-        if (ifMatchValue == null || ifMatchValue.isEmpty() || ifMatchValue.equals("null")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "You must issue a conditional PATCH using 'if-match'");
-        }
+
         String ln = year + "/" + seq;
 
-        final var lending = lendingService.setReturned(ln, resource, concurrencyService.getVersionFromIfMatchHeader(ifMatchValue));
+        final var lending = lendingService.setReturned(ln, resource);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/hal+json"))

@@ -19,6 +19,11 @@
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/GuilhermeCunha79/shared</url>
+        </repository>
     </repositories>
 
     <properties>
@@ -385,7 +390,7 @@
                         <excludedClass>pt.psoft.g1.psoftg1.SmokeTeste</excludedClass>
                     </excludedClasses>
                     <targetClasses>
-                        <param>pt.psoft.g1.psoftg1.model.*</param>
+                        <param>pt.psoft.g1.psoftg1.recommendationmanagement.model.*</param>
                     </targetClasses>
                     <!-- Pacote de testes -->
                     <targetTests>

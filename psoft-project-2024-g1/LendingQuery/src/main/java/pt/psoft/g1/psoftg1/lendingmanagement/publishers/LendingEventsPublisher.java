@@ -6,7 +6,7 @@ public interface LendingEventsPublisher {
 
     void sendLendingCreatedToBook(Lending lending);
 
-    void sendLendingReturned(Lending lending, Long currentVersion);
+    void sendLendingReturned(Lending lending);
 
     void sendLendingCreatedToReader(Lending lending);
 

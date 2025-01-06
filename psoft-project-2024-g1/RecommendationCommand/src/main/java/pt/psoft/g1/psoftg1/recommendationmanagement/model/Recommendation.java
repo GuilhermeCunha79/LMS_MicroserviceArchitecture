@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import pt.psoft.g1.psoftg1.shared.model.Commentary;
 import pt.psoft.g1.psoftg1.shared.model.Generator;
+import pt.psoft.g1.psoftg1.shared.model.RecommendationStatus;
 
 @Getter
 @Entity
@@ -25,10 +26,14 @@ public class Recommendation {
     private String readerDetailsId;
 
     @Setter
-    private String isbn; //verificar se é necessario
+    private String isbn;
 
     @Setter
     private Commentary commentary;
+
+    @Getter
+    @Setter
+    private int status;
 
     public Recommendation(String lendingNumber, String readerNumber, String isbn, Commentary commentary) {
         this.recommendationNumber = String.valueOf(Generator.generateLongID());
@@ -36,6 +41,7 @@ public class Recommendation {
         this.readerDetailsId = readerNumber;
         this.isbn = isbn;
         this.commentary = commentary;
+        this.status = RecommendationStatus.RECOMMENDATION_WAITING_VALIDATION;
     }
 
     protected Recommendation() {

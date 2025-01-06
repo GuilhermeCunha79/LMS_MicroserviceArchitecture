@@ -10,7 +10,9 @@ public interface LendingService {
     Lending create(CreateLendingRequest resource); //No ID passed, as it is auto generated
     Lending create(LendingViewAMQP resource);
     Lending createReader(LendingViewAMQP resource);
-    Lending setReturned(String id, SetLendingReturnedRequest resource, long desiredVersion);
+    Lending updateLendingRecommendation(LendingViewAMQP resource);
+    Lending updateLendingRecommendationFailed(LendingViewAMQP resource);
+    Lending setReturned(String id, SetLendingReturnedRequest resource);
     Lending setReturned(LendingViewAMQP resource);
     Optional<Lending> findByLendingNumber(String lendingNumber);
 
