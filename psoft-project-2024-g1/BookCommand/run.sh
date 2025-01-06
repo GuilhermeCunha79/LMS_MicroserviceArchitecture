@@ -12,7 +12,7 @@ else
 fi
 
 # Base de dados e configurações
-db_container_name="books_db"
+db_container_name="bookcommand_postgres_in_lms_network"
 db_base_name="books_"
 db_base_port=5432
 
@@ -56,8 +56,8 @@ fi
 echo "Configured $1 instances of databases (books_1 to books_$1) in container ${db_container_name}."
 
 
-if docker service ls --filter "name=lmsbooks" --format "{{.Name}}" | grep -q "^lmsbooks$"; then
-  docker service scale lmsbooks=$1
+if docker service ls --filter "name=lmsbooks" --format "{{.Name}}" | grep -q "^lmsbooks"; then
+  docker service scale bookcommand_lmsbooks=$1
 else
   docker service create -d \
     --name lmsbooks \
@@ -72,5 +72,5 @@ else
     --network lms_network2 \
     lmsbooks:latest
 
-  docker service scale lmsbooks=$1
+  docker service scale bookcommand_lmsbooks=$1
 fi

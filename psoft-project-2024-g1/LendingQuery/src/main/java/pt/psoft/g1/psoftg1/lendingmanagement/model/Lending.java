@@ -47,7 +47,6 @@ public class Lending {
      * Composed of {@code int year}, {@code int sequencial} and {@code String lendingNumber}. The string is
      * constructed based on the values of {@code year} and {@code sequencial}.
      */
-    @Setter
     private LendingNumber lendingNumber;
 
 
@@ -56,7 +55,6 @@ public class Lending {
      **/
     @NotNull
     @Getter
-    @Setter
     private String readerDetailsId;
 
     /**
@@ -64,7 +62,6 @@ public class Lending {
      */
     @NotNull
     @Getter
-    @Setter
     private String isbn;
 
     /**
@@ -74,7 +71,6 @@ public class Lending {
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.DATE)
     @Getter
-    @Setter
     private LocalDate startDate;
 
     /**
@@ -84,7 +80,6 @@ public class Lending {
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
     @Getter
-    @Setter
     private LocalDate limitDate;
 
     /**
@@ -102,6 +97,7 @@ public class Lending {
      * Version of the object, to handle concurrency of accesses.
      */
 
+
     /**
      * Optional commentary written by a reader when the book is returned.
      * This field is initialized as null as the lending can never begin with the book already returned
@@ -112,17 +108,12 @@ public class Lending {
     private String commentary = null;
 
     @Transient
-    @Setter
-    @Getter
     private Integer daysUntilReturn;
 
     @Transient
-    @Setter
-    @Getter
     private Integer daysOverdue;
 
     @Getter
-    @Setter
     private int fineValuePerDayInCents;
 
     /**
@@ -132,8 +123,11 @@ public class Lending {
      */
     @Getter
     @Setter
-    private int status = LendingStatus.LENDING_WAITING_VALIDATION;
+    private Integer status = LendingStatus.LENDING_WAITING_VALIDATION;
 
+    @Getter
+    @Setter
+    private String recommendationNumber="NOT RETURNED YET";
 
     /**
      * Constructs a new {@code Lending} object to be persisted in the database.
@@ -161,6 +155,7 @@ public class Lending {
         setDaysUntilReturn();
         setDaysOverdue();
         this.status = LendingStatus.LENDING_WAITING_VALIDATION;
+        this.recommendationNumber = "NOT RETURNED YET";
     }
 
     public Lending(String lendingNumber, String isbn, String readerDetails, int lendingDuration, int fineValuePerDayInCents, int status) {
@@ -179,6 +174,26 @@ public class Lending {
         setDaysUntilReturn();
         setDaysOverdue();
         this.status = status;
+    }
+
+    public Lending(String lendingNumber, String isbn, String readerDetails, int lendingDuration, int fineValuePerDayInCents,
+                   int status, String recommendationNumber) {
+        this.pk = String.valueOf(Generator.generateLongID());
+        try {
+            this.isbn = Objects.requireNonNull(isbn);
+            this.readerDetailsId = Objects.requireNonNull(readerDetails);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("Null objects passed to lending");
+        }
+        this.lendingNumber = new LendingNumber(lendingNumber);
+        this.startDate = LocalDate.now();
+        this.limitDate = LocalDate.now().plusDays(lendingDuration);
+        this.returnedDate = null;
+        this.fineValuePerDayInCents = fineValuePerDayInCents;
+        setDaysUntilReturn();
+        setDaysOverdue();
+        this.status = status;
+        this.recommendationNumber = recommendationNumber;
     }
 
     public void setValidated(int status) {
@@ -203,6 +218,10 @@ public class Lending {
             this.commentary = commentary;
 
         this.returnedDate = LocalDate.now();
+    }
+
+    public Optional<Integer> getStatus() {
+        return Optional.ofNullable(status);
     }
 
     public void setReturned(final String commentary) {
@@ -309,7 +328,6 @@ public class Lending {
         lending.limitDate = startDate.plusDays(lendingDuration);
         lending.fineValuePerDayInCents = fineValuePerDayInCents;
         lending.returnedDate = returnedDate;
-        lending.status=2;
         return lending;
 
     }

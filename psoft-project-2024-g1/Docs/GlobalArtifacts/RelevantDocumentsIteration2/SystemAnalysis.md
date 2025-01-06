@@ -135,7 +135,7 @@ The following bounded contexts have been identified:
 * The **Recommendation context** focuses on recommending books based on reader behavior and preferences. It is consumed
   by the Books and Reader contexts but does not consume any other context.
 
-![BoundedContext.svg](Images/BoundedContext.svg)
+![BoundedContext.svg](./Diagrams/BoundedContext.svg)
 
 ### Rationale for Microservices Separation
 
@@ -404,7 +404,7 @@ contexts have been migrated.
 With this the process involved five gradual iterations that led the decomposition of the monolith into five distinct
 services aligned with the bounded context defined in the steps above.
 
-![Strangler Fig process.svg](Images/Strangler Fig process.svg)
+![Strangler Fig process.svg](./Diagrams/Strangler Fig process.svg)
 
 ### Step 7
 

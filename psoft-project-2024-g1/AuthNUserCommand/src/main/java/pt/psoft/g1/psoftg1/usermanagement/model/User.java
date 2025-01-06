@@ -49,7 +49,7 @@ import lombok.Setter;
  *
  */
 @Entity
-@Table(name = "T_USER")
+@Table(name = "t_user")
 @EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails {
 
@@ -58,7 +58,7 @@ public class User implements UserDetails {
 	// database primary key
 	@Id
 	@Getter
-	@Column(name="USER_ID")
+	@Column(name="user_id")
 	private Long id;
 
 	// optimistic lock concurrency control
@@ -112,7 +112,13 @@ public class User implements UserDetails {
 	@Embedded
 	private Name name;
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(
+			name = "user_roles",
+			joinColumns = @JoinColumn(name = "user_id")
+	)
+	@Enumerated(EnumType.STRING) // Ou EnumType.ORDINAL para salvar o índice do enum.
+	@Column(name = "role")
 	@Getter
 	@Setter
 	private Set<Role> authorities = new HashSet<>();

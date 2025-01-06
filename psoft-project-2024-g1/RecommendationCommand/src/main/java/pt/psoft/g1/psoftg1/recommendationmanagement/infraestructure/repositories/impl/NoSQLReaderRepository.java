@@ -40,6 +40,16 @@ public class NoSQLReaderRepository implements RecommendationRepository {
     }
 
     @Override
+    public Optional<Recommendation> findByRecommendationNumber(String lendingNumber) {
+        // Realiza a consulta no MongoDB
+        Recommendation recommendation = mongoTemplate.findOne(
+                Query.query(Criteria.where("recommendationNumber").is(lendingNumber)),
+                Recommendation.class
+        );
+        return Optional.ofNullable(recommendation);
+    }
+
+    @Override
     public List<Recommendation> findAll() {
         return mongoTemplate.findAll(Recommendation.class);
     }

@@ -2,7 +2,9 @@
 
 ## 1. Introduction
 
-This document presents the system architecture design, offering a comprehensive overview of the project's structure, key components, and interaction patterns. The architecture is crafted to ensure scalability, maintainability, and modularity, aligning with current project requirements and anticipated future needs.
+This document presents the system architecture design, offering a comprehensive overview of the project's structure, key components, 
+and interaction patterns. The architecture is crafted to ensure scalability, maintainability, and modularity, a
+ligning with current project requirements and anticipated future needs.
 
 ## 2. System Overview
 

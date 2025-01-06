@@ -24,7 +24,8 @@ public class LendingViewAMQP {
 
     private String commentary;
 
-    @NotNull
     private Long version;
+
+    private String recommendationNumber;
 
 }

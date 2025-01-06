@@ -1,10 +1,6 @@
 package pt.psoft.g1.psoftg1.shared.api;
 
-import org.mapstruct.Named;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 public abstract class MapperInterface {
 
@@ -12,6 +8,8 @@ public abstract class MapperInterface {
         if (value == null)
             return null;
         return value.toString();}
+
+    public <T> T mapOpt(final Optional<T> i) {return i.orElse(null);}
 
     public <T extends Number> Number map(final T value) {
         if(value instanceof Double)
@@ -22,5 +20,4 @@ public abstract class MapperInterface {
             return value.longValue();
         else throw new NumberFormatException("Invalid number format");
     }
-
 }

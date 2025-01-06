@@ -4,7 +4,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
+import pt.psoft.g1.psoftg1.shared.api.LendingViewAMQP;
 import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
+
+import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public abstract class LendingViewAMQPMapper extends MapperInterface {
@@ -18,11 +21,12 @@ public abstract class LendingViewAMQPMapper extends MapperInterface {
     public abstract LendingViewAMQP toLendingViewAMQP(Lending lending);
 
     @Named("mapToInt")
-    int mapToInt(Number value) {
-        if (value == null) {
-            throw new IllegalArgumentException("Status cannot be null");
+    int mapToInt(Optional<Integer> value) {
+        if (value.isEmpty()) {
+            throw new IllegalArgumentException("Status cannot be null or empty");
         }
-        return value.intValue();
+        return value.get();
     }
+
 
 }

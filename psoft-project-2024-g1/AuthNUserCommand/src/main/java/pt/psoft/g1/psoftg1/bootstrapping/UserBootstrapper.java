@@ -23,7 +23,7 @@ public class UserBootstrapper implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final JdbcTemplate jdbcTemplate;
-    private List<String> queriesToExecute = new ArrayList<>();
+    private final List<String> queriesToExecute = new ArrayList<>();
 
     @Override
     @Transactional

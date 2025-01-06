@@ -41,12 +41,6 @@
     <dependencies>
 
 
-        <!-- https://mvnrepository.com/artifact/au.com.dius/pact-jvm-provider-spring -->
-        <dependency>
-            <groupId>au.com.dius</groupId>
-            <artifactId>pact-jvm-provider-spring_2.12</artifactId>
-            <version>3.6.2</version>
-        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
 
@@ -62,13 +56,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>shared</groupId>
-            <artifactId>shared</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -266,7 +253,6 @@
             <artifactId>spring-rabbit</artifactId>
         </dependency>
 
-
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -415,11 +401,8 @@
                 <artifactId>pitest-maven</artifactId>
                 <version>1.16.1</version> <!-- Verifique a versão mais recente -->
                 <configuration>
-                    <excludedClasses>
-                        <excludedClass>pt.psoft.g1.psoftg1.SmokeTeste</excludedClass>
-                    </excludedClasses>
                     <targetClasses>
-                        <param>pt.psoft.g1.psoftg1.model.*</param>
+                        <param>pt.psoft.g1.psoftg1.lendingmanagement.model.*</param>
                     </targetClasses>
                     <!-- Pacote de testes -->
                     <targetTests>

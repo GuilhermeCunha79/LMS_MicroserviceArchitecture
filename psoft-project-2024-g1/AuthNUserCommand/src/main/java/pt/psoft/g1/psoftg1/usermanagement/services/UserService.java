@@ -49,22 +49,13 @@ import java.util.Optional;
  * Based on https://github.com/Yoh0xFF/java-spring-security-example
  */
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepo;
     private final EditUserMapper userEditMapper;
     private final ForbiddenNameRepository forbiddenNameRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserService(UserRepository userRepositoryType,
-                       EditUserMapper userEditMapper, ForbiddenNameRepository forbiddenNameRepository, PasswordEncoder passwordEncoder) {
-        this.userEditMapper = userEditMapper;
-        this.forbiddenNameRepository = forbiddenNameRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.userRepo = userRepositoryType;
-
-    }
 
     @Transactional
     public User create(final CreateUserRequest request) {

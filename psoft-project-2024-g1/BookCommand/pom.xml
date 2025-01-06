@@ -8,7 +8,7 @@
         <version>3.2.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>lms-books-query</groupId>
+    <groupId>lms-books-command</groupId>
     <artifactId>bookCommand</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>BookCommand</name>
@@ -19,11 +19,6 @@
         <repository>
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
-        </repository>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/GuilhermeCunha79/shared</url>
         </repository>
     </repositories>
 
@@ -57,11 +52,14 @@
             <version>4.6.15</version> <!-- Use the latest version -->
         </dependency>
 
+
         <dependency>
             <groupId>au.com.dius.pact.consumer</groupId>
             <artifactId>junit5</artifactId>
             <version>4.6.15</version> <!-- Use the latest version -->
         </dependency>
+
+
 
 
         <dependency>
@@ -150,6 +148,8 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.3.0</version>
         </dependency>
+
+
 
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -298,6 +298,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal> <!-- Goal test adicionado aqui -->
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <excludes>
                         <excludedClass>pt.psoft.g1.psoftg1.SmokeTeste</excludedClass>
@@ -307,6 +314,7 @@
                     </includes>
                 </configuration>
             </plugin>
+
 
 
             <plugin>
@@ -437,6 +445,23 @@
                     <timestampedReports>false</timestampedReports>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>au.com.dius</groupId>
+                <artifactId>pact-jvm-provider-maven_2.12</artifactId>
+                <version>3.6.15</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>publish</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <pactBrokerUrl>http://localhost:9292</pactBrokerUrl>
+                </configuration>
+            </plugin>
+
 
             <plugin>
                 <groupId>org.jacoco</groupId>

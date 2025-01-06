@@ -6,6 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQPMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingFactory;
@@ -25,7 +26,7 @@ public class LendingServiceImpl implements LendingService {
     private final LendingRepository lendingRepository;
     private final FineRepository fineRepository;
     private final LendingEventsPublisher lendingEventsPublisher;
-
+    private final LendingViewAMQPMapper lendingViewAMQPMapper;
     @Value("${lendingDurationInDays}")
     private int lendingDurationInDays;
     @Value("${fineValuePerDayInCents}")
@@ -66,12 +67,41 @@ public class LendingServiceImpl implements LendingService {
 
     @Override
     public Lending create(LendingViewAMQP lendingViewAMQP) {
-        return createLending(lendingViewAMQP,  "Book");
+        return createLending(lendingViewAMQP, "Book");
     }
 
     @Override
     public Lending createReader(LendingViewAMQP lendingViewAMQP) {
         return createLending(lendingViewAMQP, "Reader");
+    }
+
+    @Override
+    public Lending updateLendingRecommendation(LendingViewAMQP resource) {
+        Optional<Lending> lending = findByLendingNumber(resource.getLendingNumber());
+
+        if (lending.isPresent()) {
+            lending.get().setRecommendationNumber(resource.getRecommendationNumber());
+            lending.get().setStatus(LendingStatus.LENDING_VALIDATED_READERS);
+
+            lendingEventsPublisher.sendLendingReturnedFinal(lending.get());
+
+            return lendingRepository.save(lending.get());
+        }
+
+        lendingEventsPublisher.sendLendingFailed(resource.getRecommendationNumber());
+
+        return null;
+    }
+
+    @Override
+    public Lending updateLendingRecommendationFailed(LendingViewAMQP resource) {
+        Lending lending = findByLendingNumber(resource.getLendingNumber())
+                .orElseThrow(() -> new NotFoundException("Lending not found: " + resource.getLendingNumber()));
+
+        lending.setReturnedDate(null);
+        lending.setCommentary(null);
+
+        return lendingRepository.save(lending);
     }
 
     private Lending createLending(LendingViewAMQP lendingViewAMQP, String entityType) {
@@ -80,7 +110,7 @@ public class LendingServiceImpl implements LendingService {
         final String readerNumber = lendingViewAMQP.getReaderDetailsId();
         final int status = lendingViewAMQP.getStatus();
 
-        // Retorna imediatamente se o status for LENDING_INVALIDATED
+        // Retorna se o status for LENDING_INVALIDATED
         if (status == LendingStatus.LENDING_INVALIDATED) {
             lendingRepository.findByLendingNumber(lendingNumber)
                     .ifPresent(lending -> {
@@ -114,19 +144,19 @@ public class LendingServiceImpl implements LendingService {
 
 
     @Override
-    public Lending setReturned(final String lendingNumber, final SetLendingReturnedRequest resource, final long desiredVersion) {
+    public Lending setReturned(final String lendingNumber, final SetLendingReturnedRequest resource) {
 
         var lending = lendingRepository.findByLendingNumber(lendingNumber)
                 .orElseThrow(() -> new NotFoundException("Cannot update lending with this lending number"));
 
-        lending.setReturned(desiredVersion, resource.getCommentary());
+        lending.setReturned(resource.getCommentary());
 
         if (lending.getDaysDelayed() > 0) {
             final var fine = new Fine(lending);
             fineRepository.save(fine);
         }
 
-        lendingEventsPublisher.sendLendingReturned(lending, desiredVersion);
+        lendingEventsPublisher.sendLendingReturned(lending);
 
         return lendingRepository.save(lending);
     }

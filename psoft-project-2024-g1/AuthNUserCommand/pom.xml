@@ -26,6 +26,14 @@
 
     <dependencies>
 
+        <!-- TestContainers para o Docker com imagens específicas (por exemplo, uma base de dados) -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.18.3</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
@@ -74,6 +82,34 @@
             <artifactId>pact-jvm-provider-junit</artifactId>
             <version>4.0.10</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.6.4.Final</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>au.com.dius.pact.provider</groupId>
+            <artifactId>junit5</artifactId>
+            <version>4.6.15</version> <!-- Use the latest version -->
+        </dependency>
+
+        <dependency>
+            <groupId>au.com.dius.pact.consumer</groupId>
+            <artifactId>junit5</artifactId>
+            <version>4.6.15</version> <!-- Use the latest version -->
+        </dependency>
+
+        <dependency>
+            <groupId>au.com.dius</groupId>
+            <artifactId>pact-jvm-provider-maven_2.12</artifactId>
+            <version>3.6.15</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <!-- security, authentication & authorization -->
         <dependency>
@@ -195,7 +231,7 @@
                 <version>3.5.1</version>
                 <configuration>
                     <excludes>
-                        <excludedClass>pt.psoft.g1.psoftg1.SmokeTeste</excludedClass>
+                        <excludedClass>pt.psoft.g1.psoftg1.auth.SmokeTeste</excludedClass>
                     </excludes>
                     <includes>
                         <include>**/*Test.java</include>

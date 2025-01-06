@@ -31,10 +31,10 @@ public abstract class LendingViewMapper extends MapperInterface {
     public abstract LendingsAverageDurationView toLendingsAverageDurationView(Double lendingsAverageDuration);
 
     @Named("mapToInt")
-    int mapToInt(Number value) {
-        if (value == null) {
-            throw new IllegalArgumentException("Status cannot be null");
+    int mapToInt(Optional<Integer> value) {
+        if (value.isEmpty()) {
+            throw new IllegalArgumentException("Status cannot be null or empty");
         }
-        return value.intValue();
+        return value.get();
     }
 }
