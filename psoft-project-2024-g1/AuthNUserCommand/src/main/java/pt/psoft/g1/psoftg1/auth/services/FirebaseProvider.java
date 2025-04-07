@@ -12,10 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
@@ -62,7 +59,7 @@ public class FirebaseProvider implements AuthProvider {
     private static void initializeFirebase() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
             FileInputStream serviceAccount =
-                    new FileInputStream("C:\\Users\\Guilherme Cunha\\IdeaProjects\\arqsoft-25-1201506-1211439\\psoft-project-2024-g1\\src\\main\\resources\\servicesAccount.json");
+                    new FileInputStream("path");
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))

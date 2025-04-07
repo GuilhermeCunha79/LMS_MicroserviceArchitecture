@@ -26,6 +26,10 @@ dist/
 # JetBrains IDE
 .idea/
 
+/servicesAccount.json
+/prometheus.yml
+
+
 # Unit test reports
 TEST*.xml
 
